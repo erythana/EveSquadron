@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -13,21 +14,19 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
-    override protected void OnInitialized()
+    override protected void OnDataContextChanged(EventArgs e)
     {
-        base.OnInitialized();
+        base.OnDataContextChanged(e);
         
         if (DataContext is not MainWindowViewModel mainWindowViewModel)
             return;
 
         Title = ApplicationConstants.ApplicationName;
-        //Bind here because the data context is not yet set within the axaml
-        var alwaysOnTopBinding = new Binding
+        var alwaysOnTopBinding = new Binding//Bind here because the data context is not yet set within the axaml
         {
             Source = mainWindowViewModel,
             Path = nameof(mainWindowViewModel.AlwaysOnTop)
         };
-
         this.Bind(TopmostProperty, alwaysOnTopBinding);
     }
 }

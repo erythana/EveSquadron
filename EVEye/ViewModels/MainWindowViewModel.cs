@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using DynamicData;
+using EVEye.DataAccess;
+using EVEye.DataAccess.Interfaces;
 using EVEye.Models;
 using EVEye.Models.EVE.Interfaces;
 using EVEye.Models.ZKillboard.Interfaces;
@@ -15,8 +19,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 {
     #region member fields
 
-    private readonly IZKillboardDataRepository _zKillboardDataRepository;
-    private readonly IEveDataRepository _eveDataRepository;
+    private readonly IPlayerInformationDataAggregator _playerInformationDataAggregator;
     private readonly ILogger<MainWindowViewModel> _logger;
     private readonly DispatcherTimer _clipboardPollingTimer;
     private string _previousClipboardContent = string.Empty;
@@ -27,16 +30,16 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     #region constructor
 
-    public MainWindowViewModel(IZKillboardDataRepository zKillboardDataRepository, IEveDataRepository eveDataRepository, IConfiguration configuration, ILogger<MainWindowViewModel> logger)
+    public MainWindowViewModel(IPlayerInformationDataAggregator playerInformationDataAggregator, IConfiguration configuration, ILogger<MainWindowViewModel> logger)
     {
-        EVEyePlayerInformation = new List<EVEyePlayerInformation>();
-        EVEyePlayerInformation.AddRange(Enumerable.Range(0, 10).Select<int, EVEyePlayerInformation>(x => new EVEyePlayerInformation(){ID = x, CharacterName = "Test Char"}));
+        EVEyePlayerInformation = new ObservableCollection<EVEyePlayerInformation>();
+        EVEyePlayerInformation.Add(new());
         
-        _zKillboardDataRepository = zKillboardDataRepository;
-        _eveDataRepository = eveDataRepository;
+        _playerInformationDataAggregator = playerInformationDataAggregator;
+
         _logger = logger;
-        
-        var configuredPollingRate = configuration["clipboardPollingMilliseconds"];
+
+        var configuredPollingRate = configuration.GetValue<string>("ClipboardPollingMilliseconds");
         var timerTickRate = TryParseClipboardPollingRate(configuredPollingRate);
         
         _clipboardPollingTimer = new DispatcherTimer(timerTickRate, DispatcherPriority.Background, ClipboardPollingTimerCallback)
@@ -44,7 +47,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             IsEnabled = true
         };
     }
-
+    
     #endregion
 
     #region properties
@@ -55,7 +58,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     }
 
     // ReSharper disable once InconsistentNaming
-    public List<EVEyePlayerInformation> EVEyePlayerInformation { get; set; }
+    public ObservableCollection<EVEyePlayerInformation> EVEyePlayerInformation { get; set; }
 
     #endregion
 
@@ -67,11 +70,11 @@ public sealed class MainWindowViewModel : ViewModelBase
         if(clipboardContent == _previousClipboardContent)
             return;
         _previousClipboardContent = clipboardContent;
-
+        
         //TODO: MAYBE PAUSE TIMER WHILE DOING THE REST
         await TryParseClipboardContentForEve(clipboardContent);
     }
-
+    
     #endregion
 
     #region helper methods
@@ -88,11 +91,21 @@ public sealed class MainWindowViewModel : ViewModelBase
         return timerTickRate;
     }
     
-    private Task TryParseClipboardContentForEve(string clipboardContent)
+    private async Task TryParseClipboardContentForEve(string clipboardContent)
     {
-        _logger.LogDebug($"TICK TACK: {clipboardContent}");
-
-        return Task.CompletedTask;
+        try
+        {
+            if (string.IsNullOrWhiteSpace(clipboardContent))
+                return;
+            
+            var playerInformation = await _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardContent.Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+            EVEyePlayerInformation.Clear();
+            EVEyePlayerInformation.AddRange(playerInformation);
+        }
+        catch (Exception e)
+        {
+            _logger.LogInformation(e, "Could not load player information. Probably no eve-related data in clipboard.");
+        }
     }
 
     #endregion

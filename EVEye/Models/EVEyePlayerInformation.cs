@@ -6,10 +6,10 @@ namespace EVEye.Models
     public class EVEyePlayerInformation
     {
         public Bitmap CharacterImage { get; set; }
-        public int ID { get; set; }
+        public int? ID { get; set; }
         public string CharacterName { get; set; }
         
-        public long SecurityStanding { get; set; }
+        public double? SecurityStanding { get; set; }
         
         public string CorporationName { get; set; }
         

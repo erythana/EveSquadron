@@ -8,13 +8,13 @@ using Microsoft.Extensions.Logging;
 
 namespace EVEye.DataAccess
 {
-    public class ZKillboardRestDataAccess<T> : RestDataAccessBase<T>, IZkillboardRestDataAccess
+    public sealed class ZKillboardRestDataAccess<T> : RestDataAccessBase<T>, IZKillboardRestDataAccess
     {
         private readonly ILogger<ZKillboardRestDataAccess<T>> _logger;
 
         public ZKillboardRestDataAccess(HttpClient httpClient,
             IConfiguration configuration,
-            ILogger<ZKillboardRestDataAccess<T>> logger) : base(httpClient)
+            ILogger<ZKillboardRestDataAccess<T>> logger) : base(httpClient, logger)
         {
             _logger = logger;
         }

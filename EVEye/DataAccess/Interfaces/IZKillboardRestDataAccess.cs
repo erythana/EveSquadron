@@ -1,6 +1,6 @@
 namespace EVEye.DataAccess.Interfaces
 {
-    public interface IZkillboardRestDataAccess
+    public interface IZKillboardRestDataAccess
     {
     }
 }

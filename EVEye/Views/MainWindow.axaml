@@ -1,5 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:model="using:EVEye.Models"
         xmlns:vm="using:EVEye.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -7,19 +8,35 @@
         x:Class="EVEye.Views.MainWindow"
         Icon="/Resources/icons/avalonia-logo.ico">
     <Design.DataContext>
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
-    
+
     <StackPanel>
         <StackPanel Orientation="Horizontal">
-            <CheckBox 
+            <CheckBox
                 IsChecked="{Binding AlwaysOnTop}"
-                Content="Always on top"/>
+                Content="Always on top" />
         </StackPanel>
-        <DataGrid 
+        <DataGrid
             Items="{Binding EVEyePlayerInformation}"
-            AutoGenerateColumns="True" 
-            IsReadOnly="True" />
+            CanUserReorderColumns="True"
+            CanUserResizeColumns="True"
+            IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="CharacterImage">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding CharacterImage }" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Character Name" Binding="{Binding CharacterName}" />
+                <DataGridTextColumn Header="Security Standing" Binding="{Binding SecurityStanding}" />
+                <DataGridTextColumn Header="Corporation" Binding="{Binding CorporationName}" />
+                <DataGridTextColumn Header="Alliance" Binding="{Binding AllianceName}" />
+                <DataGridTextColumn Header="Coallition" Binding="{Binding CoallitionName}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </StackPanel>
-    
+
 </Window>

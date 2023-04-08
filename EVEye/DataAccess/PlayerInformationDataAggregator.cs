@@ -28,11 +28,12 @@ namespace EVEye.DataAccess
             var eveNameIDMappings = await _eveDataRepository.GetIDsFrom(players);
 
             //TODO: REMOVE, THIS IS JUST A TEST
-            return eveNameIDMappings.Characters.Select(x => new EVEyePlayerInformation()
+            return await Task.WhenAll(eveNameIDMappings.Characters.Select(async x => new EVEyePlayerInformation()
             {
+                CharacterImage = await _eveDataRepository.GetPortraitFrom(x.ID, 32),
                 CharacterName = x.Name
-            });
-            
+            }));
+          
         }
 
         public Task<IEnumerable<EVEyePlayerInformation>> GetAggregatedItemsFor(IEnumerable<string> players) => GetAggregatedItems(players);

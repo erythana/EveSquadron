@@ -25,15 +25,16 @@ namespace EVEye.Models
             _esiEndpointPath = "Endpoints:EveESI";
             
             _logger = logger;
-            CharacterEndpoint = LoadSetting("CharacterEndpoint");
-
+            UniverseEndpoint = LoadSetting("UniverseEndpoint");
+            PortraitEndpoint = LoadSetting("PortraitEndpoint");
         }
 
         #endregion
 
         #region properties
 
-        public string CharacterEndpoint { get; }
+        public string UniverseEndpoint { get; }
+        public string PortraitEndpoint { get; }
 
         #endregion
 

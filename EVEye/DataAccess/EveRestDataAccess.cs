@@ -34,7 +34,7 @@ namespace EVEye.DataAccess
             var results = new List<JObject>();
             _logger.LogDebug($"Loading Character IDs from endpoint {endpoint} for {inputNames.Length} characters.");
             
-            for (var i = 0; i < inputNames.Count(); i += namesLookupLimit)
+            for (var i = 0; i < inputNames.Length; i += namesLookupLimit)
             {
                 var lookupNamesJson = JsonSerializer.Serialize(inputNames.Skip(i).Take(namesLookupLimit));
                 var content = new StringContent(lookupNamesJson);

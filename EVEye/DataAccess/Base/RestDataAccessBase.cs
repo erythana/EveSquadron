@@ -3,50 +3,41 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using EVEye.Models;
 using Microsoft.Extensions.Logging;
 
 namespace EVEye.DataAccess.Base
 {
-    public abstract class RestDataAccessBase<T> 
+    public abstract class RestDataAccessBase
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<RestDataAccessBase<T>> _logger;
+        private readonly ILogger<RestDataAccessBase> _logger;
 
-        protected RestDataAccessBase(HttpClient httpClient, ILogger<RestDataAccessBase<T>> logger)
+        protected RestDataAccessBase(HttpClient httpClient, ILogger<RestDataAccessBase> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
         }
 
-        protected async Task<List<T>?> GetAllAsync(string endpointUrl)
+        protected async Task<List<T>?> GetAllAsync<T>(string endpointUrl)
         {
             _logger.LogDebug($"Executing GetAllAsync on endpoint {endpointUrl}");
+
+            var content = await _httpClient.GetStringAsync(endpointUrl);
+            return JsonSerializer.Deserialize<List<T>>(content, ApplicationConstants.AppDefaultSerializerOptions);
+        }
+
+        protected async Task<T?> GetByIdAsync<T>(string endpointUrl, int id)
+        {
+            _logger.LogDebug($"Executing GetByIdAsync on endpoint {endpointUrl}{id}/");
             
-            var response = await _httpClient.GetAsync(endpointUrl);
-            response.EnsureSuccessStatusCode();
-
-            var content = await response.Content.ReadAsStringAsync();
-            var items = JsonSerializer.Deserialize<List<T>>(content);
-
-            return items;
+            var content = await _httpClient.GetStringAsync($"{endpointUrl}{id}/");
+            return JsonSerializer.Deserialize<T>(content, ApplicationConstants.AppDefaultSerializerOptions);
         }
 
-        protected async Task<T?> GetByIdAsync(string endpointUrl, int id)
+        protected async Task<T?> CreateAsync<T>(string endpointUrl, T item)
         {
-            _logger.LogDebug($"Executing GetByIdAsync on endpoint {endpointUrl}");
-
-            var response = await _httpClient.GetAsync($"{endpointUrl}/{id}");
-            response.EnsureSuccessStatusCode();
-
-            var content = await response.Content.ReadAsStringAsync();
-            var item = JsonSerializer.Deserialize<T>(content);
-
-            return item;
-        }
-
-        protected async Task<T?> CreateAsync(string endpointUrl, T item)
-        {
-            _logger.LogDebug($"Executing CreateAsync on endpoint {endpointUrl}");
+            _logger.LogDebug($"Executing CreateAsync (T item) on endpoint {endpointUrl}");
 
             var json = JsonSerializer.Serialize(item);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -55,25 +46,31 @@ namespace EVEye.DataAccess.Base
             response.EnsureSuccessStatusCode();
 
             var createdContent = await response.Content.ReadAsStringAsync();
-            var createdItem = JsonSerializer.Deserialize<T>(createdContent);
+            return JsonSerializer.Deserialize<T>(createdContent, ApplicationConstants.AppDefaultSerializerOptions);
+        }
+        
+        protected async Task<T?> CreateAsync<T>(string endpointUrl, HttpContent jsonPayload)
+        {
+            _logger.LogDebug($"Executing CreateAsync (string jsonPayload) on endpoint {endpointUrl}");
+            
+            var response = await _httpClient.PostAsync(endpointUrl, jsonPayload);
+            response.EnsureSuccessStatusCode();
 
-            return createdItem;
+            var createdContent = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<T>(createdContent, ApplicationConstants.AppDefaultSerializerOptions);
         }
 
-        protected async Task<T?> UpdateAsync(string endpointUrl, int id, T item)
+        protected async Task<T?> UpdateAsync<T>(string endpointUrl, int id, T item)
         {
             _logger.LogDebug($"Executing UpdateAsync on endpoint {endpointUrl}");
 
             var json = JsonSerializer.Serialize(item);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-
             var response = await _httpClient.PutAsync($"{endpointUrl}/{id}", content);
             response.EnsureSuccessStatusCode();
 
             var updatedContent = await response.Content.ReadAsStringAsync();
-            var updatedItem = JsonSerializer.Deserialize<T>(updatedContent);
-
-            return updatedItem;
+            return JsonSerializer.Deserialize<T>(updatedContent, ApplicationConstants.AppDefaultSerializerOptions);
         }
 
         protected async Task DeleteAsync(string endpointUrl, int id)

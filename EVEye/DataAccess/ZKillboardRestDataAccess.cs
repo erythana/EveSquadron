@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using EVEye.DataAccess.Base;
@@ -8,24 +7,34 @@ using Microsoft.Extensions.Logging;
 
 namespace EVEye.DataAccess
 {
-    public sealed class ZKillboardRestDataAccess<T> : RestDataAccessBase<T>, IZKillboardRestDataAccess
+    public sealed class ZKillboardRestDataAccess : RestDataAccessBase, IZKillboardRestDataAccess
     {
-        private readonly ILogger<ZKillboardRestDataAccess<T>> _logger;
+        #region member fields
+        
+        private readonly ILogger<ZKillboardRestDataAccess> _logger;
 
+        #endregion
+
+        #region constructor
+        
         public ZKillboardRestDataAccess(HttpClient httpClient,
             IConfiguration configuration,
-            ILogger<ZKillboardRestDataAccess<T>> logger) : base(httpClient, logger)
+            ILogger<ZKillboardRestDataAccess> logger) : base(httpClient, logger)
         {
             _logger = logger;
         }
 
-        public async Task<T?> GetKillmailsFrom(string endpoint, int id)
-        {
-            _logger.LogDebug($"Loading Killmails from endpoint {endpoint} for ID {id}");
+        #endregion
 
-            var result = await GetByIdAsync("thekillmailendpoint", id);
-            return result;
+        #region interface implementation
+        
+        public Task<T?> GetCharacterStatisticsAsync<T>(string characterStatsEndpoint, int playerID)
+        {
+            _logger.LogDebug($"Loading Character statistics from endpoint {characterStatsEndpoint} for ID {playerID}");
+            return GetByIdAsync<T>(characterStatsEndpoint, playerID);
         }
+        
+        #endregion
     }
 
 }

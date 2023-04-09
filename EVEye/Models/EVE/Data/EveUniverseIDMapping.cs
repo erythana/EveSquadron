@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace EVEye.Models.EVE.Data
 {
-    public struct EveUniverseIDMapping
+    public class EveUniverseIDMapping
     {
         public List<EveNameIDMapping> Characters { get; set; }
         

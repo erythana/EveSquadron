@@ -1,6 +1,6 @@
 namespace EVEye.Models.ZKillboard.Data
 {
-    public class KillboardEntry
+    public class ZKillboardEntry
     {
         public int LocationID { get; set; }
         public string Hash { get; set; }

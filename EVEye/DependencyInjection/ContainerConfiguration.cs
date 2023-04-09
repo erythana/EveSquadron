@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using EVEye.DataAccess;
 using EVEye.DataAccess.Interfaces;
 using EVEye.Models;
-using EVEye.Models.EVE.Data;
-using EVEye.Models.ZKillboard.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -22,10 +19,9 @@ namespace EVEye.DependencyInjection
         {
             return builder
                 .AddConfigurationOptions()
-                .RegisterGenerics()
-                .RegisterHttpClients()
                 .RegisterSingletons()
-                .RegisterByConvention();
+                .RegisterByConvention()
+                .RegisterHttpClients();
         }
 
         public static IServiceCollection AddLogging(this IServiceCollection builder)
@@ -51,12 +47,6 @@ namespace EVEye.DependencyInjection
         #endregion
 
         #region specific builder methods
-        
-        private static IServiceCollection RegisterGenerics(this IServiceCollection builder)
-        {
-            return builder
-                .AddTransient(typeof(IEveRestDataAccess<>), typeof(EveRestDataAccess<>));
-        }
 
         private static IServiceCollection RegisterByConvention(this IServiceCollection builder)
         {
@@ -79,38 +69,20 @@ namespace EVEye.DependencyInjection
         
         private static IServiceCollection RegisterHttpClients(this IServiceCollection builder)
         {
-            builder
+            return builder
                 .AddEveRestHttpClients()
                 .AddZKillboardRestHttpClients();
-                    
-                
-            
-            return builder;
         }
 
         private static IServiceCollection AddEveRestHttpClients(this IServiceCollection builder)
         {
-            builder.AddHttpClient<EveRestDataAccess<EveNameIDMapping>>(
-                client =>
-                {
-                    client.BaseAddress = new Uri("https://esi.evetech.net/latest/universe/ids/");
-                    client.DefaultRequestHeaders.UserAgent.ParseAdd(ApplicationConstants.UserAgentHeader);
-                    client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip");
-                    client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
-                });
+            builder.AddHttpClient<IEveRestDataAccess, EveRestDataAccess>(AddDefaultRequestHeaders);
             return builder;
         }
         
         private static IServiceCollection AddZKillboardRestHttpClients(this IServiceCollection builder)
         {
-            builder.AddHttpClient<ZKillboardRestDataAccess<List<KillboardHistory>>>(
-                client =>
-                {
-                    client.BaseAddress = new Uri("https://zkillboard.com/api/characterID/");
-                    client.DefaultRequestHeaders.UserAgent.ParseAdd(ApplicationConstants.UserAgentHeader);
-                    client.DefaultRequestHeaders.AcceptEncoding.ParseAdd("gzip");
-                    client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
-                });
+            builder.AddHttpClient<IZKillboardRestDataAccess, ZKillboardRestDataAccess>(AddDefaultRequestHeaders);
             return builder;
         }
 
@@ -120,6 +92,13 @@ namespace EVEye.DependencyInjection
 
         private static Type? GetMatchingInterface(Type type) => type.GetInterfaces()
         .FirstOrDefault(t => t.Name == "I" + type.Name);
+
+        private static void AddDefaultRequestHeaders(HttpClient httpClient)
+        {
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", ApplicationConstants.UserAgentHeader);
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Content-Encoding", "gzip");
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
+        }
 
         #endregion
     }

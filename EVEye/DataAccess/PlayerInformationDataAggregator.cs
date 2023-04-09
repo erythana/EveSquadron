@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using EVEye.DataAccess.Base;
 using EVEye.DataAccess.Interfaces;
@@ -25,15 +24,26 @@ namespace EVEye.DataAccess
         
         protected async override Task<IEnumerable<EVEyePlayerInformation>> GetAggregatedItems(IEnumerable<string> players)
         {
+            var results = new List<EVEyePlayerInformation>();
             var eveNameIDMappings = await _eveDataRepository.GetIDsFrom(players);
-
-            //TODO: REMOVE, THIS IS JUST A TEST
-            return await Task.WhenAll(eveNameIDMappings.Characters.Select(async x => new EVEyePlayerInformation()
+            foreach (var characterNameID in eveNameIDMappings.Characters)
             {
-                CharacterImage = await _eveDataRepository.GetPortraitFrom(x.ID, 32),
-                CharacterName = x.Name
-            }));
-          
+                var portrait = _eveDataRepository.GetPortraitFrom(characterNameID.ID, 32);
+                var statistics = _zKillboardDataRepository.GetStatisticsFrom(characterNameID.ID);
+                
+                var currentPlayerInformation = await Task.WhenAll(portrait, statistics).ContinueWith(t => new EVEyePlayerInformation()
+                {
+                    ID = characterNameID.ID,
+                    CharacterName = characterNameID.Name,
+                    CharacterImage = portrait.Result,
+                    CorporationName = statistics.Result.Info.CorporationID.ToString(),//TODO
+                    AllianceName = statistics.Result.Info.AllianceID.ToString(),//TODO
+                    SecurityStanding = statistics.Result.Info.SecStatus
+                });
+                results.Add(currentPlayerInformation);
+            }
+
+            return results;
         }
 
         public Task<IEnumerable<EVEyePlayerInformation>> GetAggregatedItemsFor(IEnumerable<string> players) => GetAggregatedItems(players);

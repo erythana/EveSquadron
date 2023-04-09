@@ -101,6 +101,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             var playerInformation = await _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardContent.Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
             EVEyePlayerInformation.Clear();
             EVEyePlayerInformation.AddRange(playerInformation);
+            RaisePropertyChanged(nameof(Models.EVEyePlayerInformation));
         }
         catch (Exception e)
         {

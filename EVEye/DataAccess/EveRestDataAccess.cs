@@ -1,32 +1,39 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using EVEye.DataAccess.Base;
 using EVEye.DataAccess.Interfaces;
 using EVEye.Models;
-using EVEye.Models.EVE.Data;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
 namespace EVEye.DataAccess
 {
-    public class EveRestDataAccess<T> : RestDataAccessBase<T>, IEveRestDataAccess<T>
+    public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
     {
+        #region member fields
+        
         private readonly HttpClient _httpClient;
-        private readonly ILogger<EveRestDataAccess<T>> _logger;
+        private readonly ILogger<EveRestDataAccess> _logger;
     
+        #endregion
+
+        #region constructor
+        
         public EveRestDataAccess(HttpClient httpClient,
-            ILogger<EveRestDataAccess<T>> logger) : base(httpClient, logger)
+            ILogger<EveRestDataAccess> logger) : base(httpClient, logger)
         {
             _httpClient = httpClient;
             _logger = logger;
         }
         
-        public async Task<T> GetCharacterIDsFromNames(string endpoint, IEnumerable<string> names)
+        #endregion
+
+        #region interface implementation
+        
+        public async Task<T> GetCharacterIDsFromNames<T>(string endpoint, IEnumerable<string> names)
         {
             var namesLookupLimit = ApplicationConstants.EveAPILimits.PostUniverseIDsCharactersLimit;
             var inputNames = names.ToArray();
@@ -36,33 +43,27 @@ namespace EVEye.DataAccess
             
             for (var i = 0; i < inputNames.Length; i += namesLookupLimit)
             {
-                var lookupNamesJson = JsonSerializer.Serialize(inputNames.Skip(i).Take(namesLookupLimit));
-                var content = new StringContent(lookupNamesJson);
-                var resultPart = await GetJsonPostAsync(endpoint, content);
-                results.Add(JObject.Parse(resultPart));
+                var lookupNames = inputNames.Skip(i).Take(namesLookupLimit);
+                
+                var payload = new StringContent(JsonSerializer.Serialize(lookupNames));
+                var response = await CreateAsync<T>(endpoint, payload);
+                var responseJson = JsonSerializer.Serialize(response);
+                results.Add(JObject.Parse(responseJson));
             }
 
             var resultObject = new JObject();
             foreach (var resultPart in results)
                 resultObject.Merge(resultPart);
 
-            return JsonSerializer.Deserialize<T>(resultObject.ToString(), new JsonSerializerOptions()
-            {
-                PropertyNameCaseInsensitive = true
-            })!;
+            return JsonSerializer.Deserialize<T>(resultObject.ToString(), ApplicationConstants.AppDefaultSerializerOptions)!;
         }
-    
-        #region helper methods
-    
-        //TODO: Maybe put a post method like this into the base layer
-        private async Task<string> GetJsonPostAsync(string endpointUrl, HttpContent content)
+
+        public Task<byte[]> GetPortraitByteArrayAsync(string endpoint)
         {
-            var response = await _httpClient.PostAsync(endpointUrl, content);
-            response.EnsureSuccessStatusCode();
-            
-            return await response.Content.ReadAsStringAsync();
+            _logger.LogDebug($"Trying to download image from {endpoint}");
+            return _httpClient.GetByteArrayAsync(endpoint);
         }
-    
+        
         #endregion
     }
 

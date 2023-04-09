@@ -34,7 +34,6 @@
                 <DataGridTextColumn Header="Security Standing" Binding="{Binding SecurityStanding}" />
                 <DataGridTextColumn Header="Corporation" Binding="{Binding CorporationName}" />
                 <DataGridTextColumn Header="Alliance" Binding="{Binding AllianceName}" />
-                <DataGridTextColumn Header="Coallition" Binding="{Binding CoallitionName}" />
             </DataGrid.Columns>
         </DataGrid>
     </StackPanel>

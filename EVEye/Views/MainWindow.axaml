@@ -1,7 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:model="using:EVEye.Models"
         xmlns:vm="using:EVEye.ViewModels"
+        xmlns:v="using:EVEye.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -12,16 +12,31 @@
     </Design.DataContext>
 
     <StackPanel>
+        
         <StackPanel Orientation="Horizontal">
             <CheckBox
                 IsChecked="{Binding AlwaysOnTop}"
                 Content="Always on top" />
         </StackPanel>
+        
         <DataGrid
             Items="{Binding EVEyePlayerInformation}"
             CanUserReorderColumns="True"
             CanUserResizeColumns="True"
-            IsReadOnly="True">
+            IsReadOnly="True"
+            >
+            <DataGrid.Styles>
+                <Style Selector="DataGridRow">
+                    <Setter Property="ToolTip.ShowDelay" Value="100" />
+                    <Setter Property="ToolTip.Tip">
+                        <Setter.Value>
+                            <Template>
+                                <v:PlayerStatsView />
+                            </Template>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.Styles>
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="CharacterImage">
                     <DataGridTemplateColumn.CellTemplate>
@@ -35,6 +50,7 @@
                 <DataGridTextColumn Header="Corporation" Binding="{Binding CorporationName}" />
                 <DataGridTextColumn Header="Alliance" Binding="{Binding AllianceName}" />
             </DataGrid.Columns>
+            
         </DataGrid>
     </StackPanel>
 

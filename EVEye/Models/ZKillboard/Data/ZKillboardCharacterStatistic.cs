@@ -9,7 +9,6 @@ namespace EVEye.Models.ZKillboard.Data
         public int GangRatio { get; set; }
         public int SoloKills { get; set; }
         public int SoloLosses { get; set; }
-        public int SoloDangerRatio { get => SoloKills / 100 * SoloLosses; }//TODO: Check and change Datatype
         public ZKillboardPlayerInfo Info { get; set; }
     }
 }

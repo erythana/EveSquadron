@@ -26,6 +26,17 @@ namespace EVEye.DataAccess.Base
             var content = await _httpClient.GetStringAsync(endpointUrl);
             return JsonSerializer.Deserialize<List<T>>(content, ApplicationConstants.AppDefaultSerializerOptions);
         }
+        
+        protected async Task<List<T>?> GetAllPOSTAsync<T>(string endpointUrl, HttpContent payload)
+        {
+            _logger.LogDebug($"Executing GetAllPOSTAsync (string jsonPayload) on endpoint {endpointUrl}");
+            
+            var response = await _httpClient.PostAsync(endpointUrl, payload);
+            response.EnsureSuccessStatusCode();
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<T>>(content, ApplicationConstants.AppDefaultSerializerOptions);
+        }
 
         protected async Task<T?> GetByIdAsync<T>(string endpointUrl, int id)
         {

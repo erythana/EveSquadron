@@ -8,6 +8,8 @@ namespace EVEye.Models.EVE.Interfaces
     public interface IEveDataRepository
     {
         public Task<EveUniverseIDMapping> GetIDsFrom(IEnumerable<string> names);
+
+        public Task<IEnumerable<EveNameLookup>> GetNamesFrom(IEnumerable<int> id);
         
         public Task<Bitmap?> GetPortraitFrom(int characterID, int width);
     }

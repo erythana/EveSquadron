@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using DynamicData;
-using EVEye.DataAccess;
 using EVEye.DataAccess.Interfaces;
-using EVEye.Models;
-using EVEye.Models.EVE.Interfaces;
-using EVEye.Models.ZKillboard.Interfaces;
+using EVEye.Models.EVEye;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -101,7 +96,6 @@ public sealed class MainWindowViewModel : ViewModelBase
             var playerInformation = await _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardContent.Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
             EVEyePlayerInformation.Clear();
             EVEyePlayerInformation.AddRange(playerInformation);
-            RaisePropertyChanged(nameof(Models.EVEyePlayerInformation));
         }
         catch (Exception e)
         {

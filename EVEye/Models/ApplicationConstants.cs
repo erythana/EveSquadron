@@ -11,6 +11,7 @@ namespace EVEye.Models
         public static class EveAPILimits
         {
             public const int PostUniverseIDsCharactersLimit = 500;
+            public const int PostUniverseNamesIDsLimit = 1000;
         }
         
         public static readonly JsonSerializerOptions AppDefaultSerializerOptions = new()

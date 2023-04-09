@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using EVEye.DataAccess.Base;
 using EVEye.DataAccess.Interfaces;
 using EVEye.Models;
+using EVEye.Models.EVE.Data;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 
@@ -33,20 +34,20 @@ namespace EVEye.DataAccess
 
         #region interface implementation
         
-        public async Task<T> GetCharacterIDsFromNames<T>(string endpoint, IEnumerable<string> names)
+        public async Task<T> GetIDsFromNames<T>(string idEndpoint, IEnumerable<string> names)
         {
-            var namesLookupLimit = ApplicationConstants.EveAPILimits.PostUniverseIDsCharactersLimit;
             var inputNames = names.ToArray();
-    
+            _logger.LogDebug($"Loading Character IDs from endpoint {idEndpoint} for {inputNames.Length} characters.");
+            
+            var namesLookupLimit = ApplicationConstants.EveAPILimits.PostUniverseIDsCharactersLimit;
             var results = new List<JObject>();
-            _logger.LogDebug($"Loading Character IDs from endpoint {endpoint} for {inputNames.Length} characters.");
             
             for (var i = 0; i < inputNames.Length; i += namesLookupLimit)
             {
                 var lookupNames = inputNames.Skip(i).Take(namesLookupLimit);
                 
                 var payload = new StringContent(JsonSerializer.Serialize(lookupNames));
-                var response = await CreateAsync<T>(endpoint, payload);
+                var response = await CreateAsync<T>(idEndpoint, payload);
                 var responseJson = JsonSerializer.Serialize(response);
                 results.Add(JObject.Parse(responseJson));
             }
@@ -58,12 +59,37 @@ namespace EVEye.DataAccess
             return JsonSerializer.Deserialize<T>(resultObject.ToString(), ApplicationConstants.AppDefaultSerializerOptions)!;
         }
 
-        public Task<byte[]> GetPortraitByteArrayAsync(string endpoint)
+        public Task<byte[]> GetPortraitByteArrayAsync(string portraitEndpoint)
         {
-            _logger.LogDebug($"Trying to download image from {endpoint}");
-            return _httpClient.GetByteArrayAsync(endpoint);
+            _logger.LogDebug($"Trying to download image from {portraitEndpoint}");
+            return _httpClient.GetByteArrayAsync(portraitEndpoint);
         }
-        
+
+        public async Task<IEnumerable<T>> GetNamesFromIDs<T>(string namesEndpoint, IEnumerable<int> ids)
+        {
+            var inputIDs = ids.ToArray();
+            _logger.LogDebug($"Loading CharacterNames from endpoint {namesEndpoint} for {inputIDs.Length} IDs.");
+            var idsLookupLimit = ApplicationConstants.EveAPILimits.PostUniverseNamesIDsLimit;
+    
+            var results = new List<JArray>();
+            
+            for (var i = 0; i < inputIDs.Length; i += idsLookupLimit)
+            {
+                var lookupIDs = inputIDs.Skip(i).Take(idsLookupLimit);
+                var payload = new StringContent(JsonSerializer.Serialize(lookupIDs));
+                
+                var response = await GetAllPOSTAsync<EveNameLookup>(namesEndpoint, payload);
+                var responseJson = JsonSerializer.Serialize(response);
+                results.Add(JArray.Parse(responseJson));
+            }
+
+            var resultObject = new JArray();
+            foreach (var resultPart in results)
+                resultObject.Merge(resultPart);
+
+            return JsonSerializer.Deserialize<IEnumerable<T>>(resultObject.ToString(), ApplicationConstants.AppDefaultSerializerOptions)!;
+        }
+
         #endregion
     }
 

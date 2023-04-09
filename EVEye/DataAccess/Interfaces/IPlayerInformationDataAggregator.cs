@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EVEye.Models;
+using EVEye.Models.EVEye;
 
 namespace EVEye.DataAccess.Interfaces
 {

@@ -17,7 +17,7 @@ namespace EVEye.Models.EVE
         private readonly IEveRestDataAccess _eveRestDataAccess;
         private readonly ILogger<EveDataRepository> _logger;
 
-        private readonly string _characterEndpoint;
+        private readonly string _universeEndpoint;
         private readonly string _portraitEndpoint;
 
         #endregion
@@ -29,7 +29,7 @@ namespace EVEye.Models.EVE
             _eveRestDataAccess = eveRestDataAccess;
             _logger = logger;
 
-            _characterEndpoint = endpoints.UniverseEndpoint;
+            _universeEndpoint = endpoints.UniverseEndpoint;
             _portraitEndpoint = endpoints.PortraitEndpoint;
         }
 
@@ -39,9 +39,14 @@ namespace EVEye.Models.EVE
         
         public Task<EveUniverseIDMapping> GetIDsFrom(IEnumerable<string> names)
         {
-            return _eveRestDataAccess.GetCharacterIDsFromNames<EveUniverseIDMapping>(_characterEndpoint, names);
+            return _eveRestDataAccess.GetIDsFromNames<EveUniverseIDMapping>(_universeEndpoint + "ids/", names);
         }
-        
+
+        public Task<IEnumerable<EveNameLookup>> GetNamesFrom(IEnumerable<int> ids)
+        {
+            return _eveRestDataAccess.GetNamesFromIDs<EveNameLookup>(_universeEndpoint + "names/", ids);
+        }
+
         public async Task<Bitmap?> GetPortraitFrom(int characterID, int width)
         {
             var imageContent = await _eveRestDataAccess.GetPortraitByteArrayAsync(_portraitEndpoint + characterID + $"/portrait?size={width}");

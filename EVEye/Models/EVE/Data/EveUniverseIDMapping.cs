@@ -4,17 +4,15 @@ namespace EVEye.Models.EVE.Data
 {
     public class EveUniverseIDMapping
     {
-        public List<EveNameIDMapping> Characters { get; set; }
-        
-        // Keep those ready in case we need them during next development phase
-        // public List<EveNameIDMapping> Agents { get; set; }
-        // public List<EveNameIDMapping> Alliances { get; set; }
-        // public List<EveNameIDMapping> Constellations { get; set; }
-        // public List<EveNameIDMapping> Corporations { get; set; }
-        // public List<EveNameIDMapping> Factions { get; set; }
-        // public List<EveNameIDMapping> Inventory_types { get; set; }
-        // public List<EveNameIDMapping> Regions { get; set; }
-        // public List<EveNameIDMapping> Stations { get; set; }
-        // public List<EveNameIDMapping> Systems { get; set; }
+        public List<EveNameIDMapping> Characters { get; set; } = new List<EveNameIDMapping>();
+        public List<EveNameIDMapping> Agents { get; set; } = new List<EveNameIDMapping>();
+        public List<EveNameIDMapping> Alliances { get; set; } = new List<EveNameIDMapping>();
+        public List<EveNameIDMapping> Constellations { get; set; } = new List<EveNameIDMapping>();
+        public List<EveNameIDMapping> Corporations { get; set; } = new List<EveNameIDMapping>();
+        public List<EveNameIDMapping> Factions { get; set; } = new List<EveNameIDMapping>();
+        public List<EveNameIDMapping> Inventory_Types { get; set; } = new List<EveNameIDMapping>();
+        public List<EveNameIDMapping> Regions { get; set; } = new List<EveNameIDMapping>();
+        public List<EveNameIDMapping> Stations { get; set; } = new List<EveNameIDMapping>();
+        public List<EveNameIDMapping> Systems { get; set; } = new List<EveNameIDMapping>();
     }
 }

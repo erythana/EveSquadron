@@ -51,7 +51,7 @@ namespace EVEye.DataAccess
                     ID = character.ID,
                     CharacterName = character.Name,
                     CharacterImage = portrait.Result,
-                    SecurityStanding = statistics.Result!.Info.SecStatus,
+                    SecurityStanding = statistics.Result?.Info?.SecStatus,
                 });
                 results.Add((currentPlayerInformation, statistics.Result!));
             }
@@ -68,17 +68,17 @@ namespace EVEye.DataAccess
             var idsToLookup = Enumerable.Empty<int>()
                 .Concatenate(
                     results
-                        .Select(kvp => kvp.characterStatistic.Info.CorporationID)
+                        .Select(kvp => kvp.characterStatistic.Info?.CorporationID ?? 0)
                         .Where(id => id > 0),
                     results
-                        .Select(kvp => kvp.characterStatistic.Info.AllianceID)
+                        .Select(kvp => kvp.characterStatistic.Info?.AllianceID ?? 0)
                         .Where(id => id > 0));
 
             var lookup = await _eveDataRepository.GetNamesFrom(idsToLookup);
             foreach (var player in results)
             {
-                player.playerInformation.CorporationName = lookup?.FirstOrDefault(c => c.ID == player.characterStatistic.Info.CorporationID)?.Name;
-                player.playerInformation.AllianceName = lookup?.FirstOrDefault(a => a.ID == player.characterStatistic.Info.AllianceID)?.Name;
+                player.playerInformation.CorporationName = lookup?.FirstOrDefault(c => c.ID == player.characterStatistic.Info?.CorporationID)?.Name;
+                player.playerInformation.AllianceName = lookup?.FirstOrDefault(a => a.ID == player.characterStatistic.Info?.AllianceID)?.Name;
                 player.playerInformation.PlayerDetails = new EVEyePlayerDetails()
                 {
                     ID = player.playerInformation.ID!.Value,

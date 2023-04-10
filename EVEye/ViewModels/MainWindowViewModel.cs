@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using DynamicData;
 using EVEye.DataAccess.Interfaces;
 using EVEye.Models.EVEye;
-using Microsoft.Extensions.Configuration;
+using EVEye.Models.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace EVEye.ViewModels;
@@ -18,31 +20,37 @@ public sealed class MainWindowViewModel : ViewModelBase
     private readonly ILogger<MainWindowViewModel> _logger;
     private readonly DispatcherTimer _clipboardPollingTimer;
     private string _previousClipboardContent = string.Empty;
-    
+
     private bool _alwaysOnTop;
+    private ThemeVariant _themeVariant;
 
     #endregion
 
     #region constructor
 
-    public MainWindowViewModel(IPlayerInformationDataAggregator playerInformationDataAggregator, IConfiguration configuration, ILogger<MainWindowViewModel> logger)
+    public MainWindowViewModel(IPlayerInformationDataAggregator playerInformationDataAggregator, IAppSettingsLoader settings, ILogger<MainWindowViewModel> logger)
     {
         EVEyePlayerInformation = new ObservableCollection<EVEyePlayerInformation>();
-        EVEyePlayerInformation.Add(new());
-        
         _playerInformationDataAggregator = playerInformationDataAggregator;
 
         _logger = logger;
 
-        var configuredPollingRate = configuration.GetValue<string>("ClipboardPollingMilliseconds");
-        var timerTickRate = TryParseClipboardPollingRate(configuredPollingRate);
+        ThemeVariant = settings.Theme switch
+        {
+            { } theme when theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Dark,
+            { } theme when theme.Equals("Light", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Light,
+            _ => ThemeVariant.Default
+        };
         
+        var configuredPollingRate = settings.ClipboardPollingMilliseconds;
+        var timerTickRate = TryParseClipboardPollingRate(configuredPollingRate);
+
         _clipboardPollingTimer = new DispatcherTimer(timerTickRate, DispatcherPriority.Background, ClipboardPollingTimerCallback)
         {
             IsEnabled = true
         };
     }
-    
+
     #endregion
 
     #region properties
@@ -51,6 +59,12 @@ public sealed class MainWindowViewModel : ViewModelBase
         get => _alwaysOnTop;
         set => SetProperty(ref _alwaysOnTop, value);
     }
+    
+    public ThemeVariant ThemeVariant {
+        get => _themeVariant;
+        set => SetProperty(ref _themeVariant, value);
+    }
+    
 
     // ReSharper disable once InconsistentNaming
     public ObservableCollection<EVEyePlayerInformation> EVEyePlayerInformation { get; set; }
@@ -62,14 +76,14 @@ public sealed class MainWindowViewModel : ViewModelBase
     private async void ClipboardPollingTimerCallback(object? sender, EventArgs e)
     {
         var clipboardContent = await Avalonia.Application.Current!.Clipboard!.GetTextAsync();
-        if(clipboardContent == _previousClipboardContent)
+        if (clipboardContent == _previousClipboardContent)
             return;
         _previousClipboardContent = clipboardContent;
-        
+
         //TODO: MAYBE PAUSE TIMER WHILE DOING THE REST
         await TryParseClipboardContentForEve(clipboardContent);
     }
-    
+
     #endregion
 
     #region helper methods
@@ -80,22 +94,25 @@ public sealed class MainWindowViewModel : ViewModelBase
             pollingRate = Math.Clamp(pollingRate, 100, 1000);
         else
             pollingRate = 250; //Use 250ms as fallback
-        
+
         var timerTickRate = TimeSpan.FromMilliseconds(pollingRate);
-        
+
         return timerTickRate;
     }
-    
+
     private async Task TryParseClipboardContentForEve(string clipboardContent)
     {
         try
         {
             if (string.IsNullOrWhiteSpace(clipboardContent))
                 return;
-            
-            var playerInformation = await _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardContent.Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
+
+            var playerInformation =
+                await _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardContent.Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Distinct());
+
             EVEyePlayerInformation.Clear();
             EVEyePlayerInformation.AddRange(playerInformation);
+            
         }
         catch (Exception e)
         {

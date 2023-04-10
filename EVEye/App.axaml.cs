@@ -4,7 +4,10 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
+using Avalonia.Themes.Fluent;
 using EVEye.Extensions;
+using EVEye.Models;
 using EVEye.ViewModels;
 using EVEye.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,22 +22,19 @@ public partial class App : Application
     {
         _serviceCollection = serviceCollection;
     }
-    
+
     public override void Initialize()
     {
         Resources[typeof(IServiceProvider)] = _serviceCollection;
         DataTemplates.Add(_serviceCollection.GetRequiredService<ViewLocator>());
-        
         AvaloniaXamlLoader.Load(this);
     }
-    
-    
+
 
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            ExpressionObserver.DataValidators.RemoveAll(x => x is DataAnnotationsValidationPlugin);
             desktop.MainWindow = new MainWindow
             {
                 DataContext = this.CreateInstance<MainWindowViewModel>()

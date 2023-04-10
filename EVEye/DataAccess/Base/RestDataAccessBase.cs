@@ -41,7 +41,6 @@ namespace EVEye.DataAccess.Base
         protected async Task<T?> GetByIdAsync<T>(string endpointUrl, int id)
         {
             _logger.LogDebug($"Executing GetByIdAsync on endpoint {endpointUrl}{id}/");
-            
             var content = await _httpClient.GetStringAsync($"{endpointUrl}{id}/");
             return JsonSerializer.Deserialize<T>(content, ApplicationConstants.AppDefaultSerializerOptions);
         }

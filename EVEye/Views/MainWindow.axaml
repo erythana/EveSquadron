@@ -6,26 +6,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EVEye.Views.MainWindow"
-        Icon="/Resources/icons/avalonia-logo.ico">
+        Icon="/Resources/icons/avalonia-logo.ico"
+        xmlns:conv="clr-namespace:EVEye.Views.Converters">
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
-
-    <StackPanel>
-        
-        <StackPanel Orientation="Horizontal">
+<Window.Resources>
+    <conv:BooleanToDarkThemeVariantConverter x:Key="BooleanToDarkThemeVariantConverter" />
+</Window.Resources>
+    <DockPanel>
+        <StackPanel Margin="10,0" DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10">
             <CheckBox
                 IsChecked="{Binding AlwaysOnTop}"
                 Content="Always on top" />
+            <CheckBox x:Name="IsDarkMode" Content="Dark-Mode" />
         </StackPanel>
-        
-        <DataGrid
-            Items="{Binding EVEyePlayerInformation}"
-            CanUserReorderColumns="True"
-            CanUserResizeColumns="True"
-            IsReadOnly="True"
-            >
-            <DataGrid.Styles>
+
+        <Border DockPanel.Dock="Top" x:Name="DataGridWorkaroundWrapper" >
+            <Border.Styles>
                 <Style Selector="DataGridRow">
                     <Setter Property="ToolTip.ShowDelay" Value="100" />
                     <Setter Property="ToolTip.Tip">
@@ -36,22 +34,28 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-            </DataGrid.Styles>
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="CharacterImage">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Source="{Binding CharacterImage }" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Character Name" Binding="{Binding CharacterName}" />
-                <DataGridTextColumn Header="Security Standing" Binding="{Binding SecurityStanding}" />
-                <DataGridTextColumn Header="Corporation" Binding="{Binding CorporationName}" />
-                <DataGridTextColumn Header="Alliance" Binding="{Binding AllianceName}" />
-            </DataGrid.Columns>
-            
-        </DataGrid>
-    </StackPanel>
+            </Border.Styles>
+            <DataGrid
+                x:Name="PlayerInfoGrid"
+                Items="{Binding EVEyePlayerInformation}"
+                CanUserReorderColumns="True"
+                CanUserResizeColumns="True"
+                IsReadOnly="True">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="CharacterImage">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding CharacterImage }" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Character Name" Binding="{Binding CharacterName}" />
+                    <DataGridTextColumn Header="Security Standing" Binding="{Binding SecurityStanding}" />
+                    <DataGridTextColumn Header="Corporation" Binding="{Binding CorporationName}" />
+                    <DataGridTextColumn Header="Alliance" Binding="{Binding AllianceName}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </DockPanel>
 
 </Window>

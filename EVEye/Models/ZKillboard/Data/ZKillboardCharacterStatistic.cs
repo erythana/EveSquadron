@@ -9,6 +9,6 @@ namespace EVEye.Models.ZKillboard.Data
         public int GangRatio { get; set; }
         public int SoloKills { get; set; }
         public int SoloLosses { get; set; }
-        public ZKillboardPlayerInfo Info { get; set; }
+        public ZKillboardPlayerInfo? Info { get; set; }
     }
 }

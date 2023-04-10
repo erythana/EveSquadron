@@ -1,0 +1,23 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!--This is a replacement for GroupBox-->
+    <Style Selector="HeaderedContentControl">
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <StackPanel>
+                        <Border ZIndex="1" Margin="2,0,0,0">
+                            <TextBlock FontWeight="Bold" Text="{TemplateBinding Header}" />
+                        </Border>
+                        <Border Margin="5, 0,0,0"
+                                BorderBrush="{TemplateBinding Background}"
+                                BorderThickness="1">
+                            <ContentPresenter Content="{TemplateBinding Content}" Padding="{TemplateBinding Padding}" />
+                        </Border>
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</Styles>

@@ -10,17 +10,23 @@
         <evEye:EVEyePlayerInformation />
     </Design.DataContext>
     <StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Label Content="Player:" />
-            <TextBlock Text="{Binding CharacterName}" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Label Content="Solo Danger Ratio:" />
-            <TextBlock Text="{Binding PlayerDetails.SoloDangerRatio}" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Label Content="Danger Ratio:" />
-            <TextBlock Text="{Binding PlayerDetails.DangerRatio}" />
-        </StackPanel>
+        <HeaderedContentControl Header="{Binding CharacterName, StringFormat='Character Statistics for {0}'}">
+            <StackPanel>
+                <TextBlock Text="{Binding PlayerDetails.SoloDangerRatio, StringFormat='Solo Danger-Ratio: {0}'}" />
+                <TextBlock Text="{Binding PlayerDetails.DangerRatio, StringFormat='Danger-Ratio: {0}'}" />
+            </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="Activity Information">
+            <StackPanel>
+                <TextBlock Text="Avg. Fleet Size: " />
+                <TextBlock Text="Last Activity: " />
+                <TextBlock Text="Time Ago: " />
+                <TextBlock Text="Top three ships: " />
+            </StackPanel>
+
+        </HeaderedContentControl>
+
+
     </StackPanel>
 </UserControl>

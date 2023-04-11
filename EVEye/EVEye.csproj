@@ -13,7 +13,7 @@
         <AvaloniaResource Include="Resources\icons\avalonia-logo.ico" />
         <None Remove=".gitignore" />
         <None Update="appsettings.json">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 
@@ -41,10 +41,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        
-        
-      <Reference Include="Avalonia.Themes.Fluent">
-        <HintPath>..\..\..\.nuget\packages\avalonia\0.10.18\lib\netcoreapp2.0\Avalonia.Themes.Fluent.dll</HintPath>
-      </Reference>
+
+
+        <Reference Include="Avalonia.Themes.Fluent">
+            <HintPath>..\..\..\.nuget\packages\avalonia\0.10.18\lib\netcoreapp2.0\Avalonia.Themes.Fluent.dll</HintPath>
+        </Reference>
     </ItemGroup>
 </Project>

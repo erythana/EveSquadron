@@ -1,8 +1,8 @@
-namespace EVEye.Models.Interfaces
+namespace EVEye.Models.Interfaces;
+
+public interface IEveESIEndpointsLoader
 {
-    public interface IEveESIEndpointsLoader
-    {
-        public string UniverseEndpoint { get; }
-        public string PortraitEndpoint { get; }
-    }
+    public string UniverseEndpoint { get; }
+    public string PortraitEndpoint { get; }
+    string KillmailEndpoint { get; }
 }

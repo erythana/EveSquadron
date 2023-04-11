@@ -1,7 +1,7 @@
-namespace EVEye.Models.Interfaces
+namespace EVEye.Models.Interfaces;
+
+public interface IZKillboardEndpointsLoader
 {
-    public interface IZKillboardEndpointsLoader
-    {
-        public string CharacterStatsEndpoint { get; }
-    }
+    public string CharacterEndpoint { get; }
+    public string CharacterStatsEndpoint { get; }
 }

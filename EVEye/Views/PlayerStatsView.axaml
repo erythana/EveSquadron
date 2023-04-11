@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:models="clr-namespace:EVEye.Models"
              xmlns:evEye="clr-namespace:EVEye.Models.EVEye"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="EVEye.Views.PlayerStatsView">
@@ -17,13 +16,14 @@
             </StackPanel>
         </HeaderedContentControl>
 
-        <HeaderedContentControl Header="Activity Information">
+        <HeaderedContentControl Header="Killboard Activity (last 200)">
             <StackPanel>
                 <TextBlock Text="Avg. Fleet Size: " />
                 <TextBlock Text="Last Activity: " />
                 <TextBlock Text="Time Ago: " />
-                <TextBlock Text="Top three ships: " />
+                <TextBlock Text="Top three ships: PROBABLY NONO" />
             </StackPanel>
+
 
         </HeaderedContentControl>
 

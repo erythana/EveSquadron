@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EVEye.Models.EVEye;
 
-namespace EVEye.DataAccess.Interfaces
+namespace EVEye.DataAccess.Interfaces;
+
+public interface IPlayerInformationDataAggregator
 {
-    public interface IPlayerInformationDataAggregator
-    {
-        public Task<IEnumerable<EVEyePlayerInformation>> GetAggregatedItemsFor(IEnumerable<string> players);
-    }
+    public Task<IEnumerable<EVEyePlayerInformation>> GetAggregatedItemsFor(IEnumerable<string> players);
 }

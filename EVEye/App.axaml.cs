@@ -1,20 +1,15 @@
 using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
-using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using Avalonia.Styling;
-using Avalonia.Themes.Fluent;
 using EVEye.Extensions;
-using EVEye.Models;
 using EVEye.ViewModels;
 using EVEye.Views;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EVEye;
 
-public partial class App : Application
+public class App : Application
 {
     private readonly IServiceProvider _serviceCollection;
 
@@ -42,7 +37,7 @@ public partial class App : Application
         }
         else
             throw new PlatformNotSupportedException("This application is only supported on Desktop-Environments.");
-        
+
         base.OnFrameworkInitializationCompleted();
     }
 }

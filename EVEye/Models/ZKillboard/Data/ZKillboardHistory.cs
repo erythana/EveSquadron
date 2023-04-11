@@ -1,14 +1,12 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
-namespace EVEye.Models.ZKillboard.Data
+namespace EVEye.Models.ZKillboard.Data;
+
+public class ZKillboardHistory
 {
-    public class ZKillboardHistory
-    {
-        [JsonProperty("Killmail_ID")]
-        public int ID { get; set; }
+    [JsonPropertyName("killmail_id")] 
+    public int ID { get; set; }
 
-        [JsonProperty("ZKB")]
-        public ZKillboardEntry ZKillboardEntry { get; set; }
-    }
-
+    [JsonPropertyName("zkb")] 
+    public ZKillboardEntry ZKillboardEntry { get; set; }
 }

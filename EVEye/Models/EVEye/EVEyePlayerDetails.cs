@@ -9,8 +9,9 @@ public class EVEyePlayerDetails
     public int GangRatio { get; set; }
     public int SoloKills { get; set; }
     public int SoloLosses { get; set; }
+
     public int SoloDangerRatio { get => GetSoloDangerRatio(); }
-    
+
     private int GetSoloDangerRatio()
     {
         var dangerRatio = SoloKills == 0 ? 0

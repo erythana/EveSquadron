@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using DynamicData;
@@ -14,17 +15,6 @@ namespace EVEye.ViewModels;
 
 public sealed class MainWindowViewModel : ViewModelBase
 {
-    #region member fields
-
-    private readonly IPlayerInformationDataAggregator _playerInformationDataAggregator;
-    private readonly ILogger<MainWindowViewModel> _logger;
-    private readonly DispatcherTimer _clipboardPollingTimer;
-    private string _previousClipboardContent = string.Empty;
-
-    private bool _alwaysOnTop;
-    private ThemeVariant _themeVariant;
-
-    #endregion
 
     #region constructor
 
@@ -41,7 +31,7 @@ public sealed class MainWindowViewModel : ViewModelBase
             { } theme when theme.Equals("Light", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Light,
             _ => ThemeVariant.Default
         };
-        
+
         var configuredPollingRate = settings.ClipboardPollingMilliseconds;
         var timerTickRate = TryParseClipboardPollingRate(configuredPollingRate);
 
@@ -53,29 +43,11 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     #endregion
 
-    #region properties
-
-    public bool AlwaysOnTop {
-        get => _alwaysOnTop;
-        set => SetProperty(ref _alwaysOnTop, value);
-    }
-    
-    public ThemeVariant ThemeVariant {
-        get => _themeVariant;
-        set => SetProperty(ref _themeVariant, value);
-    }
-    
-
-    // ReSharper disable once InconsistentNaming
-    public ObservableCollection<EVEyePlayerInformation> EVEyePlayerInformation { get; set; }
-
-    #endregion
-
     #region event handler
 
     private async void ClipboardPollingTimerCallback(object? sender, EventArgs e)
     {
-        var clipboardContent = await Avalonia.Application.Current!.Clipboard!.GetTextAsync();
+        var clipboardContent = await Application.Current!.Clipboard!.GetTextAsync();
         if (clipboardContent == _previousClipboardContent)
             return;
         _previousClipboardContent = clipboardContent;
@@ -83,6 +55,35 @@ public sealed class MainWindowViewModel : ViewModelBase
         //TODO: MAYBE PAUSE TIMER WHILE DOING THE REST
         await TryParseClipboardContentForEve(clipboardContent);
     }
+
+    #endregion
+    #region member fields
+
+    private readonly IPlayerInformationDataAggregator _playerInformationDataAggregator;
+    private readonly ILogger<MainWindowViewModel> _logger;
+    private readonly DispatcherTimer _clipboardPollingTimer;
+    private string? _previousClipboardContent = string.Empty;
+
+    private bool _alwaysOnTop;
+    private ThemeVariant _themeVariant;
+
+    #endregion
+
+    #region properties
+
+    public bool AlwaysOnTop {
+        get => _alwaysOnTop;
+        set => SetProperty(ref _alwaysOnTop, value);
+    }
+
+    public ThemeVariant ThemeVariant {
+        get => _themeVariant;
+        set => SetProperty(ref _themeVariant, value);
+    }
+
+
+    // ReSharper disable once InconsistentNaming
+    public ObservableCollection<EVEyePlayerInformation> EVEyePlayerInformation { get; set; }
 
     #endregion
 
@@ -112,7 +113,7 @@ public sealed class MainWindowViewModel : ViewModelBase
 
             EVEyePlayerInformation.Clear();
             EVEyePlayerInformation.AddRange(playerInformation);
-            
+
         }
         catch (Exception e)
         {

@@ -1,7 +1,6 @@
-namespace EVEye.DataAccess.Interfaces
+namespace EVEye.DataAccess.Interfaces;
+
+public interface IDataAggregatorInput<T>
 {
-    public interface IDataAggregatorInput<T>
-    {
-        public T Input { get; }
-    }
+    public T Input { get; }
 }

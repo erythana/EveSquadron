@@ -1,6 +1,6 @@
-﻿using Avalonia;
+﻿using System;
+using Avalonia;
 using Avalonia.ReactiveUI;
-using System;
 using EVEye.DependencyInjection;
 using EVEye.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EVEye;
 
-class Program
+internal class Program
 {
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
@@ -31,13 +31,10 @@ class Program
 
     }
 
-    private static ServiceProvider BuildServices()
-    {
-        return ContainerConfiguration
-            .AddLogging(new ServiceCollection()
+    private static ServiceProvider BuildServices() => ContainerConfiguration
+        .AddLogging(new ServiceCollection()
             .Configure())
-            .BuildServiceProvider();
-    }
+        .BuildServiceProvider();
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()

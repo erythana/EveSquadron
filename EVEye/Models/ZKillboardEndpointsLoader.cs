@@ -1,56 +1,36 @@
-using System;
 using EVEye.Models.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace EVEye.Models
+namespace EVEye.Models;
+
+public class ZKillboardEndpointsLoader : SettingsLoaderBase, IZKillboardEndpointsLoader
 {
-    public class ZKillboardEndpointsLoader : IZKillboardEndpointsLoader
+
+    #region constructor
+
+    public ZKillboardEndpointsLoader(IConfiguration configuration, ILogger<ZKillboardEndpointsLoader> logger) : base(configuration, logger)
     {
-        #region member fields
-        
-        private readonly IConfiguration _configuration;
-        private readonly ILogger<ZKillboardEndpointsLoader> _logger;
-        private readonly string _zKillboardEndpointPath;
+        _configuration = configuration;
+        _logger = logger;
 
-        #endregion
-
-        #region constructor
-        
-        public ZKillboardEndpointsLoader(IConfiguration configuration, ILogger<ZKillboardEndpointsLoader> logger)
-        {
-            _configuration = configuration;
-            _logger = logger;
-
-            _zKillboardEndpointPath = "Endpoints:ZKillboard";
-
-            CharacterStatsEndpoint = LoadSetting("CharacterStatsEndpoint");
-        }
-        
-        #endregion
-
-        #region properties
-
-        public string CharacterStatsEndpoint { get; }
-
-        #endregion
-
-        #region helper methods
-
-        private string LoadSetting(string settingName, bool required = true)
-        {
-            var value = _configuration.GetValue<string>($"{_zKillboardEndpointPath}:{settingName}");
-            if (required && string.IsNullOrWhiteSpace(value))
-            {
-                var error = $"The EVE-ESI endpoint for '{settingName}' is not set";
-                _logger.LogCritical(error);
-                throw new InvalidOperationException(error);
-            }
-
-            return value ?? string.Empty;
-        }
-
-        #endregion
+        var zKillboardEndpointPath = "Endpoints:ZKillboard";
+        CharacterEndpoint = LoadSetting($"{zKillboardEndpointPath}:CharacterEndpoint");
+        CharacterStatsEndpoint = LoadSetting($"{zKillboardEndpointPath}:CharacterStatsEndpoint");
     }
 
+    #endregion
+
+    #region properties
+
+    public string CharacterEndpoint { get; }
+    public string CharacterStatsEndpoint { get; }
+
+    #endregion
+    #region member fields
+
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<ZKillboardEndpointsLoader> _logger;
+
+    #endregion
 }

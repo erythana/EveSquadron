@@ -6,23 +6,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EVEye.Views.MainWindow"
-        Icon="/Resources/icons/avalonia-logo.ico"
-        xmlns:conv="clr-namespace:EVEye.Views.Converters">
+        Icon="/Resources/icons/avalonia-logo.ico">
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
-<Window.Resources>
-    <conv:BooleanToDarkThemeVariantConverter x:Key="BooleanToDarkThemeVariantConverter" />
-</Window.Resources>
+    <Window.Resources>
+    </Window.Resources>
     <DockPanel>
-        <StackPanel Margin="10,0" DockPanel.Dock="Top" Orientation="Horizontal" Spacing="10">
+        <StackPanel Margin="10,0" DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="10">
             <CheckBox
                 IsChecked="{Binding AlwaysOnTop}"
                 Content="Always on top" />
             <CheckBox x:Name="IsDarkMode" Content="Dark-Mode" />
         </StackPanel>
 
-        <Border DockPanel.Dock="Top" x:Name="DataGridWorkaroundWrapper" >
+        <Border DockPanel.Dock="Top" x:Name="DataGridWorkaroundWrapper">
             <Border.Styles>
                 <Style Selector="DataGridRow">
                     <Setter Property="ToolTip.ShowDelay" Value="100" />

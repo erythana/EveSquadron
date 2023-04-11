@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 public class ZKillboardPlayerInfo
 {
@@ -6,7 +7,9 @@ public class ZKillboardPlayerInfo
     public string Name { get; set; }
     public int CorporationID { get; set; }
     public int AllianceID { get; set; }
+    
     public DateTime Birthday { get; set; }
     public double SecStatus { get; set; }
+
     public LastAPIUpdate LastApiUpdate { get; set; }
 }

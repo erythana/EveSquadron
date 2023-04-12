@@ -7,6 +7,7 @@ namespace EVEye.Models.EVE.Data
     {
         [JsonPropertyName("Character_ID")]
         public int ID { get; set; }
+        
         [JsonPropertyName("Ship_Type_ID")]
         public int ShipTypeID { get; set; }
     }

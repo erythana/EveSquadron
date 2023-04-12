@@ -19,9 +19,13 @@
                 Content="Always on top" />
             <CheckBox x:Name="IsDarkMode" Content="Dark-Mode" />
         </StackPanel>
-
-        <Border DockPanel.Dock="Top" x:Name="DataGridWorkaroundWrapper">
-            <Border.Styles>
+        <DataGrid
+            x:Name="PlayerInfoGrid"
+            Items="{Binding EVEyePlayerInformation}"
+            CanUserReorderColumns="True"
+            CanUserResizeColumns="True"
+            IsReadOnly="True">
+            <DataGrid.Styles>
                 <Style Selector="DataGridRow">
                     <Setter Property="ToolTip.ShowDelay" Value="100" />
                     <Setter Property="ToolTip.Tip">
@@ -32,28 +36,21 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
-            </Border.Styles>
-            <DataGrid
-                x:Name="PlayerInfoGrid"
-                Items="{Binding EVEyePlayerInformation}"
-                CanUserReorderColumns="True"
-                CanUserResizeColumns="True"
-                IsReadOnly="True">
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="CharacterImage">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Image Source="{Binding CharacterImage }" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Character Name" Binding="{Binding CharacterName}" />
-                    <DataGridTextColumn Header="Security Standing" Binding="{Binding SecurityStanding}" />
-                    <DataGridTextColumn Header="Corporation" Binding="{Binding CorporationName}" />
-                    <DataGridTextColumn Header="Alliance" Binding="{Binding AllianceName}" />
-                </DataGrid.Columns>
-            </DataGrid>
-        </Border>
+            </DataGrid.Styles>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="CharacterImage">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding CharacterImage }" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Character Name" Binding="{Binding CharacterName}" />
+                <DataGridTextColumn Header="Security Standing" Binding="{Binding SecurityStanding}" />
+                <DataGridTextColumn Header="Corporation" Binding="{Binding CorporationName}" />
+                <DataGridTextColumn Header="Alliance" Binding="{Binding AllianceName}" />
+            </DataGrid.Columns>
+        </DataGrid>
     </DockPanel>
 
 </Window>

@@ -14,6 +14,12 @@ namespace EVEye.DataAccess;
 
 public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
 {
+    #region member fields
+
+    private readonly HttpClient _httpClient;
+    private readonly ILogger<EveRestDataAccess> _logger;
+
+    #endregion
 
     #region constructor
 
@@ -23,12 +29,6 @@ public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
         _httpClient = httpClient;
         _logger = logger;
     }
-
-    #endregion
-    #region member fields
-
-    private readonly HttpClient _httpClient;
-    private readonly ILogger<EveRestDataAccess> _logger;
 
     #endregion
 
@@ -94,13 +94,15 @@ public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
         return JsonSerializer.Deserialize<IEnumerable<T>>(resultObject.ToString(), ApplicationConstants.AppDefaultSerializerOptions)!;
     }
 
-    public Task<T?> GetDetailedKillInformationFor<T>(string killmailsEndpoint, string killmailHash, int killmailID)
+    public Task<T> GetDetailedKillInformationFor<T>(string killmailsEndpoint, string killmailHash, int killmailID)
     {
         return GetByIdAsync<T>($"{killmailsEndpoint}{killmailID}/{killmailHash}", null);
     }
     
+    public Task<T> GetCharacterInformationFor<T>(string characterEndpoint, int playerID)
+    {
+        return GetByIdAsync<T>($"{characterEndpoint}", playerID);
+    }
     
-    
-
     #endregion
 }

@@ -29,17 +29,16 @@ public sealed class ZKillboardRestDataAccess : RestDataAccessBase, IZKillboardRe
 
     #region interface implementation
 
-    public Task<T?> GetCharacterStatisticsAsync<T>(string characterStatsEndpoint, int playerID)
+    public Task<T> GetCharacterStatisticsAsync<T>(string characterStatsEndpoint, int playerID)
     {
         _logger.LogDebug($"Loading Character statistics from endpoint {characterStatsEndpoint} for ID {playerID}");
         return GetByIdAsync<T>(characterStatsEndpoint, playerID);
     }
 
-    public async Task<IEnumerable<T>?> GetKillboardHistoryFor<T>(string characterEndpoint, int playerID)
+    public Task<IEnumerable<T>> GetKillboardHistoryFor<T>(string characterEndpoint, int playerID)
     {
         _logger.LogDebug($"Loading Killboard history from endpoint {characterEndpoint} for ID {playerID}");
-
-        return await GetAllAsync<T>($"{characterEndpoint}{playerID}/");
+        return GetAllAsync<T>($"{characterEndpoint}{playerID}/");
     }
 
     #endregion

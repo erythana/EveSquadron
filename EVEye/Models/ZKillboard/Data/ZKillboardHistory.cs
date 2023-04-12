@@ -2,11 +2,11 @@ using System.Text.Json.Serialization;
 
 namespace EVEye.Models.ZKillboard.Data;
 
-public class ZKillboardHistory
+public class ZKillboardEntry
 {
     [JsonPropertyName("killmail_id")] 
     public int ID { get; set; }
 
     [JsonPropertyName("zkb")] 
-    public ZKillboardEntry ZKillboardEntry { get; set; }
+    public ZKillboardKill ZKillboardKill { get; set; }
 }

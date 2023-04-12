@@ -14,6 +14,7 @@ namespace EVEye.Models.EVE.Data
         public DateTime KillDate { get; set; }
         [JsonPropertyName("Solar_System_ID")]
         public int SolarSystemID { get; set; }
+        
         public EveKillVictim Victim { get; set; }
     }
 }

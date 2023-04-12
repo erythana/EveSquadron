@@ -15,6 +15,7 @@ public class EveESIEndpointsLoader : SettingsLoaderBase, IEveESIEndpointsLoader
 
         _logger = logger;
         UniverseEndpoint = LoadSetting($"{esiEndpointPath}:UniverseEndpoint");
+        CharacterEndpoint = LoadSetting($"{esiEndpointPath}:CharacterEndpoint");
         KillmailEndpoint = LoadSetting($"{esiEndpointPath}:KillmailEndpoint");
         PortraitEndpoint = LoadSetting($"{esiEndpointPath}:PortraitEndpoint");
     }
@@ -30,6 +31,7 @@ public class EveESIEndpointsLoader : SettingsLoaderBase, IEveESIEndpointsLoader
     #region properties
 
     public string UniverseEndpoint { get; }
+    public string CharacterEndpoint { get; }
     public string PortraitEndpoint { get; }
     public string KillmailEndpoint { get; }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,7 +15,14 @@ namespace EVEye.DataAccess;
 
 public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
 {
+    #region member fields
 
+    private readonly IEveDataRepository _eveDataRepository;
+    private readonly IZKillboardDataRepository _zKillboardDataRepository;
+    private readonly ILogger<PlayerInformationDataAggregator> _logger;
+
+    #endregion
+    
     #region constructor
 
     public PlayerInformationDataAggregator(IEveDataRepository eveDataRepository, IZKillboardDataRepository zKillboardDataRepository, ILogger<PlayerInformationDataAggregator> logger)
@@ -31,82 +39,136 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
     //TODO CLEAN UP AND TRY TO LIMIT QUERIES
     public async Task<IEnumerable<EVEyePlayerInformation>> GetAggregatedItemsFor(IEnumerable<string> players)
     {
-        var results = new List<(EVEyePlayerInformation playerInformation, ZKillboardCharacterStatistic characterStatistic, List<EveDetailedKillInformation> detailedKillInformationList)>();
+        var results = new List<AggregatorInformation>();
         var eveNameIDMappings = await _eveDataRepository.GetIDsFrom(players);
 
         //First query the data for each character and also query any single-value endpoints
         foreach (var character in eveNameIDMappings.Characters)
         {
-            var portrait = _eveDataRepository.GetPortraitFrom(character.ID!.Value, 32);
-            var statistics = _zKillboardDataRepository.GetStatisticsFrom(character.ID!.Value);
-            var zKillboardHistory = _zKillboardDataRepository.GetKillboardHistoryFor(character.ID!.Value);//zKillboard returns 200 values
-
-            var currentPlayerInformation = await Task.WhenAll(portrait, statistics, zKillboardHistory).ContinueWith(_ => new EVEyePlayerInformation
+            var charInfo = _eveDataRepository.GetCharacterInformationFor(character.ID);
+            var statistics = _zKillboardDataRepository.GetStatisticsFrom(character.ID);
+            var zKillboardHistory = _zKillboardDataRepository.GetKillboardHistoryFor(character.ID);//zKillboard returns 200 values
+            
+            var currentPlayerInformation = await Task.WhenAll(charInfo, statistics, zKillboardHistory).ContinueWith(t =>
             {
-                ID = character.ID,
-                CharacterName = character.Name,
-                CharacterImage = portrait.Result,
-                SecurityStanding = statistics.Result?.Info?.SecStatus
+                if (t.Status != TaskStatus.RanToCompletion)
+                    throw new InvalidOperationException($"Could not fetch information from Servers: {t.Exception}");
+
+                return new EVEyePlayerInformation
+                {
+                    ID = character.ID,
+                    CharacterName = character.Name,
+                    Birthday = DateTime.Parse(charInfo.Result.Birthday),
+                    CharacterImage = _eveDataRepository.GetPortraitFrom(character.ID, 32),
+                    SecurityStanding = charInfo.Result.SecurityStatus,
+                };
             });
 
-            var detailedKillList = new List<EveDetailedKillInformation>();
-
-
-            //THIS IS SLOW!
-            // var historyQuery = zKillboardHistory.Result.Select(h => _eveDataRepository.GetDetailedKillInformation(h.ID, h.ZKillboardEntry.Hash));
-            // var resultSet = Task.WhenAll(historyQuery);
-            // foreach (var killboardEntry in zKillboardHistory.Result!)
-            // {
-            //     var currentDetailedKillInformation = await _eveDataRepository.GetDetailedKillInformation(killboardEntry.ID, killboardEntry.ZKillboardEntry.Hash);
-            //     detailedKillList.Add(currentDetailedKillInformation);
-            // }
-
-            results.Add((currentPlayerInformation, statistics.Result!, detailedKillList));
+            var aggregatorInformation = new AggregatorInformation()
+            {
+                EVEyePlayerInformation = currentPlayerInformation,
+                ZKillboardCharacterStatistic = statistics.Result,
+                KillboardHistory = zKillboardHistory.Result
+            };
+            
+            results.Add(aggregatorInformation);
         }
 
         await BulkUpdatePlayerInformation(results);
 
-        return results.Select(x => x.playerInformation);
+        return results.Select(x => x.EVEyePlayerInformation);
     }
 
     #endregion
 
-    private async Task BulkUpdatePlayerInformation(
-        List<(EVEyePlayerInformation playerInformation, ZKillboardCharacterStatistic characterStatistic, List<EveDetailedKillInformation> detailedKillInformations)> results)
+    private async Task BulkUpdatePlayerInformation(IEnumerable<AggregatorInformation> results)
     {
         //now we can bulk query every eve item and set it
-        var idsToLookup = Enumerable.Empty<int>()
-            .Concatenate(
-                results
-                    .Select(kvp => kvp.characterStatistic.Info?.CorporationID ?? 0)
-                    .Where(id => id > 0),
-                results
-                    .Select(kvp => kvp.characterStatistic.Info?.AllianceID ?? 0)
-                    .Where(id => id > 0));
+        var idsToLookup = GetLookupIDsFrom(results);
+        var lookup = (await _eveDataRepository.GetNamesFrom(idsToLookup)).ToList();
 
-        var lookup = await _eveDataRepository.GetNamesFrom(idsToLookup);
         foreach (var player in results)
         {
-            player.playerInformation.CorporationName = lookup?.FirstOrDefault(c => c.ID == player.characterStatistic.Info?.CorporationID)?.Name;
-            player.playerInformation.AllianceName = lookup?.FirstOrDefault(a => a.ID == player.characterStatistic.Info?.AllianceID)?.Name;
-            player.playerInformation.PlayerDetails = new EVEyePlayerDetails
-            {
-                ID = player.playerInformation.ID!.Value,
-                DangerRatio = player.characterStatistic.DangerRatio,
-                GangRatio = player.characterStatistic.GangRatio,
-                ShipsDestroyed = player.characterStatistic.ShipsDestroyed,
-                ShipsLost = player.characterStatistic.ShipsLost,
-                SoloKills = player.characterStatistic.SoloKills,
-                SoloLosses = player.characterStatistic.SoloLosses
-            };
+            player.EVEyePlayerInformation.CorporationName = lookup.FirstOrDefault(c => c.ID == player.ZKillboardCharacterStatistic.Info?.CorporationID)?.Name!;
+            player.EVEyePlayerInformation.AllianceName = lookup.FirstOrDefault(a => a.ID == player.ZKillboardCharacterStatistic.Info?.AllianceID)?.Name;
+            player.EVEyePlayerInformation.PlayerDetails = GetEVEyePlayerDetails(player);
         }
     }
+    
+    private EVEyePlayerDetails GetEVEyePlayerDetails(AggregatorInformation player)
+    {
+        var latestKillboardActivity = GetFirstDetailedKillboardInfoAsync(player);
 
-    #region member fields
+        return new EVEyePlayerDetails
+        {
+            ID = player.EVEyePlayerInformation.ID,
+            DangerRatio = player.ZKillboardCharacterStatistic.DangerRatio,
+            GangRatio = player.ZKillboardCharacterStatistic.GangRatio,
+            ShipsDestroyed = player.ZKillboardCharacterStatistic.ShipsDestroyed,
+            ShipsLost = player.ZKillboardCharacterStatistic.ShipsLost,
+            SoloKills = player.ZKillboardCharacterStatistic.SoloKills,
+            SoloLosses = player.ZKillboardCharacterStatistic.SoloLosses,
+            LatestKillboardActivity = GetEveyeKillInformation(latestKillboardActivity)
+        };
+    }
 
-    private readonly IEveDataRepository _eveDataRepository;
-    private readonly IZKillboardDataRepository _zKillboardDataRepository;
-    private readonly ILogger<PlayerInformationDataAggregator> _logger;
+    private Task<EVEyeKillInformation>? GetEveyeKillInformation(Task<EveDetailedKillInformation?>? latestKillboardActivity)
+    {
+        return latestKillboardActivity?.ContinueWith<EVEyeKillInformation>(t =>
+        {
+            if (t.Status != TaskStatus.RanToCompletion)
+                throw new InvalidOperationException("Could not fetch information from Servers");
+            
+            return new EVEyeKillInformation()
+            {
+                Date = t.Result!.KillDate,
+                VictimShip = _eveDataRepository.GetNamesFrom(new []{t.Result!.Victim.ShipTypeID}).ContinueWith(list =>
+                {
+                    if (list.Status != TaskStatus.RanToCompletion)
+                        throw new InvalidOperationException("Could not fetch information from Servers");
+                    return list.Result.First().Name;
+                }),
+                AttackerShip = _eveDataRepository.GetNamesFrom(new []{Enumerable.First<EveKillAttacker>(t!.Result.Attackers, x => x.FinalBlow).ShipTypeID}).ContinueWith(list =>
+                {
+                    if (list.Status != TaskStatus.RanToCompletion)
+                        throw new InvalidOperationException("Could not fetch information from Servers");
+                    return list.Result.First().Name;
+                }),
+                AttackerGuns = _eveDataRepository.GetNamesFrom(new []{Enumerable.First<EveKillAttacker>(t!.Result.Attackers, x => x.FinalBlow).WeaponTypeID}).ContinueWith(list =>
+                {
+                    if (list.Status != TaskStatus.RanToCompletion)
+                        throw new InvalidOperationException("Could not fetch information from Servers");
+                    return list.Result.First().Name;
+                }),
+                SolarSystem = _eveDataRepository.GetNamesFrom(new []{t!.Result.SolarSystemID}).ContinueWith(list =>
+                {
+                    if (list.Status != TaskStatus.RanToCompletion)
+                        throw new InvalidOperationException("Could not fetch information from Servers");
+                    return list.Result.First().Name;
+                }),
+            };
+        });
+    }
 
-    #endregion
+    private Task<EveDetailedKillInformation?>? GetFirstDetailedKillboardInfoAsync(AggregatorInformation player, Func<ZKillboardEntry, bool>? killboardLookup = null)
+    {
+        Task<EveDetailedKillInformation?>? detailedKillInfo = null;
+        var latestKillboardActivity = player.KillboardHistory?.FirstOrDefault(killboardLookup ?? (_ => true));
+        if (latestKillboardActivity is not null)
+            detailedKillInfo = _eveDataRepository.GetDetailedKillInformation(latestKillboardActivity.ID, latestKillboardActivity.ZKillboardKill.Hash);
+        
+        return detailedKillInfo;
+    }
+
+    private IEnumerable<int> GetLookupIDsFrom(IEnumerable<AggregatorInformation> results)
+    {
+        return Enumerable.Empty<int>()
+            .Concatenate(
+                results
+                    .Select(kvp => kvp.ZKillboardCharacterStatistic.Info?.CorporationID ?? 0)
+                    .Where(id => id > 0),
+                results
+                    .Select(kvp => kvp.ZKillboardCharacterStatistic.Info?.AllianceID ?? 0)
+                    .Where(id => id > 0));
+    }
 }

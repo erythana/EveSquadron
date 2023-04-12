@@ -6,14 +6,24 @@ namespace EVEye.Models;
 
 public abstract class SettingsLoaderBase
 {
+    #region member fields
+    
     private readonly IConfiguration _configuration;
     private readonly ILogger<SettingsLoaderBase> _logger;
 
+    #endregion
+    
+    #region constructor
+    
     protected SettingsLoaderBase(IConfiguration configuration, ILogger<SettingsLoaderBase> logger)
     {
         _configuration = configuration;
         _logger = logger;
     }
+
+    #endregion
+    
+    #region helper methods
 
     protected string LoadSetting(string settingName, bool required = true)
     {
@@ -28,4 +38,6 @@ public abstract class SettingsLoaderBase
         _logger.LogDebug($"Loaded {(required ? "" : "(optional)")} setting for {settingName}, value: '{value}'");
         return value ?? string.Empty;
     }
+    
+    #endregion
 }

@@ -15,16 +15,26 @@ namespace EVEye.ViewModels;
 
 public sealed class MainWindowViewModel : ViewModelBase
 {
+    #region member fields
 
+    private readonly IPlayerInformationDataAggregator _playerInformationDataAggregator;
+    private readonly ILogger<MainWindowViewModel> _logger;
+    private readonly DispatcherTimer _clipboardPollingTimer;
+    private string? _previousClipboardContent = string.Empty;
+
+    private bool _alwaysOnTop;
+    private ThemeVariant _themeVariant;
+
+    #endregion
+    
     #region constructor
 
     public MainWindowViewModel(IPlayerInformationDataAggregator playerInformationDataAggregator, IAppSettingsLoader settings, ILogger<MainWindowViewModel> logger)
     {
-        EVEyePlayerInformation = new ObservableCollection<EVEyePlayerInformation>();
         _playerInformationDataAggregator = playerInformationDataAggregator;
-
         _logger = logger;
 
+        EVEyePlayerInformation = new ObservableCollection<EVEyePlayerInformation>();
         ThemeVariant = settings.Theme switch
         {
             { } theme when theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Dark,
@@ -55,17 +65,6 @@ public sealed class MainWindowViewModel : ViewModelBase
         //TODO: MAYBE PAUSE TIMER WHILE DOING THE REST
         await TryParseClipboardContentForEve(clipboardContent);
     }
-
-    #endregion
-    #region member fields
-
-    private readonly IPlayerInformationDataAggregator _playerInformationDataAggregator;
-    private readonly ILogger<MainWindowViewModel> _logger;
-    private readonly DispatcherTimer _clipboardPollingTimer;
-    private string? _previousClipboardContent = string.Empty;
-
-    private bool _alwaysOnTop;
-    private ThemeVariant _themeVariant;
 
     #endregion
 

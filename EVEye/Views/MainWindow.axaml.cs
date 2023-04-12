@@ -39,7 +39,7 @@ public partial class MainWindow : Window
         };
 
         IsDarkMode.Bind(ToggleButton.IsCheckedProperty, isDarkModeCheckedBinding);
-        Application.Current.Bind(Application.RequestedThemeVariantProperty, isDarkModeBinding);
+        Application.Current!.Bind(Application.RequestedThemeVariantProperty, isDarkModeBinding);
 
         var alwaysOnTopBinding = new Binding
         {

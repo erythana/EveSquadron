@@ -6,6 +6,13 @@ namespace EVEye.Models;
 
 public class AppSettingsLoader : SettingsLoaderBase, IAppSettingsLoader
 {
+    #region member fields
+
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<AppSettingsLoader> _logger;
+
+    #endregion
+    
     #region constructor
 
     public AppSettingsLoader(IConfiguration configuration, ILogger<AppSettingsLoader> logger) : base(configuration, logger)
@@ -16,12 +23,6 @@ public class AppSettingsLoader : SettingsLoaderBase, IAppSettingsLoader
         ClipboardPollingMilliseconds = LoadSetting("ClipboardPollingMilliseconds", false);
         Theme = LoadSetting("Theme", false);
     }
-
-    #endregion
-    #region member fields
-
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<AppSettingsLoader> _logger;
 
     #endregion
 

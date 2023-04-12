@@ -13,20 +13,6 @@ namespace EVEye.Models.EVE;
 
 public class EveDataRepository : IEveDataRepository
 {
-
-    #region constructor
-
-    public EveDataRepository(IEveRestDataAccess eveRestDataAccess, IEveESIEndpointsLoader endpoints, ILogger<EveDataRepository> logger)
-    {
-        _eveRestDataAccess = eveRestDataAccess;
-        _logger = logger;
-
-        _universeEndpoint = endpoints.UniverseEndpoint;
-        _killmailEndpoint = endpoints.KillmailEndpoint;
-        _portraitEndpoint = endpoints.PortraitEndpoint;
-    }
-
-    #endregion
     #region member fields
 
     private readonly IEveRestDataAccess _eveRestDataAccess;
@@ -35,6 +21,22 @@ public class EveDataRepository : IEveDataRepository
     private readonly string _universeEndpoint;
     private readonly string _killmailEndpoint;
     private readonly string _portraitEndpoint;
+    private readonly string _characterEndpoint;
+
+    #endregion
+    
+    #region constructor
+
+    public EveDataRepository(IEveRestDataAccess eveRestDataAccess, IEveESIEndpointsLoader endpoints, ILogger<EveDataRepository> logger)
+    {
+        _eveRestDataAccess = eveRestDataAccess;
+        _logger = logger;
+
+        _universeEndpoint = endpoints.UniverseEndpoint;
+        _characterEndpoint = endpoints.CharacterEndpoint;
+        _killmailEndpoint = endpoints.KillmailEndpoint;
+        _portraitEndpoint = endpoints.PortraitEndpoint;
+    }
 
     #endregion
 
@@ -51,7 +53,9 @@ public class EveDataRepository : IEveDataRepository
         return Bitmap.DecodeToWidth(stream, width);
     }
 
-    public Task<EveDetailedKillInformation> GetDetailedKillInformation(int killmailID, string killmailHash) => _eveRestDataAccess.GetDetailedKillInformationFor<EveDetailedKillInformation>(_killmailEndpoint, killmailHash, killmailID);
+    public Task<EveDetailedKillInformation?> GetDetailedKillInformation(int killmailID, string killmailHash) => _eveRestDataAccess.GetDetailedKillInformationFor<EveDetailedKillInformation?>(_killmailEndpoint, killmailHash, killmailID);
+
+    public Task<EveCharacter> GetCharacterInformationFor(int playerID) => _eveRestDataAccess.GetCharacterInformationFor<EveCharacter>(_characterEndpoint, playerID);
 
     #endregion
 }

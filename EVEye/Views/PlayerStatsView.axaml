@@ -11,17 +11,19 @@
     <StackPanel>
         <HeaderedContentControl Header="{Binding CharacterName, StringFormat='Character Statistics for {0}'}">
             <StackPanel>
+                <TextBlock Text="{Binding PlayerDetails.Birthdate, StringFormat='Birthdate: {0}'}" />
                 <TextBlock Text="{Binding PlayerDetails.SoloDangerRatio, StringFormat='Solo Danger-Ratio: {0}'}" />
                 <TextBlock Text="{Binding PlayerDetails.DangerRatio, StringFormat='Danger-Ratio: {0}'}" />
             </StackPanel>
         </HeaderedContentControl>
 
-        <HeaderedContentControl Header="Killboard Activity (last 200)">
+        <HeaderedContentControl Header="Killboard Activity">
             <StackPanel>
-                <TextBlock Text="Avg. Fleet Size: " />
-                <TextBlock Text="Last Activity: " />
-                <TextBlock Text="Time Ago: " />
-                <TextBlock Text="Top three ships: PROBABLY NONO" />
+                <!-- <TextBlock Text="{Binding  PlayerDetails.LatestKillboardActivity^.Date, StringFormat='Date: {0}', FallbackValue='Loading...'}" /> -->
+                <TextBlock Text="{Binding  PlayerDetails.LatestKillboardActivity^.SolarSystem^, StringFormat='System: {0}', FallbackValue='Loading...'}" />
+                <TextBlock Text="{Binding  PlayerDetails.LatestKillboardActivity^.AttackerGuns^, StringFormat='Attackers\' Ship: (Last Fight): {0}', FallbackValue='Loading...'}" />
+                <TextBlock Text="{Binding  PlayerDetails.LatestKillboardActivity^.AttackerShip^, StringFormat='Attackers\' Ship: (Last Fight): {0}', FallbackValue='Loading...'}" />
+                <TextBlock Text="{Binding  PlayerDetails.LatestKillboardActivity^.VictimShip^, StringFormat='Victims\' Ship: (Last Fight): {0}', FallbackValue='Loading...'}" />
             </StackPanel>
 
 

@@ -6,7 +6,13 @@ namespace EVEye.Models;
 
 public class ZKillboardEndpointsLoader : SettingsLoaderBase, IZKillboardEndpointsLoader
 {
+    #region member fields
 
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<ZKillboardEndpointsLoader> _logger;
+
+    #endregion
+    
     #region constructor
 
     public ZKillboardEndpointsLoader(IConfiguration configuration, ILogger<ZKillboardEndpointsLoader> logger) : base(configuration, logger)
@@ -25,12 +31,6 @@ public class ZKillboardEndpointsLoader : SettingsLoaderBase, IZKillboardEndpoint
 
     public string CharacterEndpoint { get; }
     public string CharacterStatsEndpoint { get; }
-
-    #endregion
-    #region member fields
-
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<ZKillboardEndpointsLoader> _logger;
 
     #endregion
 }

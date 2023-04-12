@@ -1,5 +1,6 @@
 using System;
-using System.Collections.Generic;
+
+namespace EVEye.Models.ZKillboard.Data;
 
 public class ZKillboardPlayerInfo
 {

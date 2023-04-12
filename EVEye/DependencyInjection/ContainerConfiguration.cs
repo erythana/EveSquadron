@@ -63,13 +63,19 @@ public static class ContainerConfiguration
     private static IServiceCollection RegisterSingletons(this IServiceCollection builder) => builder
         .AddSingleton<ViewLocator>();
 
-    private static IServiceCollection RegisterHttpClients(this IServiceCollection builder) => builder
-        .AddEveRestHttpClients()
-        .AddZKillboardRestHttpClients();
+    private static IServiceCollection RegisterHttpClients(this IServiceCollection builder)
+    {
+        return builder
+            .AddEveRestHttpClients()
+            .AddZKillboardRestHttpClients();
+    }
 
     private static IServiceCollection AddEveRestHttpClients(this IServiceCollection builder)
     {
-        builder.AddHttpClient<IEveRestDataAccess, EveRestDataAccess>(AddDefaultRequestHeaders);
+        builder.AddHttpClient<IEveRestDataAccess, EveRestDataAccess>(AddDefaultRequestHeaders).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            MaxConnectionsPerServer = 100
+        });;
         return builder;
     }
 

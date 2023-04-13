@@ -36,13 +36,13 @@ public class ZKillboardDataRepository : IZKillboardDataRepository
 
     public Task<ZKillboardCharacterStatistic> GetStatisticsFrom(int playerID, int delay = 0)
     {
-        Task.Delay(delay);
+        //Task.Delay(delay);
         return _zKillboardRestDataAccess.GetCharacterStatisticsAsync<ZKillboardCharacterStatistic>(_characterStatsEndpoint, playerID);
     }
 
     public Task<IEnumerable<ZKillboardEntry>> GetKillboardHistoryFor(int playerID, int delay = 0)
     {
-        Task.Delay(delay);
+        //Task.Delay(delay);
         return _zKillboardRestDataAccess.GetKillboardHistoryFor<Data.ZKillboardEntry>(_characterEndpoint, playerID);
     }
 

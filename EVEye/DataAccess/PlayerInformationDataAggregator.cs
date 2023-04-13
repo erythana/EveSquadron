@@ -73,12 +73,10 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
 
     #endregion
 
+    #region helper methods
+
     private Task BulkUpdatePlayerInformation(IEnumerable<AggregatorInformation> results)
     {
-        //now we can bulk query every eve item and set it
-        // var idsToLookup = GetLookupIDsFrom(results);
-        // var lookup = (await _eveDataRepository.GetNamesFrom(idsToLookup)).ToList();
-
         foreach (var player in results)
         {
             player.ZKillboardCharacterStatistic.ContinueWith(zkillboardStatsTask =>
@@ -152,8 +150,9 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
             {
                 latestKillboardActivityTask!.Result!.Victim.ID,
                 latestKillboardActivityTask!.Result!.Victim.ShipTypeID, 
-                latestKillboardActivityTask!.Result!.Attackers.First<EveKillAttacker>(x => x.FinalBlow).ShipTypeID,
-                latestKillboardActivityTask!.Result!.Attackers.First<EveKillAttacker>(x => x.FinalBlow).WeaponTypeID,
+                latestKillboardActivityTask!.Result!.Attackers.First(x => x.FinalBlow).ID,
+                latestKillboardActivityTask!.Result!.Attackers.First(x => x.FinalBlow).ShipTypeID,
+                latestKillboardActivityTask!.Result!.Attackers.First(x => x.FinalBlow).WeaponTypeID,
                 latestKillboardActivityTask!.Result!.SolarSystemID
             }).ContinueWith(nameLookupTask =>
             {
@@ -166,7 +165,9 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
                 return new EVEyeKillInformation
                 {
                     Date = latestKillboardActivityTask.Result!.KillDate,
-                    VictimShip = nameLookupTask.Result.First(i => i.ID == latestKillboardActivityTask.Result.Victim.ID).Name,
+                    VictimName = nameLookupTask.Result.First(i => i.ID == latestKillboardActivityTask.Result.Victim.ID).Name,
+                    VictimShip = nameLookupTask.Result.First(i => i.ID == latestKillboardActivityTask.Result.Victim.ShipTypeID).Name,
+                    AttackerName = nameLookupTask.Result.First(i => i.ID == latestKillboardActivityTask.Result.Attackers.First(x => x.FinalBlow).ID).Name,
                     AttackerShip = nameLookupTask.Result.First(i => i.ID == latestKillboardActivityTask.Result.Attackers.First(x => x.FinalBlow).ShipTypeID).Name,
                     AttackerGuns = nameLookupTask.Result.First(i => i.ID == latestKillboardActivityTask.Result.Attackers.First(x => x.FinalBlow).WeaponTypeID).Name,
                     SolarSystem = nameLookupTask.Result.First(i => i.ID == latestKillboardActivityTask.Result.SolarSystemID).Name
@@ -195,4 +196,6 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
             return detailedKillInfo;
         })!.Unwrap();
     }
+    
+    #endregion
 }

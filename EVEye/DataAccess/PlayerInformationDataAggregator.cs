@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using DynamicData;
@@ -43,27 +44,31 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
     {
         var results = new List<AggregatorInformation>();
         var eveNameIDMappings = await _eveDataRepository.GetIDsFrom(players);//FAST
-
         //First query the data for each character and also query any single-value endpoints
         foreach (var character in eveNameIDMappings.Characters)
         {
+            _logger.LogError($"CURRENT TIME: {DateTime.Now.ToLongTimeString()}");
             var currentPlayer = new EVEyePlayerInformation()
             {
                 ID = character.ID,
                 CharacterName = character.Name,
                 CharacterImage = _eveDataRepository.GetPortraitFrom(character.ID, 32),
             };
+            _logger.LogError($"CURRENT TIME: {DateTime.Now.ToLongTimeString()}");
 
             var zKillDelay = ApplicationConstants.ZKillboardAPILimits.RateLimitDelayMs;
-            var aggregatorInfo = new AggregatorInformation()
+            var aggregatorInfo = new AggregatorInformation
             {
                 EVEyePlayerInformation = currentPlayer,
                 EveCharacter = _eveDataRepository.GetCharacterInformationFor(character.ID),
                 KillboardHistory = _zKillboardDataRepository.GetKillboardHistoryFor(character.ID, zKillDelay),
                 ZKillboardCharacterStatistic = _zKillboardDataRepository.GetStatisticsFrom(character.ID, zKillDelay)
             };
-            
+            _logger.LogError($"CURRENT TIME: {DateTime.Now.ToLongTimeString()}");
+
             results.Add(aggregatorInfo);
+            _logger.LogError($"CURRENT TIME: {DateTime.Now.ToLongTimeString()}");
+
         }
 
         Task.Run(()=> BulkUpdatePlayerInformation(results));

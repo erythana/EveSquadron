@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -106,10 +107,9 @@ public sealed class MainWindowViewModel : ViewModelBase
         {
             if (string.IsNullOrWhiteSpace(clipboardContent))
                 return;
-
+            
             var playerInformation =
                 await _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardContent.Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Distinct());
-
             EVEyePlayerInformation.Clear();
             EVEyePlayerInformation.AddRange(playerInformation);
 

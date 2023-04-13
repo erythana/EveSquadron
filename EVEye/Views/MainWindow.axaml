@@ -41,7 +41,7 @@
                 <DataGridTemplateColumn Header="CharacterImage">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Source="{Binding CharacterImage }" />
+                            <Image Source="{Binding CharacterImage^, FallbackValue='Loading...'}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

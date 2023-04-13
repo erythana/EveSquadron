@@ -34,8 +34,17 @@ public class ZKillboardDataRepository : IZKillboardDataRepository
 
     #region interface implementation
 
-    public Task<ZKillboardCharacterStatistic> GetStatisticsFrom(int playerID) => _zKillboardRestDataAccess.GetCharacterStatisticsAsync<ZKillboardCharacterStatistic>(_characterStatsEndpoint, playerID);
-    public Task<IEnumerable<Data.ZKillboardEntry>> GetKillboardHistoryFor(int playerID) => _zKillboardRestDataAccess.GetKillboardHistoryFor<Data.ZKillboardEntry>(_characterEndpoint, playerID);
+    public Task<ZKillboardCharacterStatistic> GetStatisticsFrom(int playerID, int delay = 0)
+    {
+        Task.Delay(delay);
+        return _zKillboardRestDataAccess.GetCharacterStatisticsAsync<ZKillboardCharacterStatistic>(_characterStatsEndpoint, playerID);
+    }
+
+    public Task<IEnumerable<ZKillboardEntry>> GetKillboardHistoryFor(int playerID, int delay = 0)
+    {
+        Task.Delay(delay);
+        return _zKillboardRestDataAccess.GetKillboardHistoryFor<Data.ZKillboardEntry>(_characterEndpoint, playerID);
+    }
 
     #endregion
 

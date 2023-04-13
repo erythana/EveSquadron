@@ -12,6 +12,11 @@ public static class ApplicationConstants
         WriteIndented = true,
         PropertyNameCaseInsensitive = true
     };
+    
+    public static class ZKillboardAPILimits
+    {
+        public const int RateLimitDelayMs = 350;
+    }
 
     public static class EveAPILimits
     {

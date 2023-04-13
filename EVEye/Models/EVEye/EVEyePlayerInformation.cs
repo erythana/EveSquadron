@@ -5,14 +5,63 @@ using Avalonia.Media.Imaging;
 namespace EVEye.Models.EVEye;
 
 // ReSharper disable once InconsistentNaming
-public class EVEyePlayerInformation
+public class EVEyePlayerInformation : ModelBase
 {
-    public int ID { get; set; }
-    public string CharacterName { get; set; }
-    public DateTime? Birthday { get; set; }
-    public Task<Bitmap?> CharacterImage { get; set; }
-    public float SecurityStanding { get; set; }
-    public string CorporationName { get; set; }
-    public string? AllianceName { get; set; }
-    public EVEyePlayerDetails PlayerDetails { get; set; }
+    #region member fields
+
+    private int _id;
+    private string _characterName;
+    private DateTime? _birthday;
+    private Task<Bitmap?> _characterImage;
+    private float _securityStanding;
+    private string? _corporationName;
+    private string? _allianceName;
+    private EVEyePlayerDetails _playerDetails;
+    
+    #endregion
+    
+    #region properties
+
+    public int ID {
+        get => _id;
+        set => SetProperty(ref _id, value);
+    }
+
+    public string CharacterName {
+        get => _characterName;
+        set => SetProperty(ref _characterName, value);
+    }
+
+    public DateTime? Birthday {
+        get => _birthday;
+        set => SetProperty(ref _birthday, value);
+    }
+
+    public Task<Bitmap?> CharacterImage {
+        get => _characterImage;
+        set => SetProperty(ref _characterImage, value);
+    }
+
+    public float SecurityStanding {
+        get => _securityStanding;
+        set => SetProperty(ref _securityStanding, value);
+    }
+
+    public string? CorporationName {
+        get => _corporationName;
+        set => SetProperty(ref _corporationName, value);
+    }
+
+    public string? AllianceName {
+        get => _allianceName;
+        set => SetProperty(ref _allianceName, value);
+    }
+
+    public EVEyePlayerDetails PlayerDetails {
+        get => _playerDetails;
+        set => SetProperty(ref _playerDetails, value);
+        
+    }
+    
+    #endregion
 }

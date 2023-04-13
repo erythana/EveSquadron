@@ -27,8 +27,6 @@
                 <TextBlock Text="{Binding  PlayerDetails.LatestKillboardActivity^.VictimName, StringFormat='Victim: {0}', FallbackValue='Loading...'}" />
                 <TextBlock Text="{Binding  PlayerDetails.LatestKillboardActivity^.VictimShip, StringFormat='Victims\' Ship: {0}', FallbackValue='Loading...'}" />
             </StackPanel>
-
-
         </HeaderedContentControl>
 
 

@@ -11,7 +11,7 @@
     <StackPanel>
         <HeaderedContentControl Header="{Binding CharacterName, StringFormat='Character Statistics for {0}'}">
             <StackPanel>
-                <TextBlock Text="{Binding Birthday, StringFormat='Birthday: {0}'}" />
+                <TextBlock Text="{Binding Birthday, StringFormat='Birthday: {0:d}'}" />
                 <TextBlock Text="{Binding PlayerDetails.Value.Result.SoloDangerRatio, StringFormat='Solo Danger-Ratio: {0}'}" />
                 <TextBlock Text="{Binding PlayerDetails.Value.Result.DangerRatio, StringFormat='Danger-Ratio: {0}'}" />
             </StackPanel>
@@ -19,7 +19,7 @@
 
         <HeaderedContentControl Header="Killboard Activity (Last Fight)">
             <StackPanel>
-                <!-- <TextBlock Text="{Binding  PlayerDetails.LatestKillboardActivity^.Date, StringFormat='Date: {0}', FallbackValue='Loading...'}" /> -->
+                <TextBlock Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.Date, StringFormat='Date: {0:d}', FallbackValue='Loading...'}" />
                 <TextBlock Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.SolarSystem, StringFormat='System: {0}', FallbackValue='Loading...'}" />
                 <TextBlock Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.AttackerName, StringFormat='Final Blow from: {0}', FallbackValue='Loading...'}" />
                 <TextBlock Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.AttackerShip, StringFormat='Attackers\' Ship: {0}', FallbackValue='Loading...'}" />

@@ -6,7 +6,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EVEye.Views.MainWindow"
-        Icon="/Resources/icons/avalonia-logo.ico">
+        Icon="/Resources/icons/avalonia-logo.ico"
+        Width="800"
+        Height="500">
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
@@ -38,7 +40,7 @@
                 </Style>
             </DataGrid.Styles>
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="CharacterImage">
+                <DataGridTemplateColumn>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Image Source="{Binding CharacterImage^, FallbackValue='Loading...'}" />

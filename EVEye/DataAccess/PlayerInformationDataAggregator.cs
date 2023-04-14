@@ -64,6 +64,7 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
             if (charInfoTask.Status == TaskStatus.RanToCompletion)
             {
                 currentPlayer.SecurityStanding = charInfoTask.Result.SecurityStatus;
+                currentPlayer.Birthday = DateTime.Parse(charInfoTask.Result.Birthday);
                 await _eveDataRepository.GetNamesFrom(GetValidIDs(charInfoTask.Result.CorporationID, charInfoTask.Result.AllianceID))
                     .ContinueWith(nameLookupTask =>
                     {

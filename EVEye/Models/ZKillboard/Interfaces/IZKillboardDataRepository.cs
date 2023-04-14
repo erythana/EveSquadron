@@ -6,7 +6,7 @@ namespace EVEye.Models.ZKillboard.Interfaces;
 
 public interface IZKillboardDataRepository
 {
-    public Task<ZKillboardCharacterStatistic> GetStatisticsFrom(int playerID, int delay = 0);
+    public Task<ZKillboardCharacterStatistic> GetStatisticsFrom(int playerID);
 
-    public Task<IEnumerable<ZKillboardEntry>> GetKillboardHistoryFor(int playerID, int delay = 0);
+    public Task<IEnumerable<ZKillboardEntry>> GetKillboardHistoryFor(int playerID);
 }

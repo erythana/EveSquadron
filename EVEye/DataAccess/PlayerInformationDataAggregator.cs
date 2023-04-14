@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using DynamicData;
 using EVEye.DataAccess.Interfaces;
-using EVEye.Extensions;
-using EVEye.Models;
 using EVEye.Models.EVE.Data;
 using EVEye.Models.EVE.Interfaces;
 using EVEye.Models.EVEye;
@@ -43,24 +39,24 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
     public async Task<IEnumerable<EVEyePlayerInformation>> GetAggregatedItemsFor(IEnumerable<string> players)
     {
         var results = new List<AggregatorInformation>();
-        var eveNameIDMappings = await _eveDataRepository.GetIDsFrom(players);//FAST
-        //First query the data for each character and also query any single-value endpoints
-        foreach (var character in eveNameIDMappings.Characters)
+        var eveNameIDMappings = await _eveDataRepository.GetIDsFrom(players);
+
+        for (var i = 0; i < eveNameIDMappings.Characters.Count; i++)
         {
+            var character = eveNameIDMappings.Characters[i];
             var currentPlayer = new EVEyePlayerInformation()
             {
                 ID = character.ID,
                 CharacterName = character.Name,
                 CharacterImage = _eveDataRepository.GetPortraitFrom(character.ID, 32),
             };
-
-            var zKillDelay = ApplicationConstants.ZKillboardAPILimits.RateLimitDelayMs;
+            
             var aggregatorInfo = new AggregatorInformation
             {
                 EVEyePlayerInformation = currentPlayer,
                 EveCharacter = _eveDataRepository.GetCharacterInformationFor(character.ID),
-                KillboardHistory = _zKillboardDataRepository.GetKillboardHistoryFor(character.ID, zKillDelay),
-                ZKillboardCharacterStatistic = _zKillboardDataRepository.GetStatisticsFrom(character.ID, zKillDelay)
+                KillboardHistory = _zKillboardDataRepository.GetKillboardHistoryFor(character.ID),
+                ZKillboardCharacterStatistic = _zKillboardDataRepository.GetStatisticsFrom(character.ID)
             };
 
             results.Add(aggregatorInfo);
@@ -182,14 +178,19 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
         return player.KillboardHistory?.ContinueWith(t =>
         {
             if (t.Status != TaskStatus.RanToCompletion)
+            {
+                _logger.LogError(t.Exception, "Could not fetch information from Servers");
                 throw new InvalidOperationException("Could not fetch information from Servers");
-
+            }
             return t.Result.FirstOrDefault(killboardLookup ?? (_ => true));
         }).ContinueWith(t =>
         {
             if (t.Status != TaskStatus.RanToCompletion)
+            {
+                _logger.LogError(t.Exception, "Could not fetch information from Servers");
                 throw new InvalidOperationException("Could not fetch information from Servers");
-
+            }
+            
             if (t.Result is not null)
                 detailedKillInfo = _eveDataRepository.GetDetailedKillInformation(t.Result.ID, t.Result.ZKillboardKill.Hash);
 

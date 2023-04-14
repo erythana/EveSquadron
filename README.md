@@ -1,7 +1,8 @@
 # EVEye
-A Tool for Eve Online - quickly access Information from EVE-Players out of any local/chat window by copying their names.
-
+A Tool for Eve Online - quickly access Information from EVE-Players out of any local/chat window by copying their names.<br>
 Still in early development, but should work just fine for now.
+
+<img src="https://user-images.githubusercontent.com/42657063/232129804-52655df1-b49a-4597-becc-f13a431e6784.png" width=600px />
 
 ## Available on Windows, Linux (and MacOS*)
 This tool is available on all major platforms.

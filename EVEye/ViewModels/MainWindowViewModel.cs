@@ -27,7 +27,7 @@ public sealed class MainWindowViewModel : ViewModelBase
     private ThemeVariant _themeVariant;
 
     #endregion
-    
+
     #region constructor
 
     public MainWindowViewModel(IPlayerInformationDataAggregator playerInformationDataAggregator, IAppSettingsLoader settings, ILogger<MainWindowViewModel> logger)
@@ -107,12 +107,14 @@ public sealed class MainWindowViewModel : ViewModelBase
         {
             if (string.IsNullOrWhiteSpace(clipboardContent))
                 return;
-            
-            var playerInformation =
-                await _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardContent.Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Distinct());
-            EVEyePlayerInformation.Clear();
-            EVEyePlayerInformation.AddRange(playerInformation);
 
+            EVEyePlayerInformation.Clear();
+            
+            await foreach (var evEyePlayerInformation in _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardContent
+                               .Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Distinct()))
+            {
+                EVEyePlayerInformation.Add(evEyePlayerInformation);
+            }
         }
         catch (Exception e)
         {

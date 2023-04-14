@@ -16,7 +16,7 @@ public class EVEyePlayerInformation : ModelBase
     private float _securityStanding;
     private string? _corporationName;
     private string? _allianceName;
-    private EVEyePlayerDetails _playerDetails;
+    private Lazy<Task<EVEyePlayerDetails>> _playerDetails;
     
     #endregion
     
@@ -57,7 +57,7 @@ public class EVEyePlayerInformation : ModelBase
         set => SetProperty(ref _allianceName, value);
     }
 
-    public EVEyePlayerDetails PlayerDetails {
+    public Lazy<Task<EVEyePlayerDetails>> PlayerDetails {
         get => _playerDetails;
         set => SetProperty(ref _playerDetails, value);
         

@@ -53,7 +53,7 @@ public class EveDataRepository : IEveDataRepository
         return Bitmap.DecodeToWidth(stream, width);
     }
 
-    public Task<EveDetailedKillInformation?> GetDetailedKillInformation(int killmailID, string killmailHash) => _eveRestDataAccess.GetDetailedKillInformationFor<EveDetailedKillInformation?>(_killmailEndpoint, killmailHash, killmailID);
+    public Task<EveDetailedKillInformation> GetDetailedKillInformation(int killmailID, string killmailHash) => _eveRestDataAccess.GetDetailedKillInformationFor<EveDetailedKillInformation?>(_killmailEndpoint, killmailHash, killmailID);
 
     public Task<EveCharacter> GetCharacterInformationFor(int playerID) => _eveRestDataAccess.GetCharacterInformationFor<EveCharacter>(_characterEndpoint, playerID);
 

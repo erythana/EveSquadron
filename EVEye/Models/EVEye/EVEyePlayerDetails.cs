@@ -9,7 +9,6 @@ public class EVEyePlayerDetails : ModelBase
     #region member fields
     
     private int _id;
-    private DateTime _birthdate;
     private int _shipsDestroyed;
     private int _shipsLost;
     private int _dangerRatio;
@@ -25,11 +24,6 @@ public class EVEyePlayerDetails : ModelBase
     public int ID {
         get => _id;
         set => SetProperty(ref _id, value);
-    }
-
-    public DateTime Birthdate {
-        get => _birthdate;
-        set => SetProperty(ref _birthdate, value);
     }
 
     public int ShipsDestroyed {

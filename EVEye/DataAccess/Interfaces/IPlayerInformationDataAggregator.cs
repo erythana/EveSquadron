@@ -6,5 +6,5 @@ namespace EVEye.DataAccess.Interfaces;
 
 public interface IPlayerInformationDataAggregator
 {
-    public Task<IEnumerable<EVEyePlayerInformation>> GetAggregatedItemsFor(IEnumerable<string> players);
+    public IAsyncEnumerable<EVEyePlayerInformation> GetAggregatedItemsFor(IEnumerable<string> players);
 }

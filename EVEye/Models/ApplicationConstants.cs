@@ -13,6 +13,11 @@ public static class ApplicationConstants
         PropertyNameCaseInsensitive = true
     };
 
+    public static class ZKillboardAPILimits
+    {
+        public const int ZKillboardRateLimitMs = 200;
+    }
+
     public static class EveAPILimits
     {
         public const int PostUniverseIDsCharactersLimit = 500;

@@ -4,6 +4,10 @@ Still in early development, but should work just fine for now.
 
 <img src="https://user-images.githubusercontent.com/42657063/232129804-52655df1-b49a-4597-becc-f13a431e6784.png" width=600px />
 
+## Status
+![EVEye-CI](https://github.com/erythana/EVEye/actions/workflows/EVEye-CI.yml/badge.svg)
+![EVEye-CD](https://github.com/erythana/EVEye/actions/workflows/EVEye-CD.yml/badge.svg)
+
 ## Available on Windows, Linux (and MacOS*)
 This tool is available on all major platforms.
 It requires the [.NET 7 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) to be installed (except for Linux, it's bundled within the Flatpak).

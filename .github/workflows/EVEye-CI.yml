@@ -56,6 +56,6 @@ jobs:
       with:
         name: EVEye
         path: |
-          ../EVEye-Linux
-          ../EVEye-Windows 
-          ../EVEye-MacOS
+          EVEye-Linux
+          EVEye-Windows 
+          EVEye-MacOS

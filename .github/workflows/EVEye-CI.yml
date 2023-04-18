@@ -13,11 +13,6 @@ on:
 jobs:
 
   build:
-
-    strategy:
-      matrix:
-        targetplatform: [x86, x64]
-
     runs-on: ubuntu-latest
 
     env:
@@ -43,12 +38,12 @@ jobs:
         dotnet-version: '7.0.x'
 
     # Publish EVEye-Linux
-    - name: Publish EVEye-Linux
-      run:  dotnet publish -c Release -o ../EVEye-Linux -r linux-${{ matrix.targetplatform }} --self-contained true -- -p:PublishSingleFile=true 
+    - name: Publish EVEye-Linux (x64 only)
+      run:  dotnet publish -c Release -o ../EVEye-Linux -r linux-x64 --self-contained true -- -p:PublishSingleFile=true 
 
     # Publish EVEye-Windows
-    - name: Publish EVEye-Linux
-      run:  dotnet publish -c Release -o ../EVEye-Windows -r win-${{ matrix.targetplatform }} --self-contained true --p:PublishSingleFile=true 
+    - name: Publish EVEye-Linux (x64 only)
+      run:  dotnet publish -c Release -o ../EVEye-Windows -r win-x64 --self-contained true --p:PublishSingleFile=true 
 
     # Publish EVEye-MacOS (x64 only)
     - name: Publish EVEye-MacOS (x64 only)

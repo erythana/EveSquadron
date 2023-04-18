@@ -29,7 +29,7 @@
             IsReadOnly="True">
             <DataGrid.Styles>
                 <Style Selector="DataGridRow">
-                    <Setter Property="ToolTip.ShowDelay" Value="100" />
+                    <Setter Property="ToolTip.ShowDelay" Value="250" />
                     <Setter Property="ToolTip.Tip">
                         <Setter.Value>
                             <Template>

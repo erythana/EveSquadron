@@ -54,5 +54,5 @@ jobs:
     - name: Upload MacOS artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: EVEye-Linux
+        name: EVEye-MacOS
         path: EVEye-MacOS

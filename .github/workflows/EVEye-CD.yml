@@ -32,7 +32,7 @@ jobs:
           tag=$(git describe --tags --abbrev=0)
           release_name="EVEye-Linux-$tag-x64"
           dotnet publish -c Release -o "${release_name}" -r linux-x64 --self-contained true --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true 
-          7z a -tzip "${release_name}.zip" "./${release_name}/*"
+          tar czvf "${release_name}.tar.gz" "$release_name"
           rm -r "$release_name"
 
     # Publish EVEye-Windows (x64)
@@ -41,7 +41,7 @@ jobs:
           tag=$(git describe --tags --abbrev=0)
           release_name="EVEye-Windows-$tag-x64"
           dotnet publish -c Release -o "${release_name}" -r win-x64 --self-contained true --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true 
-          tar czvf "${release_name}.tar.gz" "$release_name"
+          7z a -tzip "${release_name}.zip" "./${release_name}/*"
           rm -r "$release_name"
 
     # Publish EVEye-MacOS (x64)

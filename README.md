@@ -2,7 +2,7 @@
 A Tool for Eve Online - quickly access Information from EVE-Players out of any local/chat window by copying their names.<br />
 Still in early development, but should work just fine for now.
 
-<img src="https://user-images.githubusercontent.com/42657063/232129804-52655df1-b49a-4597-becc-f13a431e6784.png" width=600px />
+![EVEye-Introduction](https://user-images.githubusercontent.com/42657063/233203139-ac7300d0-aadb-4a03-ae89-4625eab75984.gif)
 
 ## Status
 ![EVEye-CI](https://github.com/erythana/EVEye/actions/workflows/EVEye-CI.yml/badge.svg)<br />
@@ -40,7 +40,7 @@ You can change these settings:
 
 ## Some additional information
 This tool queries the official ESI API and also the zKillboard API (credits to Squizz Caphinator) for information about the latest killboard activity of each player.<br />
-It only accesses public availble information and doesn't share anything with anyone.<br />
+It only accesses public available information and doesn't share anything with anyone.<br />
 This project is inspired by 'Pirates Little Helper' which is not maintained anymore and also not natively available on other platforms than Windows.
 
 ## Roadmap

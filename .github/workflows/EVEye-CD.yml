@@ -1,0 +1,61 @@
+# Trigger on any push with a git tag
+name:  EVEye Continious Delivery
+
+# To create a git tag, run the following commands on the branch you wish to release:
+#   git tag 1.0.0.0
+#   git push origin --tags
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    # Install the .NET workload
+    - name: Install .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+
+    # Publish EVEye-Linux (x64)
+    - name: Publish EVEye-Linux (x64)
+      run:  |
+          tag=$(git describe --tags --abbrev=0)
+          release_name="EVEye-Linux-$tag-x64"
+          dotnet publish -c Release -o "${release_name}" -r linux-x64 --self-contained true --p:PublishSingleFile=true 
+          7z a -tzip "${release_name}.zip" "./${release_name}/*"
+          rm -r "$release_name"
+
+    # Publish EVEye-Windows (x64)
+    - name: Publish EVEye-Windows (x64)
+      run:  |
+          tag=$(git describe --tags --abbrev=0)
+          release_name="EVEye-Windows-$tag-x64"
+          dotnet publish -c Release -o "${release_name}" -r win-x64 --self-contained true --p:PublishSingleFile=true 
+          tar czvf "${release_name}.tar.gz" "$release_name"
+          rm -r "$release_name"
+
+    # Publish EVEye-MacOS (x64)
+    - name: Publish EVEye-MacOS (x64)
+      run:  |
+          tag=$(git describe --tags --abbrev=0)
+          release_name="EVEye-MacOS-$tag-x64"
+          dotnet publish -c Release -o "${release_name}" -r osx-x64 --self-contained true --p:PublishSingleFile=true 
+          tar czvf "${release_name}.tar.gz" "$release_name"
+          rm -r "$release_name"
+
+    - name: Upload releases
+      uses: softprops/action-gh-release@v1
+      with:
+        files: "EVEye*"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

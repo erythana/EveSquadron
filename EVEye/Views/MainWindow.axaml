@@ -48,7 +48,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Character Name" Binding="{Binding CharacterName}" />
-                <DataGridTextColumn Header="Security Standing" Binding="{Binding SecurityStanding}" />
+                <DataGridTextColumn Header="Security Status" Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}}" />
                 <DataGridTextColumn Header="Corporation" Binding="{Binding CorporationName}" />
                 <DataGridTextColumn Header="Alliance" Binding="{Binding AllianceName}" />
             </DataGrid.Columns>

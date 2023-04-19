@@ -11,7 +11,7 @@ Still in early development, but should work just fine for now.
 ## Available on Windows, Linux (and MacOS*)
 This tool is available on all major platforms.
 It comes bundled with the [.NET 7 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/7.0).<br />
-See the "Releases" section to your right. <br />
+Check the ![Releases](https://github.com/erythana/EVEye/releases) section to your right. <br />
 * For Windows, just run the .exe file<br />
 * For Linux/MacOS you can run the EVEye file (make sure it is executeable)
 ```

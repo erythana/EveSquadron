@@ -56,6 +56,6 @@ jobs:
     - name: Upload releases
       uses: softprops/action-gh-release@v1
       with:
-        files: "EVEye*"
+        files: "EVEye-*"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

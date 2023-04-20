@@ -1,9 +1,4 @@
----
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-
-layout: default
----
+# EVEye
 ![EVEye-Introduction](https://user-images.githubusercontent.com/42657063/233203139-ac7300d0-aadb-4a03-ae89-4625eab75984.gif)
 
 ## Current Status

@@ -1,5 +1,6 @@
 # EVEye
-![EVEye-Introduction](https://user-images.githubusercontent.com/42657063/233203139-ac7300d0-aadb-4a03-ae89-4625eab75984.gif)
+![EVEye-Introduction](https://user-images.githubusercontent.com/42657063/233636782-b444d940-e728-4a9d-b39c-98430b6db816.gif)
+
 
 ## Current Status
 ![EVEye-CI](https://github.com/erythana/EVEye/actions/workflows/EVEye-CI.yml/badge.svg)

@@ -1,14 +1,12 @@
 ---
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-
 layout: default
 ---
-![EVEye-Introduction](https://user-images.githubusercontent.com/42657063/233636782-b444d940-e728-4a9d-b39c-98430b6db816.gif)
+# Eve Squadron
+![EveSquadron-Introduction](https://user-images.githubusercontent.com/42657063/233203139-ac7300d0-aadb-4a03-ae89-4625eab75984.gif)
 
 ## Current Status
-![EVEye-CI](https://github.com/erythana/EVEye/actions/workflows/EVEye-CI.yml/badge.svg)
-![EVEye-CD](https://github.com/erythana/EVEye/actions/workflows/EVEye-CD.yml/badge.svg)
+![EveSquadron-CI](https://github.com/erythana/EveSquadron/actions/workflows/EveSquadron-CI.yml/badge.svg)
+![EveSquadron-CD](https://github.com/erythana/EveSquadron/actions/workflows/EveSquadron-CD.yml/badge.svg)
 <br />
 This tool is still in early development, but it should work just fine for now.<br />
 However, there may be some bugs or glitches that need to be addressed, so please keep this in mind.<br />
@@ -19,20 +17,20 @@ Please report them to me if you encounter any problems.
 To use this tool, simply copy the name of the player you're interested in from your local or chat window.<br />
 The tool will automatically retrieve the player's information and display additional metrics in a tooltip.
 
-### Instructions for using EVEye
+### Instructions for using EveSquadron
 
-You can use EVEye on all major platforms, including Windows, Linux, and MacOS.<br />
+You can use EveSquadron on all major platforms, including Windows, Linux, and MacOS.<br />
 To get started, download the latest release and extract it. You can find the package in the top bar of this website.
 
 Once you've downloaded the tool, you can run it easily on Windows by clicking the .exe file.
 
 <br />
-For Linux and MacOS, you'll need to make sure that the EVEye file is executable before you run it.<br />
+For Linux and MacOS, you'll need to make sure that the EveSquadron file is executable before you run it.<br />
 To make it executable, run the first command. The second one will start the tool!:
 
 ```
-chmod +x EVEye
-./EVEye
+chmod +x EveSquadron
+./EveSquadron
 ```
 Questions? Feel free to contact me in game.
 

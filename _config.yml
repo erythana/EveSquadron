@@ -1,10 +1,10 @@
-title: EVEye
+title: "Eve Squadron"
 email: erythanadevsup@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  EVEye is a cross-platform Intel Tool for Eve Online that provides quick access to important character metrics and statistics fetched live from Eve and zKillboard Servers.
+  Eve Squadron is a cross-platform Intel Tool for Eve Online that provides quick access to important character metrics and statistics fetched live from Eve and zKillboard Servers.
   Available on Linux, Windows and MacOS, its user-friendly interface displays all vital information at one glance, making it an essential tool for players of all levels.
 baseurl: "/" # the subpath of your site, e.g. /blog
-url: "https://www.eveye.online"
+url: "https://www.eve-squadron.com"
 
 # Build settings
 #theme: minima

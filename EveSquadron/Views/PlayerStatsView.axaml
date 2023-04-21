@@ -1,0 +1,62 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:eveSquadron="clr-namespace:EveSquadron.Models.EveSquadron"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="EveSquadron.Views.PlayerStatsView">
+    <Design.DataContext>
+        <eveSquadron:EveSquadronPlayerInformation />
+    </Design.DataContext>
+    
+    <StackPanel Grid.IsSharedSizeScope="True">
+        <HeaderedContentControl Header="{Binding CharacterName, StringFormat='Character Statistics for {0}'}">
+            <Grid RowDefinitions="Auto, Auto,Auto">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Descriptions" />
+                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Birthday:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Birthday, StringFormat={}{0:d}}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Danger-Ratio:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding PlayerDetails.Value.Result.DangerRatio, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Solo Danger-Ratio:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding PlayerDetails.Value.Result.SoloDangerRatio, FallbackValue='Loading...'}" />
+            </Grid>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="Killboard Activity (Last Fight)">
+            <Grid RowDefinitions="Auto, Auto,Auto, Auto, Auto, Auto, Auto">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Descriptions" />
+                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Date:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="0" Grid.Column="2"
+                           Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.Date, StringFormat={}{0:d}, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="System:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="1" Grid.Column="2"
+                           Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.SolarSystem, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Final Blow from:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="2" Grid.Column="2"
+                           Text="{Binding PlayerDetails.Value.Result.LatestKillboardActivity^.AttackerName, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Attackers' Ship:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="3" Grid.Column="2"
+                           Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.AttackerShip, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Attackers' Guns:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="4" Grid.Column="2"
+                           Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.AttackerGuns, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Victim:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="5" Grid.Column="2"
+                           Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.VictimName, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Victims' Ship:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="6" Grid.Column="2"
+                           Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.VictimShip, FallbackValue='Loading...'}" />
+            </Grid>
+        </HeaderedContentControl>
+
+
+    </StackPanel>
+</UserControl>

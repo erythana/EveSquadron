@@ -1,0 +1,58 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:EveSquadron.ViewModels"
+        xmlns:v="using:EveSquadron.Views"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="EveSquadron.Views.MainWindow"
+        Icon="/Resources/icons/avalonia-logo.ico"
+        Width="800"
+        Height="500">
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+    <Window.Resources>
+    </Window.Resources>
+    <DockPanel>
+        <StackPanel Margin="10,0" DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="10">
+            <CheckBox
+                IsChecked="{Binding AlwaysOnTop}"
+                Content="Always on top" />
+            <CheckBox x:Name="IsDarkMode" Content="Dark-Mode" />
+        </StackPanel>
+        <DataGrid
+            x:Name="PlayerInfoGrid"
+            Items="{Binding EveSquadronPlayerInformation}"
+            CanUserReorderColumns="True"
+            CanUserResizeColumns="True"
+            IsReadOnly="True">
+            <DataGrid.Styles>
+                <Style Selector="DataGridRow">
+                    <Setter Property="ToolTip.ShowDelay" Value="250" />
+                    <Setter Property="ToolTip.Tip">
+                        <Setter.Value>
+                            <Template>
+                                <v:PlayerStatsView />
+                            </Template>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.Styles>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding CharacterImage^, FallbackValue='Loading...'}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Character Name" Binding="{Binding CharacterName}" />
+                <DataGridTextColumn Header="Security Status" Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}}" />
+                <DataGridTextColumn Header="Corporation" Binding="{Binding CorporationName}" />
+                <DataGridTextColumn Header="Alliance" Binding="{Binding AllianceName}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+
+</Window>

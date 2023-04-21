@@ -8,25 +8,53 @@
     <Design.DataContext>
         <evEye:EVEyePlayerInformation />
     </Design.DataContext>
-    <StackPanel>
+    
+    <StackPanel Grid.IsSharedSizeScope="True">
         <HeaderedContentControl Header="{Binding CharacterName, StringFormat='Character Statistics for {0}'}">
-            <StackPanel>
-                <TextBlock Text="{Binding Birthday, StringFormat='Birthday: {0:d}'}" />
-                <TextBlock Text="{Binding PlayerDetails.Value.Result.SoloDangerRatio, StringFormat='Solo Danger-Ratio: {0}'}" />
-                <TextBlock Text="{Binding PlayerDetails.Value.Result.DangerRatio, StringFormat='Danger-Ratio: {0}'}" />
-            </StackPanel>
+            <Grid RowDefinitions="Auto, Auto,Auto">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Descriptions" />
+                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Birthday:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Birthday, StringFormat={}{0:d}}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Danger-Ratio:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding PlayerDetails.Value.Result.DangerRatio}" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Solo Danger-Ratio:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding PlayerDetails.Value.Result.SoloDangerRatio}" />
+            </Grid>
         </HeaderedContentControl>
 
         <HeaderedContentControl Header="Killboard Activity (Last Fight)">
-            <StackPanel>
-                <TextBlock Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.Date, StringFormat='Date: {0:d}', FallbackValue='Loading...'}" />
-                <TextBlock Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.SolarSystem, StringFormat='System: {0}', FallbackValue='Loading...'}" />
-                <TextBlock Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.AttackerName, StringFormat='Final Blow from: {0}', FallbackValue='Loading...'}" />
-                <TextBlock Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.AttackerShip, StringFormat='Attackers\' Ship: {0}', FallbackValue='Loading...'}" />
-                <TextBlock Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.AttackerGuns, StringFormat='Attackers\' Guns: {0}', FallbackValue='Loading...'}" />
-                <TextBlock Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.VictimName, StringFormat='Victim: {0}', FallbackValue='Loading...'}" />
-                <TextBlock Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.VictimShip, StringFormat='Victims\' Ship: {0}', FallbackValue='Loading...'}" />
-            </StackPanel>
+            <Grid RowDefinitions="Auto, Auto,Auto, Auto, Auto, Auto, Auto">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Descriptions" />
+                    <ColumnDefinition Width="15" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Date:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="0" Grid.Column="2"
+                           Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.Date, StringFormat={}{0:d}, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="System:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="1" Grid.Column="2"
+                           Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.SolarSystem, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Final Blow from:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="2" Grid.Column="2"
+                           Text="{Binding PlayerDetails.Value.Result.LatestKillboardActivity^.AttackerName, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Attackers' Ship:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="3" Grid.Column="2"
+                           Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.AttackerShip, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Attackers' Guns:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="4" Grid.Column="2"
+                           Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.AttackerGuns, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Victim:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="5" Grid.Column="2"
+                           Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.VictimName, FallbackValue='Loading...'}" />
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Victims' Ship:" FontWeight="SemiBold" />
+                <TextBlock Grid.Row="6" Grid.Column="2"
+                           Text="{Binding  PlayerDetails.Value.Result.LatestKillboardActivity^.VictimShip, FallbackValue='Loading...'}" />
+            </Grid>
         </HeaderedContentControl>
 
 

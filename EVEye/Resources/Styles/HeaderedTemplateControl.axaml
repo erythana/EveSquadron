@@ -10,7 +10,7 @@
                         <Border ZIndex="1" Margin="2,0,0,0">
                             <TextBlock FontWeight="Bold" Text="{TemplateBinding Header}" />
                         </Border>
-                        <Border Margin="5, 0,0,0"
+                        <Border Margin="10, 0,0,0"
                                 BorderBrush="{TemplateBinding Background}"
                                 BorderThickness="1">
                             <ContentPresenter Content="{TemplateBinding Content}" Padding="{TemplateBinding Padding}" />

@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     steps:
     - name: Checkout
@@ -36,7 +36,7 @@ jobs:
     - name: Publish EveSquadron-Windows (x64)
       run: |
         tag=$(git describe --tags --abbrev=0)
-        dotnet publish -c Release -o ./EveSquadron-Windows -r win-x64 --self-contained true -p:Version="$tag" -p:OutputType="WinExe"
+        dotnet publish -c Release -o ./EveSquadron-Windows -r win-x64 --self-contained true -p:OutputType="WinExe" -p:Version="$tag" 
 
     # Publish EveSquadron-MacOS (x64)
     - name: Publish EveSquadron-MacOS (x64)

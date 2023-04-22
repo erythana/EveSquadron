@@ -28,8 +28,8 @@ jobs:
     # Publish EveSquadron-Linux (x64)
     - name: Publish EveSquadron-Linux (x64)
       run:  |
-          tag=$(git describe --tags --abbrev=0)
-          release_name="EveSquadron-Linux-$tag-x64"
+          $tag=$(git describe --tags --abbrev=0)
+          $release_name="EveSquadron-Linux-$tag-x64"
           dotnet publish -c Release -o "${release_name}" -r linux-x64 --self-contained true -p:Version="$tag"
           tar czvf "${release_name}.tar.gz" "$release_name"
           rm -r "$release_name"
@@ -37,8 +37,8 @@ jobs:
     # Publish EveSquadron-Windows (x64)
     - name: Publish EveSquadron-Windows (x64)
       run:  |
-          tag=$(git describe --tags --abbrev=0)
-          release_name="EveSquadron-Windows-$tag-x64"
+          $tag=$(git describe --tags --abbrev=0)
+          $release_name="EveSquadron-Windows-$tag-x64"
           dotnet publish -c Release -o "${release_name}" -r win-x64 --self-contained true -p:OutputType="WinExe" -p:Version="$tag" 
           7z a -tzip "${release_name}.zip" "./${release_name}/*"
           rm -r "$release_name"
@@ -46,8 +46,8 @@ jobs:
     # Publish EveSquadron-MacOS (x64)
     - name: Publish EveSquadron-MacOS (x64)
       run:  |
-          tag=$(git describe --tags --abbrev=0)
-          release_name="EveSquadron-MacOS-$tag-x64"
+          $tag=$(git describe --tags --abbrev=0)
+          $release_name="EveSquadron-MacOS-$tag-x64"
           dotnet publish -c Release -o "${release_name}" -r osx-x64 --self-contained true -p:Version="$tag"
           tar czvf "${release_name}.tar.gz" "$release_name"
           rm -r "$release_name"

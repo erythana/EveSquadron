@@ -30,12 +30,12 @@ public abstract class SettingsLoaderBase
         var value = _configuration.GetValue<string>($"{settingName}");
         if (required && string.IsNullOrWhiteSpace(value))
         {
-            var error = $"Can not load required setting '{settingName}'";
+            var error = $"Could not load required setting '{settingName}'";
             _logger.LogCritical(error);
             throw new InvalidOperationException(error);
         }
 
-        _logger.LogDebug($"Loaded {(required ? "" : "(optional)")} setting for {settingName}, value: '{value}'");
+        _logger.LogInformation($"Loaded {(required ? "" : "(optional)")} setting for '{settingName}', value: '{value}'");
         return value ?? string.Empty;
     }
     

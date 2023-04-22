@@ -131,6 +131,8 @@ public class MainWindowViewModel : ViewModelBase
             if (string.IsNullOrWhiteSpace(clipboardContent))
                 return;
 
+            _logger.LogDebug("New Clipboard-Copy detected. Trying to parse player names");
+            
             EveSquadronPlayerInformation.Clear();
             
             await foreach (var eveSquadronPlayerInformation in _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardContent

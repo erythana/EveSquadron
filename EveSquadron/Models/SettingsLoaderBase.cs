@@ -35,7 +35,7 @@ public abstract class SettingsLoaderBase
             throw new InvalidOperationException(error);
         }
 
-        _logger.LogInformation($"Loaded {(required ? "" : "(optional)")} setting for '{settingName}', value: '{value}'");
+        _logger.LogInformation($"Loaded {(required ? "" : "(optional) ")}setting for '{settingName}', value: '{value}'");
         return value ?? string.Empty;
     }
     

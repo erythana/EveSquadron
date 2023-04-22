@@ -10,7 +10,6 @@ on:
       - '*'
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
 
@@ -31,7 +30,7 @@ jobs:
       run:  |
           tag=$(git describe --tags --abbrev=0)
           release_name="EveSquadron-Linux-$tag-x64"
-          dotnet publish -c Release -o "${release_name}" -r linux-x64 --self-contained true --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true 
+          dotnet publish -c Release -o "${release_name}" -r linux-x64 --self-contained true -p:Version="${tag}" --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true 
           tar czvf "${release_name}.tar.gz" "$release_name"
           rm -r "$release_name"
 
@@ -40,7 +39,7 @@ jobs:
       run:  |
           tag=$(git describe --tags --abbrev=0)
           release_name="EveSquadron-Windows-$tag-x64"
-          dotnet publish -c Release -o "${release_name}" -r win-x64 --self-contained true --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true 
+          dotnet publish -c Release -o "${release_name}" -r win-x64 --self-contained true -p:Version="${tag}" --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true 
           7z a -tzip "${release_name}.zip" "./${release_name}/*"
           rm -r "$release_name"
 
@@ -49,7 +48,7 @@ jobs:
       run:  |
           tag=$(git describe --tags --abbrev=0)
           release_name="EveSquadron-MacOS-$tag-x64"
-          dotnet publish -c Release -o "${release_name}" -r osx-x64 --self-contained true --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true 
+          dotnet publish -c Release -o "${release_name}" -r osx-x64 --self-contained true -p:Version="${tag}" --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true 
           tar czvf "${release_name}.tar.gz" "$release_name"
           rm -r "$release_name"
 

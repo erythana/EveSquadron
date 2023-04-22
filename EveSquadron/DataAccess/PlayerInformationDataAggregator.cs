@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EveSquadron.DataAccess.Interfaces;
+using EveSquadron.DataRepositories.Interfaces;
 using EveSquadron.Extensions;
 using EveSquadron.Models;
 using EveSquadron.Models.EVE.Data;
-using EveSquadron.Models.EVE.Interfaces;
 using EveSquadron.Models.EveSquadron;
 using EveSquadron.Models.ZKillboard.Data;
-using EveSquadron.Models.ZKillboard.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace EveSquadron.DataAccess;

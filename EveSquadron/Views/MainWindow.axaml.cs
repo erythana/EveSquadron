@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
+using Avalonia.Interactivity;
 using EveSquadron.Models;
 using EveSquadron.ViewModels;
 using EveSquadron.Views.Converters;
@@ -47,5 +48,11 @@ public partial class MainWindow : Window
             Path = nameof(mainWindowViewModel.AlwaysOnTop)
         };
         this.Bind(TopmostProperty, alwaysOnTopBinding);
+    }
+
+    private void OnFetchErrorClick(object? sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button) return;
+        button.IsVisible = false;
     }
 }

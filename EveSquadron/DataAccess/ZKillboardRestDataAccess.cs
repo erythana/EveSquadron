@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using EveSquadron.DataAccess.Base;
 using EveSquadron.DataAccess.Interfaces;
+using EveSquadron.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -12,6 +14,7 @@ public sealed class ZKillboardRestDataAccess : RestDataAccessBase, IZKillboardRe
 {
     #region member fields
 
+    private readonly HttpClient _httpClient;
     private readonly ILogger<ZKillboardRestDataAccess> _logger;
 
     #endregion
@@ -22,6 +25,7 @@ public sealed class ZKillboardRestDataAccess : RestDataAccessBase, IZKillboardRe
         IConfiguration configuration,
         ILogger<ZKillboardRestDataAccess> logger) : base(httpClient, logger)
     {
+        _httpClient = httpClient;
         _logger = logger;
     }
 
@@ -42,4 +46,12 @@ public sealed class ZKillboardRestDataAccess : RestDataAccessBase, IZKillboardRe
     }
 
     #endregion
+    
+    private async Task<T> GetByIdAsync<T>(string endpointUrl, int id) //Same method as in RestDataAccessBase - zKillboards needs a trailing backslash
+    {
+        _logger.LogDebug($"Executing GetByIdAsync on endpoint {endpointUrl}{id}/");
+        var content = await _httpClient.GetStringAsync($"{endpointUrl}{id}/");
+        
+        return JsonSerializer.Deserialize<T>(content, ApplicationConstants.AppDefaultSerializerOptions)!;
+    }
 }

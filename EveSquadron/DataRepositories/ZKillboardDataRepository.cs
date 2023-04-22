@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using EveSquadron.DataAccess.Interfaces;
+using EveSquadron.DataRepositories.Interfaces;
 using EveSquadron.Models.Interfaces;
 using EveSquadron.Models.ZKillboard.Data;
-using EveSquadron.Models.ZKillboard.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace EveSquadron.Models.ZKillboard;
+namespace EveSquadron.DataRepositories;
 
 public class ZKillboardDataRepository : IZKillboardDataRepository
 {
@@ -41,7 +41,7 @@ public class ZKillboardDataRepository : IZKillboardDataRepository
 
     public Task<IEnumerable<ZKillboardEntry>> GetKillboardHistoryFor(int playerID)
     {
-        return _zKillboardRestDataAccess.GetKillboardHistoryFor<Data.ZKillboardEntry>(_characterEndpoint, playerID);
+        return _zKillboardRestDataAccess.GetKillboardHistoryFor<ZKillboardEntry>(_characterEndpoint, playerID);
     }
 
     #endregion

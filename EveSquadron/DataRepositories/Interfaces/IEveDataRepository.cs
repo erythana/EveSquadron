@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using EveSquadron.Models.EVE.Data;
 
-namespace EveSquadron.Models.EVE.Interfaces;
+namespace EveSquadron.DataRepositories.Interfaces;
 
 public interface IEveDataRepository
 {

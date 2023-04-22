@@ -10,17 +10,78 @@
         Width="800"
         Height="500">
     <Design.DataContext>
-        <vm:MainWindowViewModel />
+        <vm:DesignTimeMainWindowViewModel />
     </Design.DataContext>
     <Window.Resources>
     </Window.Resources>
     <DockPanel>
-        <StackPanel Margin="10,0" DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="10">
+        <DockPanel Margin="10,0" DockPanel.Dock="Bottom" Height="40">
             <CheckBox
                 IsChecked="{Binding AlwaysOnTop}"
-                Content="Always on top" />
-            <CheckBox x:Name="IsDarkMode" Content="Dark-Mode" />
-        </StackPanel>
+                Content="Always on top"
+                Margin="5,0" />
+            <CheckBox
+                x:Name="IsDarkMode"
+                Content="Dark-Mode"
+                Margin="5,0" />
+            
+            <!-- Update Information - Material Icon "System Update" -->
+            <Button
+                Margin="5,5"
+                Height="30"
+                Width="30"
+                Command="{Binding UpdateClickedCommand}"
+                DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
+                IsVisible="{Binding !UpdateAvailable^, FallbackValue=False, Converter={x:Static BoolConverters.Not}}"><!-- We negate the UpdateAvailable so we can use the builtin BoolConverters -->
+                <Button.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="ToolTip.Tip">
+                            <Setter.Value>
+                                <Template>
+                                    <StackPanel>
+                                        <TextBlock Text="Update available!" />
+                                        <TextBlock Text="{Binding LatestReleasePath, StringFormat='Click here to navigate to {0}'}" />
+                                    </StackPanel>
+                                </Template>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Styles>
+                <PathIcon
+                    Foreground="Orange"
+                    Data="M260 1016q-24 0-42-18t-18-42V196q0-24 18-42t42-18h440q24 0 42 18t18 42v760q0 24-18 42t-42 18H260Zm0-90v30h440v-30H260Zm0-60h440V286H260v580Zm220-128L325 583l43-43 82 82V428h60v194l82-82 43 43-155 155ZM260 226h440v-30H260v30Zm0 0v-30 30Zm0 700v30-30Z">
+                </PathIcon>
+            </Button>
+            <!-- Update Fetch Error - Material Icon "Sync Problem" -->
+            <Button
+                Margin="5,5"
+                Height="30"
+                Width="30"
+                Click="OnFetchErrorClick"
+                IsVisible="{Binding UpdateAvailable^, FallbackValue=False, Converter={x:Static ObjectConverters.IsNull}}"
+                DockPanel.Dock="Right"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center">
+                <Button.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="ToolTip.Tip">
+                            <Setter.Value>
+                                <Template>
+                                    <StackPanel>
+                                        <TextBlock Text="Could not fetch information from release servers!" />
+                                        <TextBlock Text="{Binding LatestReleasePath}" />
+                                    </StackPanel>
+                                </Template>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Styles>
+                <PathIcon
+                    Foreground="Red"
+                    Data="M122 911v-71h99l-5-7q-58-66-88-128.483Q98 642.034 98 580q0-121.482 74-214.241Q246 273 362 243v96q-77 24-123 91.144Q193 497.287 193 580q0 48 15.5 90.5T264 750l24 21v-98h72v238H122Zm357.877-128Q464 783 452.5 771.377q-11.5-11.623-11.5-27.5t11.623-27.377q11.623-11.5 27.5-11.5t27.377 11.623q11.5 11.623 11.5 27.5T507.377 771.5q-11.623 11.5-27.5 11.5ZM446 632V366h72v266h-72Zm151 278v-97q77-23 123-90.144Q766 655.713 766 573q0-50-16.5-93T695 402l-24-21v98h-72V241h238v71H737l6 7q64.606 59.71 91.303 125.891Q861 511.071 861 573q0 120.482-74.5 213.741Q712 880 597 910Z" />
+            </Button>
+        </DockPanel>
+        
         <DataGrid
             x:Name="PlayerInfoGrid"
             Items="{Binding EveSquadronPlayerInformation}"
@@ -48,7 +109,8 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Character Name" Binding="{Binding CharacterName}" />
-                <DataGridTextColumn Header="Security Status" Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}}" />
+                <DataGridTextColumn Header="Security Status"
+                                    Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}}" />
                 <DataGridTextColumn Header="Corporation" Binding="{Binding CorporationName}" />
                 <DataGridTextColumn Header="Alliance" Binding="{Binding AllianceName}" />
             </DataGrid.Columns>

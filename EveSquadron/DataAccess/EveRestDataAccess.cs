@@ -96,12 +96,12 @@ public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
 
     public Task<T> GetDetailedKillInformationFor<T>(string killmailsEndpoint, string killmailHash, int killmailID)
     {
-        return GetByIdAsync<T>($"{killmailsEndpoint}{killmailID}/{killmailHash}", null);
+        return GetByIdAsync<T>($"{killmailsEndpoint}{killmailID}/{killmailHash}");
     }
     
     public Task<T> GetCharacterInformationFor<T>(string characterEndpoint, int playerID)
     {
-        return GetByIdAsync<T>($"{characterEndpoint}", playerID);
+        return GetByIdAsync<T>($"{characterEndpoint}{playerID}");
     }
     
     #endregion

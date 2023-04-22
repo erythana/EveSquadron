@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EveSquadron.Models.ZKillboard.Data;
 
-namespace EveSquadron.Models.ZKillboard.Interfaces;
+namespace EveSquadron.DataRepositories.Interfaces;
 
 public interface IZKillboardDataRepository
 {

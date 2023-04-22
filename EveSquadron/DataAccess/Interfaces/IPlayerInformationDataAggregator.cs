@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using EveSquadron.Models.EveSquadron;
 
 namespace EveSquadron.DataAccess.Interfaces;

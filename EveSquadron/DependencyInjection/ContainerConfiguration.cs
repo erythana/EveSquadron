@@ -5,6 +5,8 @@ using System.Reflection;
 using EveSquadron.DataAccess;
 using EveSquadron.DataAccess.Interfaces;
 using EveSquadron.Models;
+using EveSquadron.Models.Interfaces;
+using EveSquadron.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,8 +19,9 @@ public static class ContainerConfiguration
 
     public static IServiceCollection Configure(this IServiceCollection builder) => builder
         .AddConfigurationOptions()
+        .RegisterTransientsByConvention()
+        .RegisterTransientsNonConvention()
         .RegisterSingletons()
-        .RegisterByConvention()
         .RegisterHttpClients();
 
     public static IServiceCollection AddLogging(this IServiceCollection builder)
@@ -45,7 +48,7 @@ public static class ContainerConfiguration
 
     #region specific builder methods
 
-    private static IServiceCollection RegisterByConvention(this IServiceCollection builder)
+    private static IServiceCollection RegisterTransientsByConvention(this IServiceCollection builder)
     {
         var typesWithConvention = Assembly.GetExecutingAssembly()
             .GetTypes()
@@ -59,6 +62,9 @@ public static class ContainerConfiguration
 
         return builder;
     }
+    
+    private static IServiceCollection RegisterTransientsNonConvention(this IServiceCollection builder) => builder
+        .AddTransient<IReleaseVersionChecker, GithubReleaseVersionChecker>();
 
     private static IServiceCollection RegisterSingletons(this IServiceCollection builder) => builder
         .AddSingleton<ViewLocator>();
@@ -67,7 +73,8 @@ public static class ContainerConfiguration
     {
         return builder
             .AddEveRestHttpClients()
-            .AddZKillboardRestHttpClients();
+            .AddZKillboardRestHttpClients()
+            .AddGithubHttpClients();
     }
 
     private static IServiceCollection AddEveRestHttpClients(this IServiceCollection builder)
@@ -82,6 +89,12 @@ public static class ContainerConfiguration
     private static IServiceCollection AddZKillboardRestHttpClients(this IServiceCollection builder)
     {
         builder.AddHttpClient<IZKillboardRestDataAccess, ZKillboardRestDataAccess>(AddDefaultRequestHeaders);
+        return builder;
+    }
+    
+    private static IServiceCollection AddGithubHttpClients(this IServiceCollection builder)
+    {
+        builder.AddHttpClient<IGithubReleaseDataAccess, GithubReleaseDataAccess>(AddDefaultRequestHeaders);
         return builder;
     }
 

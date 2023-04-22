@@ -3,12 +3,12 @@ using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
 using EveSquadron.DataAccess.Interfaces;
+using EveSquadron.DataRepositories.Interfaces;
 using EveSquadron.Models.EVE.Data;
-using EveSquadron.Models.EVE.Interfaces;
 using EveSquadron.Models.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace EveSquadron.Models.EVE;
+namespace EveSquadron.DataRepositories;
 
 public class EveDataRepository : IEveDataRepository
 {

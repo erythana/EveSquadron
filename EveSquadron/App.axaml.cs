@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -35,6 +36,7 @@ public class App : Application
                 DataContext = this.CreateInstance<MainWindowViewModel>()
             };
         }
+        else if (ApplicationLifetime is null) {} //DESIGNER
         else
             throw new PlatformNotSupportedException("This application is only supported on Desktop-Environments.");
 

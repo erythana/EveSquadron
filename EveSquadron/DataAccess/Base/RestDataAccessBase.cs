@@ -38,10 +38,10 @@ public abstract class RestDataAccessBase
         return JsonSerializer.Deserialize<List<T>>(content, ApplicationConstants.AppDefaultSerializerOptions)!;
     }
 
-    protected async Task<T> GetByIdAsync<T>(string endpointUrl, int? id)
+    protected async Task<T> GetByIdAsync<T>(string endpointUrl)
     {
-        _logger.LogDebug($"Executing GetByIdAsync on endpoint {endpointUrl}{id}/");
-        var content = await _httpClient.GetStringAsync($"{endpointUrl}{id}/");
+        _logger.LogDebug($"Executing GetByIdAsync on endpoint {endpointUrl}");
+        var content = await _httpClient.GetStringAsync($"{endpointUrl}");
         
         return JsonSerializer.Deserialize<T>(content, ApplicationConstants.AppDefaultSerializerOptions)!;
     }

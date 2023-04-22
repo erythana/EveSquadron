@@ -6,6 +6,13 @@ namespace EveSquadron.Models;
 
 public class EveESIEndpointsLoader : SettingsLoaderBase, IEveESIEndpointsLoader
 {
+    #region member fields
+
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<EveESIEndpointsLoader> _logger;
+
+    #endregion
+    
     #region constructor
 
     public EveESIEndpointsLoader(IConfiguration configuration, ILogger<EveESIEndpointsLoader> logger) : base(configuration, logger)
@@ -19,13 +26,6 @@ public class EveESIEndpointsLoader : SettingsLoaderBase, IEveESIEndpointsLoader
         KillmailEndpoint = LoadSetting($"{esiEndpointPath}:KillmailEndpoint");
         PortraitEndpoint = LoadSetting($"{esiEndpointPath}:PortraitEndpoint");
     }
-
-    #endregion
-    
-    #region member fields
-
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<EveESIEndpointsLoader> _logger;
 
     #endregion
 

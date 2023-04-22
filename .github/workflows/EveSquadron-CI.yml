@@ -30,19 +30,19 @@ jobs:
     - name: Publish EveSquadron-Linux (x64)
       run:  |
         tag=$(git describe --tags --abbrev=0)
-        dotnet publish -c Release -o ./EveSquadron-Linux -r linux-x64 --self-contained true -p:Version="$tag" --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true 
+        dotnet publish -c Release -o ./EveSquadron-Linux -r linux-x64 --self-contained true -p:Version="$tag" --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true --p:IncludeAllContentForSelfExtract=true
 
     # Publish EveSquadron-Windows (x64)
     - name: Publish EveSquadron-Linux (x64)
       run: |
         tag=$(git describe --tags --abbrev=0)
-        dotnet publish -c Release -o ./EveSquadron-Windows -r win-x64 --self-contained true -p:Version="$tag" --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true 
+        dotnet publish -c Release -o ./EveSquadron-Windows -r win-x64 --self-contained true -p:Version="$tag" --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true --p:IncludeAllContentForSelfExtract=true
 
     # Publish EveSquadron-MacOS (x64)
     - name: Publish EveSquadron-MacOS (x64)
       run:  |
         tag=$(git describe --tags --abbrev=0)
-        dotnet publish -c Release -o ./EveSquadron-MacOS -r osx-x64 --self-contained true -p:Version="$tag" --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true 
+        dotnet publish -c Release -o ./EveSquadron-MacOS -r osx-x64 --self-contained true -p:Version="$tag" --p:PublishSingleFile=true --p:IncludeNativeLibrariesInSingleFile=true --p:IncludeNativeLibrariesForSelfExtract=true --p:IncludeAllContentForSelfExtract=true
 
     - name: Upload Linux artifacts
       uses: actions/upload-artifact@v3

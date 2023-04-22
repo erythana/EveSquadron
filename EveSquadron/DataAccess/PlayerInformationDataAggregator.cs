@@ -40,6 +40,8 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
     public async IAsyncEnumerable<EveSquadronPlayerInformation> GetAggregatedItemsFor(IEnumerable<string> players)
     {
         var eveNameIDMappings = await _eveDataRepository.GetIDsFrom(players);
+        _logger.LogDebug($"Retrieved {eveNameIDMappings.Characters.Count} characters from GetIDsFrom.");
+        
         foreach (var character in eveNameIDMappings.Characters)
         {
             var currentPlayer = new EveSquadronPlayerInformation

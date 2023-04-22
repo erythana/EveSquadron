@@ -37,7 +37,7 @@ public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
     public async Task<T> GetIDsFromNames<T>(string idEndpoint, IEnumerable<string> names)
     {
         var inputNames = names.ToArray();
-        _logger.LogDebug($"Loading Character IDs from endpoint {idEndpoint} for {inputNames.Length} characters.");
+        _logger.LogDebug($"Loading Character IDs from endpoint '{idEndpoint}' for {inputNames.Length} characters.");
 
         var namesLookupLimit = ApplicationConstants.EveAPILimits.PostUniverseIDsCharactersLimit;
         var results = new List<JObject>();
@@ -63,14 +63,14 @@ public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
 
     public Task<byte[]> GetPortraitByteArrayAsync(string portraitEndpoint)
     {
-        _logger.LogDebug($"Trying to download image from {portraitEndpoint}");
+        _logger.LogDebug($"Downloading image from endpoint '{portraitEndpoint}'");
         return _httpClient.GetByteArrayAsync(portraitEndpoint);
     }
 
     public async Task<IEnumerable<T>> GetNamesFromIDs<T>(string namesEndpoint, IEnumerable<int> ids)
     {
         var inputIDs = ids.ToArray();
-        _logger.LogDebug($"Loading CharacterNames from endpoint {namesEndpoint} for {inputIDs.Length} IDs.");
+        _logger.LogDebug($"Loading CharacterNames from endpoint '{namesEndpoint}' for {inputIDs.Length} IDs.");
         var idsLookupLimit = ApplicationConstants.EveAPILimits.PostUniverseNamesIDsLimit;
 
         var results = new List<JArray>();
@@ -96,11 +96,13 @@ public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
 
     public Task<T> GetDetailedKillInformationFor<T>(string killmailsEndpoint, string killmailHash, int killmailID)
     {
+        _logger.LogDebug($"GetDetailedKillInformationFor on endpoint '{killmailsEndpoint}' for killmail hash '{killmailHash}' and killmail id '{killmailID}'.");
         return GetByIdAsync<T>($"{killmailsEndpoint}{killmailID}/{killmailHash}");
     }
     
     public Task<T> GetCharacterInformationFor<T>(string characterEndpoint, int playerID)
     {
+        _logger.LogDebug($"GetCharacterInformationFor on endpoint '{characterEndpoint}' for player id '{playerID}'.");
         return GetByIdAsync<T>($"{characterEndpoint}{playerID}");
     }
     

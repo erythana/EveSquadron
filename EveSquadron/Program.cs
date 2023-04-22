@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.ReactiveUI;
 using EveSquadron.DependencyInjection;
 using EveSquadron.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -16,6 +17,7 @@ internal class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        
         var services = BuildServices();
         var startupLogger = services.GetRequiredService<ILogger<Program>>();
 
@@ -31,10 +33,10 @@ internal class Program
 
     }
 
-    private static ServiceProvider BuildServices() => ContainerConfiguration
-        .AddLogging(new ServiceCollection()
-            .Configure())
-        .BuildServiceProvider();
+    private static ServiceProvider BuildServices() =>
+        new ServiceCollection()
+            .Configure()
+            .BuildServiceProvider();
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()

@@ -12,39 +12,61 @@ using EveSquadron.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Configuration;
+using Microsoft.Extensions.Logging.Console;
 
 namespace EveSquadron.DependencyInjection;
 
 public static class ContainerConfiguration
 {
+    #region member fields
+    
+    private static readonly IConfiguration _configuration;
+    
+    #endregion
+    
+    #region constructor
+    
+    static ContainerConfiguration()
+    {
+        _configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json")
+            .AddJsonFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EveSquadron.appsettings.json"), optional: true)
+            .Build();
+    }
+    
+    #endregion
+
     #region Container Initialization/Configuration
 
     public static IServiceCollection Configure(this IServiceCollection builder) => builder
-        .AddConfigurationOptions()
+        .AddConfiguration()
+        .AddLogging()
         .RegisterTransientsByConvention()
         .RegisterTransientsNonConvention()
         .RegisterSingletons()
         .RegisterHttpClients();
+    
 
-    public static IServiceCollection AddLogging(this IServiceCollection builder)
+    private static IServiceCollection AddConfiguration(this IServiceCollection builder)
     {
+        builder.AddSingleton(_configuration);
+        return builder;
+    }
+    
+    private static IServiceCollection AddLogging(this IServiceCollection builder)
+    {
+        var loggingConfiguration = _configuration.GetSection("Logging");
+        
         return builder.AddLogging(config =>
         {
             config.ClearProviders();
             config.SetMinimumLevel(LogLevel.Trace);
+            config.AddConfiguration(loggingConfiguration);
             config.AddDebug();
+            config.AddConsole();
         });
-    }
-
-    private static IServiceCollection AddConfigurationOptions(this IServiceCollection builder)
-    {
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
-        builder.AddSingleton<IConfiguration>(configuration);
-
-        return builder;
     }
 
     #endregion

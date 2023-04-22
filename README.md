@@ -50,6 +50,22 @@ It's important to note that you shouldn't modify the Endpoints-Setting, as these
 To get started, open the appconfig.json file in a text editor of your choice.<br />
 This file should be located in the same directory as the executable file.
 
+However, if you don't want to modify the default configuration file, you can create your own file in your operating systems configuration directory.<br />
+This file takes precedence over the applications defaults.
+
+Create the file `EveSquadron.appsettings.json` in your configuration directory:
+* For Linux/MacOS, place the file in `/Users/<USERNAME>/.config/`
+* For Windows, place the file in `C:\Users\USERNAME\AppData\Roaming`
+
+The configuration file needs the same layout as the default one, but you only need to set the values you want to change.
+For example, a file like
+```
+{
+  "Theme": "Light"
+}
+```
+is perfectly fine!
+
 #### Customizing the Theme
 
 One of the main settings you might want to customize is the theme of the app.<br />
@@ -112,17 +128,9 @@ To speed things up, caching and cache invalidation will be implemented.
 
 ### UI Improvements
 
-There are several improvements planned for the user interface of this tool.<br />
+There are several UI improvements planned for the user interface of this tool.<br />
 In particular, the character tooltip with the details needs some work.<br />
 Additionally, window sizes will be persisted after the app is closed.
-
-### Improved Configuration
-
-Currently, the appconfig.json file is used to configure settings.<br />
-However, in the future, an appsettings.json file will be implemented that uses the platform's user configuration directories.<br />
-This will make it easier to manage settings and ensure that they persist across different sessions.
-
-Overall, these improvements will make this tool even more useful and user-friendly. So stay tuned for updates!
 
 ## Feedback and Donations
 

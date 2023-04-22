@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using Avalonia;
 using EveSquadron.DataAccess;
 using EveSquadron.DataAccess.Interfaces;
 using EveSquadron.Models;
@@ -37,6 +39,7 @@ public static class ContainerConfiguration
     private static IServiceCollection AddConfigurationOptions(this IServiceCollection builder)
     {
         var configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
             .Build();
         builder.AddSingleton<IConfiguration>(configuration);

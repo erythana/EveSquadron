@@ -4,11 +4,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using EveSquadron.DataAccess.Interfaces;
+using EveSquadron.Models;
 using EveSquadron.Models.EveSquadron;
 using EveSquadron.Models.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -134,16 +136,28 @@ public class MainWindowViewModel : ViewModelBase
             _logger.LogDebug("New Clipboard-Copy detected. Trying to parse player names");
             
             EveSquadronPlayerInformation.Clear();
+
+            var clipboardSplit = Regex.Split(clipboardContent, "\r?\n")//This replaces Environment.NewLine and splits the newlines  because, for some reason, Windows used \n on a users system
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(s => s.Trim())
+                .Distinct()
+                .ToList();
+
+            var nameCharacterLimit = ApplicationConstants.EveAPILimits.PostUniverseIDsNameCharacterLimit;
+            if (clipboardSplit.Any(x => x.Length > nameCharacterLimit))
+            {
+                _logger.LogDebug($"TryParseClipboardContentForEve: Could not load player information. These arent proper eve names, the limit on characters in a name is {nameCharacterLimit}");
+                return;
+            }
             
-            await foreach (var eveSquadronPlayerInformation in _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardContent
-                               .Split(Environment.NewLine, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Distinct()))
+            await foreach (var eveSquadronPlayerInformation in _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardSplit))
             {
                 EveSquadronPlayerInformation.Add(eveSquadronPlayerInformation);
             }
         }
         catch (Exception e)
         {
-            _logger.LogInformation(e, "Could not load player information. Probably no eve-related data in clipboard.");
+            _logger.LogError(e, "Could not load player information. Check input from clipboard!.");
         }
     }
     

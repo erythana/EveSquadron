@@ -20,7 +20,8 @@ public static class ApplicationConstants
 
     public static class EveAPILimits
     {
-        public const int PostUniverseIDsCharactersLimit = 500;
+        public const int PostUniverseIDsNameCharacterLimit = 100;
+        public const int PostUniverseIDsPlayerCountLimit = 500;
         public const int PostUniverseNamesIDsLimit = 1000;
     }
 }

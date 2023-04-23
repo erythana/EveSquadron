@@ -39,7 +39,7 @@ public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
         var inputNames = names.ToArray();
         _logger.LogDebug($"Loading Character IDs from endpoint '{idEndpoint}' for {inputNames.Length} characters.");
 
-        var namesLookupLimit = ApplicationConstants.EveAPILimits.PostUniverseIDsCharactersLimit;
+        var namesLookupLimit = ApplicationConstants.EveAPILimits.PostUniverseIDsPlayerCountLimit;
         var results = new List<JObject>();
 
         for (var i = 0; i < inputNames.Length; i += namesLookupLimit)

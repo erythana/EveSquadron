@@ -60,9 +60,7 @@ public class GithubReleaseVersionChecker : IReleaseVersionChecker
         }
 
         //we know that its always going to be x.x.x - no need for iterating over
-        var newReleaseAvailable = serverVersion.major > currentMajor ||
-                                  serverVersion.major == currentMajor && serverVersion.minor > currentMinor ||
-                                  serverVersion.major == currentMajor && serverVersion.minor == currentMinor && serverVersion.patch > currentPatch;
+        var newReleaseAvailable = serverVersion.major > currentMajor || serverVersion.minor > currentMinor || serverVersion.patch > currentPatch;
         
         if (newReleaseAvailable)
             _logger.LogInformation($"New release '{githubRelease}' available!");

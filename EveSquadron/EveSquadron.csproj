@@ -1,16 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
+        <ApplicationIcon>Resources\icons\1337_64_16.ico</ApplicationIcon>
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <LangVersion>11</LangVersion>
+        <Company>Eve Squadron</Company>
+        <Product>Eve Squadron</Product>
     </PropertyGroup>
 
     <ItemGroup>
         <AvaloniaResource Include="Assets\**" />
-        <AvaloniaResource Include="Resources\icons\avalonia-logo.ico" />
+        <AvaloniaResource Include="Resources\icons\1337_64_16.ico" />
         <None Remove=".gitignore" />
         <None Update="appsettings.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

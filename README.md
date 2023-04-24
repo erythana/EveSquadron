@@ -132,6 +132,10 @@ There are several UI improvements planned for the user interface of this tool.<b
 In particular, the character tooltip with the details needs some work.<br />
 Additionally, window sizes will be persisted after the app is closed.
 
+## Copyright notice
+Some eve related images are used in this application. They are property of CCP:
+"(c) 2014 CCP hf. All rights reserved. "EVE", "EVE Online", "CCP", and all related logos and images are trademarks or registered trademarks of CCP hf." 
+
 ## Feedback and Donations
 
 If you have any feature requests or suggestions for improvements, please don't hesitate to reach out!<br />

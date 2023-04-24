@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:EveSquadron.ViewModels"
+        xmlns:m="using:EveSquadron.Models"
         xmlns:v="using:EveSquadron.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -87,7 +88,8 @@
             Items="{Binding EveSquadronPlayerInformation}"
             CanUserReorderColumns="True"
             CanUserResizeColumns="True"
-            IsReadOnly="True">
+            IsReadOnly="True"
+            DoubleTapped="PlayerInfoGrid_OnDoubleTapped">
             <DataGrid.Styles>
                 <Style Selector="DataGridRow">
                     <Setter Property="ToolTip.ShowDelay" Value="250" />
@@ -108,11 +110,10 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Character Name" Binding="{Binding CharacterName}" />
-                <DataGridTextColumn Header="Security Status"
-                                    Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}}" />
-                <DataGridTextColumn Header="Corporation" Binding="{Binding CorporationName}" />
-                <DataGridTextColumn Header="Alliance" Binding="{Binding AllianceName}" />
+                <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.CharacterName}" Binding="{Binding Character.Name}" />
+                <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.SecurityStatus}" Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}}" />
+                <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.Corporation}" Binding="{Binding Corporation.Name}" />
+                <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.Alliance}" Binding="{Binding Alliance.Name}" />
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

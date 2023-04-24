@@ -10,7 +10,7 @@
     </Design.DataContext>
     
     <StackPanel Grid.IsSharedSizeScope="True">
-        <HeaderedContentControl Header="{Binding CharacterName, StringFormat='Character Statistics for {0}'}">
+        <HeaderedContentControl Header="{Binding Character.Name, StringFormat='Character Statistics for {0}'}">
             <Grid RowDefinitions="Auto, Auto,Auto">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="Descriptions" />

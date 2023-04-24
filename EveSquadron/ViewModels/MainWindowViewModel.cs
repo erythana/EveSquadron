@@ -11,6 +11,7 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using EveSquadron.DataAccess.Interfaces;
 using EveSquadron.Models;
+using EveSquadron.Models.EVE.Data;
 using EveSquadron.Models.EveSquadron;
 using EveSquadron.Models.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -112,6 +113,24 @@ public class MainWindowViewModel : ViewModelBase
 
     #endregion
 
+    #region zKillboard Navigation
+
+    public void OpenZKillboardLinkFor(EveSquadronPlayerInformation target, string clickedColumn)
+    {
+        var targetUrl = clickedColumn switch
+        {
+            MainDataGridHeaderNames.CharacterName => $"{AppConstants.ZKillboardUrls.Character}/{target.Character.ID}",
+            MainDataGridHeaderNames.Corporation when target.Corporation is not null => $"{AppConstants.ZKillboardUrls.Corporation}/{target.Corporation.ID}",
+            MainDataGridHeaderNames.Alliance when target.Alliance is not null  =>  $"{AppConstants.ZKillboardUrls.Alliance}/{target.Alliance.ID}",
+            _ => string.Empty
+        };
+        if (string.IsNullOrWhiteSpace(targetUrl)) return;
+        
+        Process.Start(new ProcessStartInfo(targetUrl) { UseShellExecute = true });
+    }
+
+    #endregion
+
     #region helper methods
 
     private static TimeSpan TryParseClipboardPollingRate(string? configuredPollingRate)
@@ -143,7 +162,7 @@ public class MainWindowViewModel : ViewModelBase
                 .Distinct()
                 .ToList();
 
-            var nameCharacterLimit = ApplicationConstants.EveAPILimits.PostUniverseIDsNameCharacterLimit;
+            var nameCharacterLimit = AppConstants.EveAPILimits.PostUniverseIDsNameCharacterLimit;
             if (clipboardSplit.Any(x => x.Length > nameCharacterLimit))
             {
                 _logger.LogDebug($"TryParseClipboardContentForEve: Could not load player information. These arent proper eve names, the limit on characters in a name is {nameCharacterLimit}");

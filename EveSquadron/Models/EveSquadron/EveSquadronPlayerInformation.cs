@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
+using EveSquadron.Models.EVE.Data;
 
 namespace EveSquadron.Models.EveSquadron;
 
@@ -10,12 +11,12 @@ public class EveSquadronPlayerInformation : ModelBase
     #region member fields
 
     private int _id;
-    private string _characterName;
+    private EveNameIDMapping _character;
     private DateTime? _birthday;
     private Task<Bitmap?> _characterImage;
     private float _securityStanding;
-    private string? _corporationName;
-    private string? _allianceName;
+    private EveNameIDMapping? _corporation;
+    private EveNameIDMapping? _alliance;
     private Lazy<Task<EveSquadronPlayerDetails>> _playerDetails;
     
     #endregion
@@ -27,9 +28,9 @@ public class EveSquadronPlayerInformation : ModelBase
         set => SetProperty(ref _id, value);
     }
 
-    public string CharacterName {
-        get => _characterName;
-        set => SetProperty(ref _characterName, value);
+    public EveNameIDMapping Character {
+        get => _character;
+        set => SetProperty(ref _character, value);
     }
 
     public DateTime? Birthday {
@@ -47,14 +48,14 @@ public class EveSquadronPlayerInformation : ModelBase
         set => SetProperty(ref _securityStanding, value);
     }
 
-    public string? CorporationName {
-        get => _corporationName;
-        set => SetProperty(ref _corporationName, value);
+    public EveNameIDMapping? Corporation {
+        get => _corporation;
+        set => SetProperty(ref _corporation, value);
     }
 
-    public string? AllianceName {
-        get => _allianceName;
-        set => SetProperty(ref _allianceName, value);
+    public EveNameIDMapping? Alliance {
+        get => _alliance;
+        set => SetProperty(ref _alliance, value);
     }
 
     public Lazy<Task<EveSquadronPlayerDetails>> PlayerDetails {

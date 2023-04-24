@@ -47,7 +47,7 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
             var currentPlayer = new EveSquadronPlayerInformation
             {
                 ID = character.ID,
-                CharacterName = character.Name,
+                Character = character,
                 CharacterImage = _eveDataRepository.GetPortraitFrom(character.ID, 32),
                 PlayerDetails = GetLazyPlayerDetails(character)
             };
@@ -66,8 +66,8 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
 
         var nameLookup = await _eveDataRepository.GetNamesFrom(GetValidIDs(charInfo.CorporationID, charInfo.AllianceID));
         var eveNameLookups = nameLookup.ToList();
-        currentPlayer.CorporationName = eveNameLookups.FirstOrDefault(c => c.ID == charInfo.CorporationID)?.Name;
-        currentPlayer.AllianceName = eveNameLookups.FirstOrDefault(a => a.ID == charInfo.AllianceID)?.Name;
+        currentPlayer.Corporation = eveNameLookups.FirstOrDefault(c => c.ID == charInfo.CorporationID);
+        currentPlayer.Alliance = eveNameLookups.FirstOrDefault(a => a.ID == charInfo.AllianceID);
     }
 
     private Lazy<Task<EveSquadronPlayerDetails>> GetLazyPlayerDetails(EveNameIDMapping character) =>
@@ -77,7 +77,7 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
             {
                 //Run these in sequence and also use a delay, zKillboard Rate Limit is harsh
                 var zKillHistory = await _zKillboardDataRepository.GetKillboardHistoryFor(character.ID);
-                await Task.Delay(ApplicationConstants.ZKillboardAPILimits.ZKillboardRateLimitMs);
+                await Task.Delay(AppConstants.ZKillboardAPILimits.ZKillboardRateLimitMs);
                 var zKillStatistic = await _zKillboardDataRepository.GetStatisticsFrom(character.ID);
                 return new EveSquadronPlayerDetails
                 {

@@ -39,7 +39,7 @@ public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
         var inputNames = names.ToArray();
         _logger.LogDebug($"Loading Character IDs from endpoint '{idEndpoint}' for {inputNames.Length} characters.");
 
-        var namesLookupLimit = ApplicationConstants.EveAPILimits.PostUniverseIDsPlayerCountLimit;
+        var namesLookupLimit = AppConstants.EveAPILimits.PostUniverseIDsPlayerCountLimit;
         var results = new List<JObject>();
 
         for (var i = 0; i < inputNames.Length; i += namesLookupLimit)
@@ -58,7 +58,7 @@ public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
             resultObject.Merge(resultPart);
         }
 
-        return JsonSerializer.Deserialize<T>(resultObject.ToString(), ApplicationConstants.AppDefaultSerializerOptions)!;
+        return JsonSerializer.Deserialize<T>(resultObject.ToString(), AppConstants.AppDefaultSerializerOptions)!;
     }
 
     public Task<byte[]> GetPortraitByteArrayAsync(string portraitEndpoint)
@@ -71,7 +71,7 @@ public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
     {
         var inputIDs = ids.ToArray();
         _logger.LogDebug($"Loading CharacterNames from endpoint '{namesEndpoint}' for {inputIDs.Length} IDs.");
-        var idsLookupLimit = ApplicationConstants.EveAPILimits.PostUniverseNamesIDsLimit;
+        var idsLookupLimit = AppConstants.EveAPILimits.PostUniverseNamesIDsLimit;
 
         var results = new List<JArray>();
 
@@ -91,7 +91,7 @@ public class EveRestDataAccess : RestDataAccessBase, IEveRestDataAccess
             resultObject.Merge(resultPart);
         }
 
-        return JsonSerializer.Deserialize<IEnumerable<T>>(resultObject.ToString(), ApplicationConstants.AppDefaultSerializerOptions)!;
+        return JsonSerializer.Deserialize<IEnumerable<T>>(resultObject.ToString(), AppConstants.AppDefaultSerializerOptions)!;
     }
 
     public Task<T> GetDetailedKillInformationFor<T>(string killmailsEndpoint, string killmailHash, int killmailID)

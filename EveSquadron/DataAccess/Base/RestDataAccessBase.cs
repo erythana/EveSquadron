@@ -23,7 +23,7 @@ public abstract class RestDataAccessBase
     {
         _logger.LogDebug($"Executing GetAllAsync on endpoint '{endpointUrl}'");
         var content = await _httpClient.GetStringAsync(endpointUrl);
-        return JsonSerializer.Deserialize<List<T>>(content, ApplicationConstants.AppDefaultSerializerOptions)!;
+        return JsonSerializer.Deserialize<List<T>>(content, AppConstants.AppDefaultSerializerOptions)!;
     }
 
     protected async Task<IEnumerable<T>> GetAllPOSTAsync<T>(string endpointUrl, HttpContent payload)
@@ -34,7 +34,7 @@ public abstract class RestDataAccessBase
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<List<T>>(content, ApplicationConstants.AppDefaultSerializerOptions)!;
+        return JsonSerializer.Deserialize<List<T>>(content, AppConstants.AppDefaultSerializerOptions)!;
     }
 
     protected async Task<T> GetByIdAsync<T>(string endpointUrl)
@@ -42,7 +42,7 @@ public abstract class RestDataAccessBase
         _logger.LogDebug($"Executing GetByIdAsync on endpoint '{endpointUrl}'");
         var content = await _httpClient.GetStringAsync($"{endpointUrl}");
         
-        return JsonSerializer.Deserialize<T>(content, ApplicationConstants.AppDefaultSerializerOptions)!;
+        return JsonSerializer.Deserialize<T>(content, AppConstants.AppDefaultSerializerOptions)!;
     }
 
     protected async Task<T> CreateAsync<T>(string endpointUrl, T item)
@@ -56,7 +56,7 @@ public abstract class RestDataAccessBase
         response.EnsureSuccessStatusCode();
 
         var createdContent = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<T>(createdContent, ApplicationConstants.AppDefaultSerializerOptions)!;
+        return JsonSerializer.Deserialize<T>(createdContent, AppConstants.AppDefaultSerializerOptions)!;
     }
 
     protected async Task<T> CreateAsync<T>(string endpointUrl, HttpContent jsonPayload)
@@ -67,7 +67,7 @@ public abstract class RestDataAccessBase
         response.EnsureSuccessStatusCode();
 
         var createdContent = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<T>(createdContent, ApplicationConstants.AppDefaultSerializerOptions)!;
+        return JsonSerializer.Deserialize<T>(createdContent, AppConstants.AppDefaultSerializerOptions)!;
     }
 
     protected async Task<T> UpdateAsync<T>(string endpointUrl, int id, T item)
@@ -80,7 +80,7 @@ public abstract class RestDataAccessBase
         response.EnsureSuccessStatusCode();
 
         var updatedContent = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<T>(updatedContent, ApplicationConstants.AppDefaultSerializerOptions)!;
+        return JsonSerializer.Deserialize<T>(updatedContent, AppConstants.AppDefaultSerializerOptions)!;
     }
 
     protected async Task DeleteAsync(string endpointUrl, int id)

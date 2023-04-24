@@ -3,8 +3,12 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.LogicalTree;
 using EveSquadron.Models;
+using EveSquadron.Models.EVE.Data;
+using EveSquadron.Models.EveSquadron;
 using EveSquadron.ViewModels;
 using EveSquadron.Views.Converters;
 
@@ -24,7 +28,7 @@ public partial class MainWindow : Window
         if (DataContext is not MainWindowViewModel mainWindowViewModel)
             return;
 
-        Title = ApplicationConstants.ApplicationName;
+        Title = AppConstants.ApplicationName;
 
         var isDarkModeBinding = new Binding
         {
@@ -54,5 +58,14 @@ public partial class MainWindow : Window
     {
         if (sender is not Button button) return;
         button.IsVisible = false;
+    }
+
+    private void PlayerInfoGrid_OnDoubleTapped(object? sender, TappedEventArgs e)
+    {
+        if (sender is not DataGrid {DataContext: MainWindowViewModel mainWindowViewModel, CurrentColumn.Header: string clickedColumn } ||
+            e.Source is not ILogical logical ||
+            logical.GetLogicalParent<DataGridCell>()?.DataContext is not EveSquadronPlayerInformation playerInformation) return;
+        
+       mainWindowViewModel.OpenZKillboardLinkFor(playerInformation, clickedColumn);
     }
 }

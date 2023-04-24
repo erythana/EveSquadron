@@ -28,7 +28,7 @@ internal class Program
         }
         catch (Exception e)
         {
-            startupLogger.LogCritical(e, $"Unhandled exception in {ApplicationConstants.ApplicationName} - Application shutdown.");
+            startupLogger.LogCritical(e, $"Unhandled exception in {AppConstants.ApplicationName} - Application shutdown.");
         }
 
     }

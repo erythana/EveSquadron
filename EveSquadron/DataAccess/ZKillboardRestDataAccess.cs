@@ -52,6 +52,6 @@ public sealed class ZKillboardRestDataAccess : RestDataAccessBase, IZKillboardRe
         _logger.LogDebug($"Executing GetByIdAsync on endpoint '{endpointUrl}{id}/'");
         var content = await _httpClient.GetStringAsync($"{endpointUrl}{id}/");
         
-        return JsonSerializer.Deserialize<T>(content, ApplicationConstants.AppDefaultSerializerOptions)!;
+        return JsonSerializer.Deserialize<T>(content, AppConstants.AppDefaultSerializerOptions)!;
     }
 }

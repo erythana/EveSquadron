@@ -132,7 +132,7 @@ public static class ContainerConfiguration
 
     private static void AddDefaultRequestHeaders(HttpClient httpClient)
     {
-        httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", ApplicationConstants.UserAgentHeader);
+        httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", AppConstants.UserAgentHeader);
         httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Content-Encoding", "gzip");
         httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
     }

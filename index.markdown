@@ -140,6 +140,6 @@ You can send an in-game mail to "Christian Gaterau" with your feedback.
 Additionally, if you find this tool useful and would like to support its continued development, consider donating some ISK.<br />
 Your contributions will keep me from doing PvE and i have more time so this tool remains up-to-date and useful for all Eve Online players.
 
-`
+```
 "Give me money. Money me! Money now! Me a money needing a lot now."
-`
+```

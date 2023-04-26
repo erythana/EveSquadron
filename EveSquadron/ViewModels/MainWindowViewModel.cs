@@ -13,7 +13,6 @@ using Avalonia.Styling;
 using Avalonia.Threading;
 using EveSquadron.DataAccess.Interfaces;
 using EveSquadron.Models;
-using EveSquadron.Models.EVE.Data;
 using EveSquadron.Models.EveSquadron;
 using EveSquadron.Models.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -47,8 +46,8 @@ public class MainWindowViewModel : ViewModelBase
         _updateAvailable = Task.FromResult<bool?>(false);
         _playerInformationDataAggregator = playerInformationDataAggregator;
         _playerInformationDataAggregator.ParsedNewID += OnParsedNewID;
-        _idCountDictionary = new Dictionary<int, int>();
         _eveSquadronPlayerInformation = new ObservableCollection<EveSquadronPlayerInformation>();
+        _idCountDictionary = new Dictionary<int, int>();
         _releaseVersionChecker = releaseVersionChecker;
         _logger = logger;
 
@@ -95,7 +94,6 @@ public class MainWindowViewModel : ViewModelBase
             foreach (var member in allianceMembers)
                 member.AlliancePasteCount = allianceMembers.Count;
         }
-
         Dispatcher.UIThread.InvokeAsync(() => EveSquadronPlayers.Refresh());
     }
 

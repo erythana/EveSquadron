@@ -34,6 +34,12 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
 
     #endregion
 
+    #region events
+    
+    public event EventHandler<(int? CorporationID, int? AllianceID)> ParsedNewID;
+
+    #endregion
+
     #region interface implementation
     
     public async IAsyncEnumerable<EveSquadronPlayerInformation> GetAggregatedItemsFor(IEnumerable<string> players)
@@ -57,8 +63,6 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
         }
     }
 
-    public event EventHandler<int?> ParsedNewID;
-
     private async Task SetCharacterInfo(EveSquadronPlayerInformation currentPlayer)
     {
         var charInfo = await _eveDataRepository.GetCharacterInformationFor(currentPlayer.ID);
@@ -70,8 +74,7 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
         currentPlayer.Corporation = eveNameLookups.FirstOrDefault(c => c.ID == charInfo.CorporationID);
         currentPlayer.Alliance = eveNameLookups.FirstOrDefault(a => a.ID == charInfo.AllianceID);
         
-        ParsedNewID.Invoke(this, currentPlayer.Corporation?.ID);
-        ParsedNewID.Invoke(this, currentPlayer.Alliance?.ID);
+        ParsedNewID.Invoke(this, (currentPlayer.Corporation?.ID, currentPlayer.Alliance?.ID));
     }
 
     private Lazy<Task<EveSquadronPlayerDetails>> GetLazyPlayerDetails(EveNameIDMapping character) =>

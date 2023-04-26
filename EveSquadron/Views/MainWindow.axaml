@@ -5,6 +5,8 @@
         xmlns:v="using:EveSquadron.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:eveSquadron="clr-namespace:EveSquadron"
+        xmlns:converters="clr-namespace:EveSquadron.Views.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EveSquadron.Views.MainWindow"
         Icon="/Resources/icons/1337_64_16.ico"
@@ -14,6 +16,7 @@
         <vm:DesignTimeMainWindowViewModel />
     </Design.DataContext>
     <Window.Resources>
+        <converters:GroupCountVisibilityConverter x:Key="GroupCountVisibilityConverter" />
     </Window.Resources>
     <DockPanel>
         <DockPanel Margin="10,0" DockPanel.Dock="Bottom" Height="40">
@@ -25,7 +28,6 @@
                 x:Name="IsDarkMode"
                 Content="Dark-Mode"
                 Margin="5,0" />
-            
             <!-- Update Information - Material Icon "System Update" -->
             <Button
                 Margin="5,5"
@@ -82,7 +84,7 @@
                     Data="M122 911v-71h99l-5-7q-58-66-88-128.483Q98 642.034 98 580q0-121.482 74-214.241Q246 273 362 243v96q-77 24-123 91.144Q193 497.287 193 580q0 48 15.5 90.5T264 750l24 21v-98h72v238H122Zm357.877-128Q464 783 452.5 771.377q-11.5-11.623-11.5-27.5t11.623-27.377q11.623-11.5 27.5-11.5t27.377 11.623q11.5 11.623 11.5 27.5T507.377 771.5q-11.623 11.5-27.5 11.5ZM446 632V366h72v266h-72Zm151 278v-97q77-23 123-90.144Q766 655.713 766 573q0-50-16.5-93T695 402l-24-21v98h-72V241h238v71H737l6 7q64.606 59.71 91.303 125.891Q861 511.071 861 573q0 120.482-74.5 213.741Q712 880 597 910Z" />
             </Button>
         </DockPanel>
-        
+
         <DataGrid
             x:Name="PlayerInfoGrid"
             Items="{Binding EveSquadronPlayerInformation}"
@@ -110,10 +112,31 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.CharacterName}" Binding="{Binding Character.Name}" />
-                <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.SecurityStatus}" Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}}" />
-                <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.Corporation}" Binding="{Binding Corporation.Name}" />
-                <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.Alliance}" Binding="{Binding Alliance.Name}" />
+                <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.CharacterName}"
+                                    Binding="{Binding Character.Name}" />
+                <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.SecurityStatus}"
+                                    Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}}" />
+
+                <DataGridTemplateColumn  Header="{x:Static m:MainDataGridHeaderNames.Corporation}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="5,5">
+                                <TextBlock Text="{Binding Corporation.Name}" />
+                                <TextBlock Text="{Binding CorporationPasteCount, StringFormat=' [{0}]'}" IsVisible="{Binding CorporationPasteCount, Converter={StaticResource GroupCountVisibilityConverter}}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn  Header="{x:Static m:MainDataGridHeaderNames.Alliance}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="5,5">
+                                <TextBlock Text="{Binding Alliance.Name}" />
+                                <TextBlock Text="{Binding AlliancePasteCount, StringFormat=' [{0}]'}" IsVisible="{Binding AlliancePasteCount, Converter={StaticResource GroupCountVisibilityConverter}}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

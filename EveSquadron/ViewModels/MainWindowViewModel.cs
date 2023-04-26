@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -32,6 +33,7 @@ public class MainWindowViewModel : ViewModelBase
     private bool _alwaysOnTop;
     private ThemeVariant _themeVariant;
     private Task<bool?> _updateAvailable;
+    private readonly Dictionary<int, int> _idCountDictionary;
 
     #endregion
 
@@ -42,9 +44,11 @@ public class MainWindowViewModel : ViewModelBase
         _themeVariant = ThemeVariant.Default;
         _updateAvailable = Task.FromResult<bool?>(false);
         _playerInformationDataAggregator = playerInformationDataAggregator;
+        _playerInformationDataAggregator.ParsedNewID += PlayerInformationDataAggregatorOnParsedNewID;
+        _idCountDictionary = new Dictionary<int, int>();
         _releaseVersionChecker = releaseVersionChecker;
         _logger = logger;
-        
+
         var version = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly()!.Location).ProductVersion ?? "";
         if(_releaseVersionChecker.TryParseVersionNumber(version, out var recognizedVersion))
             UpdateAvailable = _releaseVersionChecker.IsNewReleaseAvailable(recognizedVersion.major, recognizedVersion.minor, recognizedVersion.patch);
@@ -65,6 +69,23 @@ public class MainWindowViewModel : ViewModelBase
         {
             IsEnabled = true
         };
+    }
+
+    private void PlayerInformationDataAggregatorOnParsedNewID(object? sender, int? e)
+    {
+        if (e is { } id)
+        {
+            if (!_idCountDictionary.TryAdd(id, 1))
+                _idCountDictionary[id] += 1;
+
+            var corpMembers = EveSquadronPlayerInformation.Where(x => x.Corporation?.ID == id).ToList();
+            foreach (var member in corpMembers)
+                member.CorporationPasteCount = corpMembers.Count;
+            
+            var allianceMembers = EveSquadronPlayerInformation.Where(x => x.Alliance?.ID == id).ToList();
+            foreach (var member in allianceMembers)
+                member.AlliancePasteCount = allianceMembers.Count;
+        }
     }
 
     #endregion
@@ -107,27 +128,8 @@ public class MainWindowViewModel : ViewModelBase
         set => SetProperty(ref _themeVariant, value);
     }
 
-
     // ReSharper disable once InconsistentNaming
     public ObservableCollection<EveSquadronPlayerInformation> EveSquadronPlayerInformation { get; set; }
-
-    #endregion
-
-    #region zKillboard Navigation
-
-    public void OpenZKillboardLinkFor(EveSquadronPlayerInformation target, string clickedColumn)
-    {
-        var targetUrl = clickedColumn switch
-        {
-            MainDataGridHeaderNames.CharacterName => $"{AppConstants.ZKillboardUrls.Character}/{target.Character.ID}",
-            MainDataGridHeaderNames.Corporation when target.Corporation is not null => $"{AppConstants.ZKillboardUrls.Corporation}/{target.Corporation.ID}",
-            MainDataGridHeaderNames.Alliance when target.Alliance is not null  =>  $"{AppConstants.ZKillboardUrls.Alliance}/{target.Alliance.ID}",
-            _ => string.Empty
-        };
-        if (string.IsNullOrWhiteSpace(targetUrl)) return;
-        
-        Process.Start(new ProcessStartInfo(targetUrl) { UseShellExecute = true });
-    }
 
     #endregion
 
@@ -155,6 +157,7 @@ public class MainWindowViewModel : ViewModelBase
             _logger.LogDebug("New Clipboard-Copy detected. Trying to parse player names");
             
             EveSquadronPlayerInformation.Clear();
+            _idCountDictionary.Clear();
 
             var clipboardSplit = Regex.Split(clipboardContent, "\r?\n")//This replaces Environment.NewLine and splits the newlines  because, for some reason, Windows used \n on a users system
                 .Where(s => !string.IsNullOrWhiteSpace(s))
@@ -179,9 +182,27 @@ public class MainWindowViewModel : ViewModelBase
             _logger.LogError(e, "Could not load player information. Check input from clipboard!.");
         }
     }
-    
+
     private void OnUpdateButtonClicked() => 
         Process.Start(new ProcessStartInfo(LatestReleasePath) { UseShellExecute = true });
+
+    #endregion
+    
+    #region zKillboard Navigation
+
+    public void OpenZKillboardLinkFor(EveSquadronPlayerInformation target, string clickedColumn)
+    {
+        var targetUrl = clickedColumn switch
+        {
+            MainDataGridHeaderNames.CharacterName => $"{AppConstants.ZKillboardUrls.Character}/{target.Character.ID}",
+            MainDataGridHeaderNames.Corporation when target.Corporation is not null => $"{AppConstants.ZKillboardUrls.Corporation}/{target.Corporation.ID}",
+            MainDataGridHeaderNames.Alliance when target.Alliance is not null  =>  $"{AppConstants.ZKillboardUrls.Alliance}/{target.Alliance.ID}",
+            _ => string.Empty
+        };
+        if (string.IsNullOrWhiteSpace(targetUrl)) return;
+        
+        Process.Start(new ProcessStartInfo(targetUrl) { UseShellExecute = true });
+    }
 
     #endregion
 }

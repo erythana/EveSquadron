@@ -18,7 +18,9 @@ public class EveSquadronPlayerInformation : ModelBase
     private EveNameIDMapping? _corporation;
     private EveNameIDMapping? _alliance;
     private Lazy<Task<EveSquadronPlayerDetails>> _playerDetails;
-    
+    private int _corporationPasteCount;
+    private int _alliancePasteCount;
+
     #endregion
     
     #region properties
@@ -52,10 +54,20 @@ public class EveSquadronPlayerInformation : ModelBase
         get => _corporation;
         set => SetProperty(ref _corporation, value);
     }
+    
+    public int CorporationPasteCount {
+        get => _corporationPasteCount;
+        set => SetProperty(ref _corporationPasteCount, value);
+    }
 
     public EveNameIDMapping? Alliance {
         get => _alliance;
         set => SetProperty(ref _alliance, value);
+    }
+    
+    public int AlliancePasteCount {
+        get => _alliancePasteCount;
+        set => SetProperty(ref _alliancePasteCount, value);
     }
 
     public Lazy<Task<EveSquadronPlayerDetails>> PlayerDetails {

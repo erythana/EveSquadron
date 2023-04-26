@@ -5,7 +5,6 @@
         xmlns:v="using:EveSquadron.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:eveSquadron="clr-namespace:EveSquadron"
         xmlns:converters="clr-namespace:EveSquadron.Views.Converters"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EveSquadron.Views.MainWindow"
@@ -87,11 +86,13 @@
 
         <DataGrid
             x:Name="PlayerInfoGrid"
-            Items="{Binding EveSquadronPlayerInformation}"
+            Items="{Binding EveSquadronPlayers}"
             CanUserReorderColumns="True"
             CanUserResizeColumns="True"
+            CanUserSortColumns="True"
             IsReadOnly="True"
             DoubleTapped="PlayerInfoGrid_OnDoubleTapped">
+            <!-- ReSharper disable Xaml.BindingWithContextNotResolved -->
             <DataGrid.Styles>
                 <Style Selector="DataGridRow">
                     <Setter Property="ToolTip.ShowDelay" Value="250" />
@@ -114,10 +115,11 @@
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.CharacterName}"
                                     Binding="{Binding Character.Name}" />
+               
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.SecurityStatus}"
                                     Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}}" />
 
-                <DataGridTemplateColumn  Header="{x:Static m:MainDataGridHeaderNames.Corporation}">
+                <DataGridTemplateColumn  Header="{x:Static m:MainDataGridHeaderNames.Corporation}"  SortMemberPath="Corporation.Name">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="5,5">
@@ -127,7 +129,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn  Header="{x:Static m:MainDataGridHeaderNames.Alliance}">
+                <DataGridTemplateColumn  Header="{x:Static m:MainDataGridHeaderNames.Alliance}" SortMemberPath="Alliance.Name">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="5,5">
@@ -138,6 +140,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
+            <!-- ReSharper restore Xaml.BindingWithContextNotResolved -->
         </DataGrid>
     </DockPanel>
 

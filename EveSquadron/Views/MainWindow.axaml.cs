@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Specialized;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -29,7 +30,7 @@ public partial class MainWindow : Window
             return;
 
         Title = AppConstants.ApplicationName;
-
+        
         var isDarkModeBinding = new Binding
         {
             Source = mainWindowViewModel,
@@ -53,7 +54,7 @@ public partial class MainWindow : Window
         };
         this.Bind(TopmostProperty, alwaysOnTopBinding);
     }
-
+    
     private void OnFetchErrorClick(object? sender, RoutedEventArgs e)
     {
         if (sender is not Button button) return;

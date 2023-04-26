@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using EveSquadron.DataAccess.Interfaces;
@@ -28,12 +29,13 @@ public class MainWindowViewModel : ViewModelBase
     private readonly IReleaseVersionChecker _releaseVersionChecker;
     private readonly ILogger<MainWindowViewModel> _logger;
     private readonly DispatcherTimer _clipboardPollingTimer;
+    
     private string? _previousClipboardContent = string.Empty;
-
     private bool _alwaysOnTop;
     private ThemeVariant _themeVariant;
     private Task<bool?> _updateAvailable;
     private readonly Dictionary<int, int> _idCountDictionary;
+    private ObservableCollection<EveSquadronPlayerInformation> EveSquadronPlayerInformation { get; }
 
     #endregion
 
@@ -44,7 +46,7 @@ public class MainWindowViewModel : ViewModelBase
         _themeVariant = ThemeVariant.Default;
         _updateAvailable = Task.FromResult<bool?>(false);
         _playerInformationDataAggregator = playerInformationDataAggregator;
-        _playerInformationDataAggregator.ParsedNewID += PlayerInformationDataAggregatorOnParsedNewID;
+        _playerInformationDataAggregator.ParsedNewID += OnParsedNewID;
         _idCountDictionary = new Dictionary<int, int>();
         _releaseVersionChecker = releaseVersionChecker;
         _logger = logger;
@@ -55,6 +57,7 @@ public class MainWindowViewModel : ViewModelBase
 
         UpdateClickedCommand = ReactiveCommand.Create(OnUpdateButtonClicked);
         EveSquadronPlayerInformation = new ObservableCollection<EveSquadronPlayerInformation>();
+        EveSquadronPlayers = new DataGridCollectionView(EveSquadronPlayerInformation);
         ThemeVariant = settings.Theme switch
         {
             { } theme when theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Dark,
@@ -71,21 +74,29 @@ public class MainWindowViewModel : ViewModelBase
         };
     }
 
-    private void PlayerInformationDataAggregatorOnParsedNewID(object? sender, int? e)
+    //This whole method (+Event) is a workaround to provide a point where the IDs are loaded and we can work with the data from there. Each ID causes enumerations over the whole collection and UI refresh - try to get rid of that in the (close) future!
+    private void OnParsedNewID(object? sender, (int? CorporationID, int? AllianceID) newIDs)
     {
-        if (e is { } id)
+        if (newIDs.CorporationID is not null)
         {
-            if (!_idCountDictionary.TryAdd(id, 1))
-                _idCountDictionary[id] += 1;
-
-            var corpMembers = EveSquadronPlayerInformation.Where(x => x.Corporation?.ID == id).ToList();
+            if (!_idCountDictionary.TryAdd(newIDs.CorporationID.Value, 1))
+                _idCountDictionary[newIDs.CorporationID.Value] += 1;
+                
+            var corpMembers = EveSquadronPlayerInformation.Where(x => x.Corporation?.ID == newIDs.CorporationID).ToList();
             foreach (var member in corpMembers)
                 member.CorporationPasteCount = corpMembers.Count;
-            
-            var allianceMembers = EveSquadronPlayerInformation.Where(x => x.Alliance?.ID == id).ToList();
+        }
+        if (newIDs.AllianceID is not null)
+        {
+            if (!_idCountDictionary.TryAdd(newIDs.AllianceID.Value, 1))
+                _idCountDictionary[newIDs.AllianceID.Value] += 1;
+                
+            var allianceMembers = EveSquadronPlayerInformation.Where(x => x.Alliance?.ID == newIDs.AllianceID).ToList();
             foreach (var member in allianceMembers)
                 member.AlliancePasteCount = allianceMembers.Count;
         }
+            
+        Dispatcher.UIThread.InvokeAsync(() => EveSquadronPlayers.Refresh());
     }
 
     #endregion
@@ -129,7 +140,8 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     // ReSharper disable once InconsistentNaming
-    public ObservableCollection<EveSquadronPlayerInformation> EveSquadronPlayerInformation { get; set; }
+
+    public DataGridCollectionView EveSquadronPlayers { get; }
 
     #endregion
 

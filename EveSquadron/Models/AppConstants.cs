@@ -5,7 +5,7 @@ namespace EveSquadron.Models;
 public static class AppConstants
 {
     public const string ApplicationName = "Eve Squadron";
-    public const string UserAgentHeader = "erythanadevsup@gmail.com";
+    public const string UserAgentHeader = $"{ApplicationName} - erythanadevsup@gmail.com";
 
     #region Serialization options
     

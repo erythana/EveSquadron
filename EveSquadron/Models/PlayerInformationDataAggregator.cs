@@ -2,16 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EveSquadron.DataAccess.Interfaces;
 using EveSquadron.DataRepositories.Interfaces;
 using EveSquadron.Extensions;
-using EveSquadron.Models;
 using EveSquadron.Models.EVE.Data;
 using EveSquadron.Models.EveSquadron;
+using EveSquadron.Models.Interfaces;
 using EveSquadron.Models.ZKillboard.Data;
 using Microsoft.Extensions.Logging;
 
-namespace EveSquadron.DataAccess;
+namespace EveSquadron.Models;
 
 public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
 {
@@ -37,6 +36,7 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
     #region events
     
     public event EventHandler<(int? CorporationID, int? AllianceID)> ParsedNewID;
+    public event EventHandler? OnValidPaste;
 
     #endregion
 
@@ -45,6 +45,9 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
     public async IAsyncEnumerable<EveSquadronPlayerInformation> GetAggregatedItemsFor(IEnumerable<string> players)
     {
         var eveNameIDMappings = await _eveDataRepository.GetIDsFrom(players);
+        if (eveNameIDMappings.Characters.Any())
+            OnValidPaste?.Invoke(this, EventArgs.Empty);
+        
         _logger.LogDebug($"Retrieved {eveNameIDMappings.Characters.Count} characters from GetIDsFrom.");
         
         foreach (var character in eveNameIDMappings.Characters)

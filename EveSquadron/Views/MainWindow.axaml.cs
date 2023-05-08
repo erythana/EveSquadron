@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Specialized;
+using System.Linq;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -7,6 +9,7 @@ using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.LogicalTree;
+using Avalonia.Media.Imaging;
 using EveSquadron.Models;
 using EveSquadron.Models.EVE.Data;
 using EveSquadron.Models.EveSquadron;
@@ -68,5 +71,15 @@ public partial class MainWindow : Window
             logical.GetLogicalParent<DataGridCell>()?.DataContext is not EveSquadronPlayerInformation playerInformation) return;
         
        mainWindowViewModel.OpenZKillboardLinkFor(playerInformation, clickedColumn);
+    }
+
+    private void PlayerInfoGrid_OnCopyingRowClipboardContent(object? sender, DataGridRowClipboardEventArgs e)
+    {
+        var rowContent = e.ClipboardRowContent.ToList();
+        foreach (var cellContent in rowContent)
+        {
+            if (cellContent.Content is Task<Bitmap>)
+                e.ClipboardRowContent.Remove(cellContent);//Exclude Images from copy
+        }
     }
 }

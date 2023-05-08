@@ -24,17 +24,17 @@ public class MainWindowViewModel : ViewModelBase
 {
     #region member fields
 
+    private readonly ObservableCollection<EveSquadronPlayerInformation> _eveSquadronPlayerInformation;
     private readonly IPlayerInformationDataAggregator _playerInformationDataAggregator;
     private readonly IReleaseVersionChecker _releaseVersionChecker;
-    private readonly ILogger<MainWindowViewModel> _logger;
+    private readonly Dictionary<int, int> _idCountDictionary;
     private readonly DispatcherTimer _clipboardPollingTimer;
-    
-    private string? _previousClipboardContent = string.Empty;
+    private readonly ILogger<MainWindowViewModel> _logger;
+
     private bool _alwaysOnTop;
     private ThemeVariant _themeVariant;
     private Task<bool?> _updateAvailable;
-    private readonly Dictionary<int, int> _idCountDictionary;
-    private ObservableCollection<EveSquadronPlayerInformation> _eveSquadronPlayerInformation { get; }
+    private string? _previousClipboardContent = string.Empty;
 
     #endregion
 
@@ -44,15 +44,20 @@ public class MainWindowViewModel : ViewModelBase
     {
         _themeVariant = ThemeVariant.Default;
         _updateAvailable = Task.FromResult<bool?>(false);
+        _idCountDictionary = new Dictionary<int, int>();
+        _eveSquadronPlayerInformation = new ObservableCollection<EveSquadronPlayerInformation>();
         _playerInformationDataAggregator = playerInformationDataAggregator;
         _playerInformationDataAggregator.ParsedNewID += OnParsedNewID;
-        _eveSquadronPlayerInformation = new ObservableCollection<EveSquadronPlayerInformation>();
-        _idCountDictionary = new Dictionary<int, int>();
+        _playerInformationDataAggregator.OnValidPaste += (_, _) =>
+        {
+            _eveSquadronPlayerInformation.Clear();
+            _idCountDictionary.Clear();
+        };
         _releaseVersionChecker = releaseVersionChecker;
         _logger = logger;
 
         var version = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly()!.Location).ProductVersion ?? "";
-        if(_releaseVersionChecker.TryParseVersionNumber(version, out var recognizedVersion))
+        if (_releaseVersionChecker.TryParseVersionNumber(version, out var recognizedVersion))
             UpdateAvailable = _releaseVersionChecker.IsNewReleaseAvailable(recognizedVersion.major, recognizedVersion.minor, recognizedVersion.patch);
 
         UpdateClickedCommand = ReactiveCommand.Create(OnUpdateButtonClicked);
@@ -80,20 +85,22 @@ public class MainWindowViewModel : ViewModelBase
         {
             if (!_idCountDictionary.TryAdd(newIDs.CorporationID.Value, 1))
                 _idCountDictionary[newIDs.CorporationID.Value] += 1;
-                
+
             var corpMembers = _eveSquadronPlayerInformation.Where(x => x.Corporation?.ID == newIDs.CorporationID).ToList();
             foreach (var member in corpMembers)
                 member.CorporationPasteCount = corpMembers.Count;
         }
+
         if (newIDs.AllianceID is not null)
         {
             if (!_idCountDictionary.TryAdd(newIDs.AllianceID.Value, 1))
                 _idCountDictionary[newIDs.AllianceID.Value] += 1;
-                
+
             var allianceMembers = _eveSquadronPlayerInformation.Where(x => x.Alliance?.ID == newIDs.AllianceID).ToList();
             foreach (var member in allianceMembers)
                 member.AlliancePasteCount = allianceMembers.Count;
         }
+
         Dispatcher.UIThread.InvokeAsync(() => EveSquadronPlayers.Refresh());
     }
 
@@ -120,7 +127,7 @@ public class MainWindowViewModel : ViewModelBase
         get => _alwaysOnTop;
         set => SetProperty(ref _alwaysOnTop, value);
     }
-    
+
     public ReactiveCommand<Unit, Unit> UpdateClickedCommand { get; }
 
     public Task<bool?> UpdateAvailable {
@@ -165,11 +172,8 @@ public class MainWindowViewModel : ViewModelBase
                 return;
 
             _logger.LogDebug("New Clipboard-Copy detected. Trying to parse player names");
-            
-            _eveSquadronPlayerInformation.Clear();
-            _idCountDictionary.Clear();
 
-            var clipboardSplit = Regex.Split(clipboardContent, "\r?\n")//This replaces Environment.NewLine and splits the newlines  because, for some reason, Windows used \n on a users system
+            var clipboardSplit = Regex.Split(clipboardContent, "\r?\n") //This replaces Environment.NewLine and splits the newlines  because, for some reason, Windows used \n on a users system
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Select(s => s.Trim())
                 .Distinct()
@@ -181,7 +185,7 @@ public class MainWindowViewModel : ViewModelBase
                 _logger.LogDebug($"TryParseClipboardContentForEve: Could not load player information. These arent proper eve names, the limit on characters in a name is {nameCharacterLimit}");
                 return;
             }
-            
+
             await foreach (var eveSquadronPlayerInformation in _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardSplit))
             {
                 _eveSquadronPlayerInformation.Add(eveSquadronPlayerInformation);
@@ -193,11 +197,14 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private void OnUpdateButtonClicked() => 
-        Process.Start(new ProcessStartInfo(LatestReleasePath) { UseShellExecute = true });
+    private void OnUpdateButtonClicked() =>
+        Process.Start(new ProcessStartInfo(LatestReleasePath)
+        {
+            UseShellExecute = true
+        });
 
     #endregion
-    
+
     #region zKillboard Navigation
 
     public void OpenZKillboardLinkFor(EveSquadronPlayerInformation target, string clickedColumn)
@@ -206,12 +213,15 @@ public class MainWindowViewModel : ViewModelBase
         {
             MainDataGridHeaderNames.CharacterName => $"{AppConstants.ZKillboardUrls.Character}/{target.Character.ID}",
             MainDataGridHeaderNames.Corporation when target.Corporation is not null => $"{AppConstants.ZKillboardUrls.Corporation}/{target.Corporation.ID}",
-            MainDataGridHeaderNames.Alliance when target.Alliance is not null  =>  $"{AppConstants.ZKillboardUrls.Alliance}/{target.Alliance.ID}",
+            MainDataGridHeaderNames.Alliance when target.Alliance is not null => $"{AppConstants.ZKillboardUrls.Alliance}/{target.Alliance.ID}",
             _ => string.Empty
         };
         if (string.IsNullOrWhiteSpace(targetUrl)) return;
-        
-        Process.Start(new ProcessStartInfo(targetUrl) { UseShellExecute = true });
+
+        Process.Start(new ProcessStartInfo(targetUrl)
+        {
+            UseShellExecute = true
+        });
     }
 
     #endregion

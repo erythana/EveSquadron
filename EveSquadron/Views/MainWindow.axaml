@@ -90,6 +90,7 @@
             CanUserReorderColumns="True"
             CanUserResizeColumns="True"
             CanUserSortColumns="True"
+            CopyingRowClipboardContent="PlayerInfoGrid_OnCopyingRowClipboardContent"
             IsReadOnly="True"
             DoubleTapped="PlayerInfoGrid_OnDoubleTapped">
             <!-- ReSharper disable Xaml.BindingWithContextNotResolved -->
@@ -106,35 +107,36 @@
                 </Style>
             </DataGrid.Styles>
             <DataGrid.Columns>
-                <DataGridTemplateColumn>
+                <DataGridTemplateColumn ClipboardContentBinding="{Binding CharacterImage}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Source="{Binding CharacterImage^, FallbackValue='Loading...'}" />
+                            <Image Source="{Binding CharacterImage^, FallbackValue='Loading...', Mode=OneWay}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.CharacterName}"
-                                    Binding="{Binding Character.Name}" />
+                                    Binding="{Binding Character.Name, Mode=OneWay}" />
                
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.SecurityStatus}"
-                                    Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}}" />
+                                    Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}, Mode=OneWay}" />
 
-                <DataGridTemplateColumn  Header="{x:Static m:MainDataGridHeaderNames.Corporation}"  SortMemberPath="Corporation.Name">
+                <DataGridTemplateColumn Header="{x:Static m:MainDataGridHeaderNames.Corporation}" SortMemberPath="Corporation.Name" ClipboardContentBinding="{Binding Corporation.Name}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="5,5">
-                                <TextBlock Text="{Binding Corporation.Name}" />
-                                <TextBlock Text="{Binding CorporationPasteCount, StringFormat=' [{0}]'}" IsVisible="{Binding CorporationPasteCount, Converter={StaticResource GroupCountVisibilityConverter}}" />
+                                <TextBlock Text="{Binding Corporation.Name, Mode=OneWay}" />
+                                <TextBlock Text="{Binding CorporationPasteCount, StringFormat=' [{0}]'}" IsVisible="{Binding CorporationPasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTemplateColumn  Header="{x:Static m:MainDataGridHeaderNames.Alliance}" SortMemberPath="Alliance.Name">
+                
+                <DataGridTemplateColumn Header="{x:Static m:MainDataGridHeaderNames.Alliance}" SortMemberPath="Alliance.Name" ClipboardContentBinding="{Binding Alliance.Name}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="5,5">
-                                <TextBlock Text="{Binding Alliance.Name}" />
-                                <TextBlock Text="{Binding AlliancePasteCount, StringFormat=' [{0}]'}" IsVisible="{Binding AlliancePasteCount, Converter={StaticResource GroupCountVisibilityConverter}}" />
+                                <TextBlock Text="{Binding Alliance.Name, Mode=OneWay}" />
+                                <TextBlock Text="{Binding AlliancePasteCount, StringFormat=' [{0}]'}" IsVisible="{Binding AlliancePasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

@@ -29,6 +29,7 @@ public static class ContainerConfiguration
         _configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.Logging.json")
             .AddJsonFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EveSquadron.appsettings.json"), optional: true)
             .Build();
     }

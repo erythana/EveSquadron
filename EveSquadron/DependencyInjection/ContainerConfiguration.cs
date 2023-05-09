@@ -64,10 +64,7 @@ public static class ContainerConfiguration
             config.AddDebug();
             config.AddConsole();
             if (OperatingSystem.IsWindows())
-                config.AddEventLog(new EventLogSettings
-                {
-                    SourceName = "Eve Squadron"
-                });
+                config.AddEventLog();
         });
     }
 

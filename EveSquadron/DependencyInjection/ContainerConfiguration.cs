@@ -3,30 +3,27 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using Avalonia;
 using EveSquadron.DataAccess;
 using EveSquadron.DataAccess.Interfaces;
 using EveSquadron.Models;
 using EveSquadron.Models.Interfaces;
-using EveSquadron.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Configuration;
-using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Logging.EventLog;
 
 namespace EveSquadron.DependencyInjection;
 
 public static class ContainerConfiguration
 {
     #region member fields
-    
+
     private static readonly IConfiguration _configuration;
-    
+
     #endregion
-    
+
     #region constructor
-    
+
     static ContainerConfiguration()
     {
         _configuration = new ConfigurationBuilder()
@@ -35,7 +32,7 @@ public static class ContainerConfiguration
             .AddJsonFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EveSquadron.appsettings.json"), optional: true)
             .Build();
     }
-    
+
     #endregion
 
     #region Container Initialization/Configuration
@@ -47,18 +44,18 @@ public static class ContainerConfiguration
         .RegisterTransientsNonConvention()
         .RegisterSingletons()
         .RegisterHttpClients();
-    
+
 
     private static IServiceCollection AddConfiguration(this IServiceCollection builder)
     {
         builder.AddSingleton(_configuration);
         return builder;
     }
-    
+
     private static IServiceCollection AddLogging(this IServiceCollection builder)
     {
         var loggingConfiguration = _configuration.GetSection("Logging");
-        
+
         return builder.AddLogging(config =>
         {
             config.ClearProviders();
@@ -66,6 +63,11 @@ public static class ContainerConfiguration
             config.AddConfiguration(loggingConfiguration);
             config.AddDebug();
             config.AddConsole();
+            if (OperatingSystem.IsWindows())
+                config.AddEventLog(new EventLogSettings
+                {
+                    SourceName = "Eve Squadron"
+                });
         });
     }
 
@@ -87,7 +89,7 @@ public static class ContainerConfiguration
 
         return builder;
     }
-    
+
     private static IServiceCollection RegisterTransientsNonConvention(this IServiceCollection builder) => builder
         .AddTransient<IReleaseVersionChecker, GithubReleaseVersionChecker>();
 
@@ -107,7 +109,8 @@ public static class ContainerConfiguration
         builder.AddHttpClient<IEveRestDataAccess, EveRestDataAccess>(AddDefaultRequestHeaders).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
         {
             MaxConnectionsPerServer = 100
-        });;
+        });
+        ;
         return builder;
     }
 
@@ -116,7 +119,7 @@ public static class ContainerConfiguration
         builder.AddHttpClient<IZKillboardRestDataAccess, ZKillboardRestDataAccess>(AddDefaultRequestHeaders);
         return builder;
     }
-    
+
     private static IServiceCollection AddGithubHttpClients(this IServiceCollection builder)
     {
         builder.AddHttpClient<IGithubReleaseDataAccess, GithubReleaseDataAccess>(AddDefaultRequestHeaders);

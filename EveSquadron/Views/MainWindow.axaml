@@ -90,8 +90,10 @@
             CanUserReorderColumns="True"
             CanUserResizeColumns="True"
             CanUserSortColumns="True"
-            CopyingRowClipboardContent="PlayerInfoGrid_OnCopyingRowClipboardContent"
             IsReadOnly="True"
+            LoadingRow="PlayerInfoGrid_OnLoadingRow"
+            UnloadingRow="PlayerInfoGrid_OnUnloadingRow"
+            CopyingRowClipboardContent="PlayerInfoGrid_OnCopyingRowClipboardContent"
             DoubleTapped="PlayerInfoGrid_OnDoubleTapped">
             <!-- ReSharper disable Xaml.BindingWithContextNotResolved -->
             <DataGrid.Styles>

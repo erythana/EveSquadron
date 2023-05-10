@@ -73,7 +73,6 @@ public class EveSquadronPlayerInformation : ModelBase
     public Lazy<Task<EveSquadronPlayerDetails>> PlayerDetails {
         get => _playerDetails;
         set => SetProperty(ref _playerDetails, value);
-        
     }
     
     #endregion

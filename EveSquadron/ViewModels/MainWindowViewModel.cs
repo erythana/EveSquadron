@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Collections;
+using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using EveSquadron.DataAccess.Interfaces;
@@ -68,6 +69,9 @@ public class MainWindowViewModel : ViewModelBase
             { } theme when theme.Equals("Light", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Light,
             _ => ThemeVariant.Default
         };
+        HoverColor = Color.TryParse(settings.HoverColor, out var color)
+            ? color
+            : Colors.Orange;
 
         var configuredPollingRate = settings.ClipboardPollingMilliseconds;
         var timerTickRate = TryParseClipboardPollingRate(configuredPollingRate);
@@ -77,6 +81,8 @@ public class MainWindowViewModel : ViewModelBase
             IsEnabled = true
         };
     }
+
+
 
     //This whole method (+Event) is a workaround to provide a point where the IDs are loaded and we can work with the data from there. Each ID causes enumerations over the whole collection and UI refresh - try to get rid of that in the (close) future!
     private void OnParsedNewID(object? sender, (int? CorporationID, int? AllianceID) newIDs)
@@ -143,6 +149,8 @@ public class MainWindowViewModel : ViewModelBase
         get => _themeVariant;
         set => SetProperty(ref _themeVariant, value);
     }
+    
+    public Color HoverColor { get; }
 
     // ReSharper disable once InconsistentNaming
 

@@ -91,6 +91,7 @@
             CanUserResizeColumns="True"
             CanUserSortColumns="True"
             IsReadOnly="True"
+            RowHeight="{Binding GridRowHeight}"
             LoadingRow="PlayerInfoGrid_OnLoadingRow"
             UnloadingRow="PlayerInfoGrid_OnUnloadingRow"
             CopyingRowClipboardContent="PlayerInfoGrid_OnCopyingRowClipboardContent"
@@ -109,10 +110,10 @@
                 </Style>
             </DataGrid.Styles>
             <DataGrid.Columns>
-                <DataGridTemplateColumn ClipboardContentBinding="{Binding CharacterImage}" IsVisible="{Binding ShowPortrait}">
+                <DataGridTemplateColumn ClipboardContentBinding="{Binding CharacterImage}" IsVisible="{Binding ShowPortrait}" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Source="{Binding CharacterImage^, FallbackValue='Loading...', Mode=OneWay}" />
+                            <Image Source="{Binding CharacterImage^, FallbackValue='Loading...', Mode=OneWay}" Height="{Binding RowHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}" Stretch="Uniform" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

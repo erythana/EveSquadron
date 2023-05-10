@@ -72,7 +72,8 @@ public class MainWindowViewModel : ViewModelBase
         HoverColor = Color.TryParse(settings.HoverColor, out var color)
             ? color
             : Colors.Orange;
-        ShowPortrait = !bool.TryParse(settings.ShowPortrait, out var showPortrait) || showPortrait; 
+        ShowPortrait = !bool.TryParse(settings.ShowPortrait, out var showPortrait) || showPortrait;
+        GridRowHeight = GetGridSize(settings.GridRowSize);
 
         var configuredPollingRate = settings.ClipboardPollingMilliseconds;
         var timerTickRate = TryParseClipboardPollingRate(configuredPollingRate);
@@ -150,7 +151,9 @@ public class MainWindowViewModel : ViewModelBase
     
     public Color HoverColor { get; }
     
-    public bool ShowPortrait { get; set; }
+    public bool ShowPortrait { get; }
+
+    public int GridRowHeight { get; }
 
     // ReSharper disable once InconsistentNaming
 
@@ -210,6 +213,13 @@ public class MainWindowViewModel : ViewModelBase
         {
             UseShellExecute = true
         });
+    
+    private int GetGridSize(string? sizeMode = "big") => sizeMode?.ToLower() switch
+    {
+        "small" => 16,
+        "medium" => 24,
+        _ => 32,
+    };
 
     #endregion
 

@@ -24,6 +24,7 @@ public class AppSettingsLoader : SettingsLoaderBase, IAppSettingsLoader
         Theme = LoadSetting("Theme", false);
         HoverColor = LoadSetting("HoverColor", false);
         ShowPortrait = LoadSetting("ShowPortrait", false);
+        GridRowSize = LoadSetting("GridRowSize", false);
     }
 
     #endregion
@@ -37,6 +38,8 @@ public class AppSettingsLoader : SettingsLoaderBase, IAppSettingsLoader
     public string HoverColor { get; set; }
     
     public string ShowPortrait { get; set; }
+    
+    public string GridRowSize { get; set; }
 
     #endregion
 }

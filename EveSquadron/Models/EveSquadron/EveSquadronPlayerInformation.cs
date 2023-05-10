@@ -13,7 +13,7 @@ public class EveSquadronPlayerInformation : ModelBase
     private int _id;
     private EveNameIDMapping _character;
     private DateTime? _birthday;
-    private Task<Bitmap?> _characterImage;
+    private Task<Bitmap?>? _characterImage;
     private float _securityStanding;
     private EveNameIDMapping? _corporation;
     private EveNameIDMapping? _alliance;
@@ -40,7 +40,7 @@ public class EveSquadronPlayerInformation : ModelBase
         set => SetProperty(ref _birthday, value);
     }
 
-    public Task<Bitmap?> CharacterImage {
+    public Task<Bitmap?>? CharacterImage {
         get => _characterImage;
         set => SetProperty(ref _characterImage, value);
     }

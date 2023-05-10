@@ -23,6 +23,7 @@ public class AppSettingsLoader : SettingsLoaderBase, IAppSettingsLoader
         ClipboardPollingMilliseconds = LoadSetting("ClipboardPollingMilliseconds", false);
         Theme = LoadSetting("Theme", false);
         HoverColor = LoadSetting("HoverColor", false);
+        ShowPortrait = LoadSetting("ShowPortrait", false);
     }
 
     #endregion
@@ -34,6 +35,8 @@ public class AppSettingsLoader : SettingsLoaderBase, IAppSettingsLoader
     public string Theme { get; set; }
     
     public string HoverColor { get; set; }
+    
+    public string ShowPortrait { get; set; }
 
     #endregion
 }

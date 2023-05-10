@@ -12,7 +12,6 @@ using Avalonia.Collections;
 using Avalonia.Media;
 using Avalonia.Styling;
 using Avalonia.Threading;
-using EveSquadron.DataAccess.Interfaces;
 using EveSquadron.Models;
 using EveSquadron.Models.EveSquadron;
 using EveSquadron.Models.Interfaces;
@@ -54,6 +53,7 @@ public class MainWindowViewModel : ViewModelBase
             _eveSquadronPlayerInformation.Clear();
             _idCountDictionary.Clear();
         };
+        
         _releaseVersionChecker = releaseVersionChecker;
         _logger = logger;
 
@@ -72,6 +72,7 @@ public class MainWindowViewModel : ViewModelBase
         HoverColor = Color.TryParse(settings.HoverColor, out var color)
             ? color
             : Colors.Orange;
+        ShowPortrait = !bool.TryParse(settings.ShowPortrait, out var showPortrait) || showPortrait; 
 
         var configuredPollingRate = settings.ClipboardPollingMilliseconds;
         var timerTickRate = TryParseClipboardPollingRate(configuredPollingRate);
@@ -82,8 +83,20 @@ public class MainWindowViewModel : ViewModelBase
         };
     }
 
+    #endregion
 
+    #region event handler
 
+    private async void ClipboardPollingTimerCallback(object? sender, EventArgs e)
+    {
+        var clipboardContent = await Application.Current!.Clipboard!.GetTextAsync();
+        if (clipboardContent == _previousClipboardContent || clipboardContent is null)
+            return;
+        _previousClipboardContent = clipboardContent;
+        
+        await TryParseClipboardContentForEve(clipboardContent);
+    }
+    
     //This whole method (+Event) is a workaround to provide a point where the IDs are loaded and we can work with the data from there. Each ID causes enumerations over the whole collection and UI refresh - try to get rid of that in the (close) future!
     private void OnParsedNewID(object? sender, (int? CorporationID, int? AllianceID) newIDs)
     {
@@ -112,21 +125,6 @@ public class MainWindowViewModel : ViewModelBase
 
     #endregion
 
-    #region event handler
-
-    private async void ClipboardPollingTimerCallback(object? sender, EventArgs e)
-    {
-        var clipboardContent = await Application.Current!.Clipboard!.GetTextAsync();
-        if (clipboardContent == _previousClipboardContent || clipboardContent is null)
-            return;
-        _previousClipboardContent = clipboardContent;
-
-        //TODO: MAYBE PAUSE TIMER WHILE DOING THE REST
-        await TryParseClipboardContentForEve(clipboardContent);
-    }
-
-    #endregion
-
     #region properties
 
     public bool AlwaysOnTop {
@@ -151,6 +149,8 @@ public class MainWindowViewModel : ViewModelBase
     }
     
     public Color HoverColor { get; }
+    
+    public bool ShowPortrait { get; set; }
 
     // ReSharper disable once InconsistentNaming
 
@@ -194,7 +194,7 @@ public class MainWindowViewModel : ViewModelBase
                 return;
             }
 
-            await foreach (var eveSquadronPlayerInformation in _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardSplit))
+            await foreach (var eveSquadronPlayerInformation in _playerInformationDataAggregator.GetAggregatedItemsFor(clipboardSplit, ShowPortrait))
             {
                 _eveSquadronPlayerInformation.Add(eveSquadronPlayerInformation);
             }

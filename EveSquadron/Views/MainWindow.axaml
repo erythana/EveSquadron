@@ -109,7 +109,7 @@
                 </Style>
             </DataGrid.Styles>
             <DataGrid.Columns>
-                <DataGridTemplateColumn ClipboardContentBinding="{Binding CharacterImage}">
+                <DataGridTemplateColumn ClipboardContentBinding="{Binding CharacterImage}" IsVisible="{Binding ShowPortrait}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Image Source="{Binding CharacterImage^, FallbackValue='Loading...', Mode=OneWay}" />

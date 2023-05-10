@@ -35,14 +35,14 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
 
     #region events
     
-    public event EventHandler<(int? CorporationID, int? AllianceID)> ParsedNewID;
+    public event EventHandler<(int? CorporationID, int? AllianceID)>? ParsedNewID;
     public event EventHandler? OnValidPaste;
 
     #endregion
 
     #region interface implementation
     
-    public async IAsyncEnumerable<EveSquadronPlayerInformation> GetAggregatedItemsFor(IEnumerable<string> players)
+    public async IAsyncEnumerable<EveSquadronPlayerInformation> GetAggregatedItemsFor(IEnumerable<string> players, bool fetchPortrait = true)
     {
         var eveNameIDMappings = await _eveDataRepository.GetIDsFrom(players);
         if (eveNameIDMappings.Characters.Any())
@@ -56,7 +56,7 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
             {
                 ID = character.ID,
                 Character = character,
-                CharacterImage = _eveDataRepository.GetPortraitFrom(character.ID, 32),
+                CharacterImage = fetchPortrait ? _eveDataRepository.GetPortraitFrom(character.ID, 32) : null,
                 PlayerDetails = GetLazyPlayerDetails(character)
             };
 

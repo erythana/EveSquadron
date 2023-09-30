@@ -1,0 +1,61 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="EveSquadron.Views.WhitelistManagementView"
+        Title="WhitelistManagementView"
+        x:Name="WhitelistWindow"
+        Loaded="Control_OnLoaded"
+        Closing="Window_OnClosing"
+        MinWidth="550">
+
+    <DockPanel LastChildFill="True">
+        <DockPanel DockPanel.Dock="Bottom">
+            <DockPanel.Styles>
+                <Style Selector=":is(Layoutable)">
+                    <Setter Property="Margin" Value="2, 2" />
+                </Style>  
+            </DockPanel.Styles>
+            <Button Content="Import from Clipboard" Command="{Binding ImportClipboardWhitelistCommand}" DockPanel.Dock="Right">
+                <Button.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="ToolTip.Tip">
+                            <Setter.Value>
+                                <Template>
+                                    <TextBlock Text="You can paste names or comma-separated names (type,name)" Foreground="LightSkyBlue" />
+                                </Template>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Styles>
+            </Button>
+            <Button Content="Save" Command="{Binding SaveWhitelistCommand}" />
+            <Button Content="Add single item" Command="{Binding AddSingleItemWhitelistCommand}" />
+            <Button Content="Delete selected" Command="{Binding DeleteSelectedWhitelistCommand}"
+                    CommandParameter="{Binding #WhitelistGrid.SelectedItems}" />
+        </DockPanel>
+        <DataGrid
+            x:Name="WhitelistGrid"
+            Items="{Binding CurrentWhitelistEntries}"
+            CanUserReorderColumns="True"
+            CanUserResizeColumns="True"
+            CanUserSortColumns="True">
+
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Width="Auto" Header="Type" IsReadOnly="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox
+                                ItemsSource="{Binding #WhitelistWindow.DataContext.AvailableEntityTypes, Mode=OneTime}"
+                                SelectedItem="{Binding Type, Mode=TwoWay}"
+                                HorizontalAlignment="Stretch" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Width="*" Header="Whitelisted Name" Binding="{Binding Name}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+
+</Window>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -6,6 +7,7 @@ using System.Reflection;
 using EveSquadron.DataAccess;
 using EveSquadron.DataAccess.Interfaces;
 using EveSquadron.Models;
+using EveSquadron.Models.EveSquadron.Interfaces;
 using EveSquadron.Models.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -89,10 +91,13 @@ public static class ContainerConfiguration
     }
 
     private static IServiceCollection RegisterTransientsNonConvention(this IServiceCollection builder) => builder
-        .AddTransient<IReleaseVersionChecker, GithubReleaseVersionChecker>();
+        .AddTransient<IReleaseVersionChecker, GithubReleaseVersionChecker>()
+        .AddTransient(typeof(IClipboardToWhitelistEntitiesParser<>), typeof(ClipboardToWhitelistEntitiesParser<>));
+        
 
     private static IServiceCollection RegisterSingletons(this IServiceCollection builder) => builder
-        .AddSingleton<ViewLocator>();
+        .AddSingleton<ViewLocator>()
+        .AddSingleton<IEqualityComparer<IWhitelistEntry>, WhitelistEntityEqualityComparer>();
 
     private static IServiceCollection RegisterHttpClients(this IServiceCollection builder)
     {

@@ -5,7 +5,7 @@ using Avalonia.Styling;
 
 namespace EveSquadron.Views.Converters;
 
-public class BooleanToDarkThemeVariantConverter : IValueConverter
+public class BooleanToThemeVariantConverter : IValueConverter
 {
     public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {

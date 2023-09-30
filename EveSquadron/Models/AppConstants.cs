@@ -7,6 +7,14 @@ public static class AppConstants
     public const string ApplicationName = "Eve Squadron";
     public const string UserAgentHeader = $"{ApplicationName} - erythanadevsup@gmail.com";
 
+    #region Setting Defaults
+
+    public const int MinimalClipboardPollingMs = 100;
+    public const int MaximalClipboardPollingMs = 20000;
+    public const int DefaultClipboardPollingMs = 250;
+
+    #endregion
+
     #region Serialization options
     
     public static readonly JsonSerializerOptions AppDefaultSerializerOptions = new()
@@ -42,5 +50,11 @@ public static class AppConstants
         public const int PostUniverseNamesIDsLimit = 1000;
     }
     
+    #endregion
+
+    #region Whitelist DB Defaults
+
+    public const string WhitelistDefaultDbName = "WhitelistDB.sqlite";
+
     #endregion
 }

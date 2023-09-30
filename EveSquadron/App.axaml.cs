@@ -29,11 +29,13 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        DataContext = this.CreateInstance<MainWindowViewModel>();
+            
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow
             {
-                DataContext = this.CreateInstance<MainWindowViewModel>()
+                DataContext = DataContext
             };
         }
         else if (ApplicationLifetime is null) {} //DESIGNER

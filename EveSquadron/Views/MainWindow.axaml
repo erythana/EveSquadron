@@ -9,22 +9,34 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EveSquadron.Views.MainWindow"
         Icon="/Resources/icons/1337_64_16.ico"
+        MinWidth="550"
         Width="800"
-        Height="500">
+        Height="500"
+        IsEnabled="{Binding  WhitelistManagementViewModel.IsWindowVisible, Mode=OneWay, Converter={x:Static BoolConverters.Not}}">
     <Design.DataContext>
         <vm:DesignTimeMainWindowViewModel />
     </Design.DataContext>
     <Window.Resources>
+        <converters:BooleanToThemeVariantConverter x:Key="BooleanToThemeVariantConverter" />
         <converters:GroupCountVisibilityConverter x:Key="GroupCountVisibilityConverter" />
     </Window.Resources>
     <DockPanel>
-        <DockPanel Margin="10,0" DockPanel.Dock="Bottom" Height="40">
+        <DockPanel DataContext="{Binding StatusBarViewModel}" Margin="10,0" DockPanel.Dock="Bottom" Height="40">
+            <CheckBox
+                IsChecked="{Binding WhitelistActive}"
+                Content="Whitelist"
+                Margin="5,0" />
+            <Button
+                Command="{Binding OpenWhitelistCommand}"
+                Content="Manage Whitelist"
+                Margin="5,0"
+                IsVisible="{Binding WhitelistActive}" />
             <CheckBox
                 IsChecked="{Binding AlwaysOnTop}"
                 Content="Always on top"
                 Margin="5,0" />
             <CheckBox
-                x:Name="IsDarkMode"
+                IsChecked="{Binding ThemeVariant, Converter={StaticResource BooleanToThemeVariantConverter}}"
                 Content="Dark-Mode"
                 Margin="5,0" />
             <!-- Update Information - Material Icon "System Update" -->
@@ -32,7 +44,7 @@
                 Margin="5,5"
                 Height="30"
                 Width="30"
-                Command="{Binding UpdateClickedCommand}"
+                Command="{Binding OpenUpdateCommand}"
                 DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
                 IsVisible="{Binding !UpdateAvailable^, FallbackValue=False, Converter={x:Static BoolConverters.Not}}"><!-- We negate the UpdateAvailable so we can use the builtin BoolConverters -->
                 <Button.Styles>

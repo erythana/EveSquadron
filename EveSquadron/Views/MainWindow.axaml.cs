@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -13,8 +12,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using EveSquadron.Models;
 using EveSquadron.Models.EveSquadron;
-using EveSquadron.ViewModels;
-using EveSquadron.Views.Converters;
+using EveSquadron.ViewModels.Interfaces;
 
 namespace EveSquadron.Views;
 
@@ -47,35 +45,28 @@ public partial class MainWindow : Window
     {
         base.OnDataContextChanged(e);
 
-        if (DataContext is not MainWindowViewModel mainWindowViewModel)
+        if (DataContext is not IMainWindowViewModel currentViewModel)
             return;
 
         Title = AppConstants.ApplicationName;
 
-        _hoverColor = mainWindowViewModel.HoverColor;
-
-        var isDarkModeBinding = new Binding
-        {
-            Source = mainWindowViewModel,
-            Path = nameof(mainWindowViewModel.ThemeVariant)
-        };
-
-        var isDarkModeCheckedBinding = new Binding
-        {
-            Source = mainWindowViewModel,
-            Path = nameof(mainWindowViewModel.ThemeVariant),
-            Converter = new BooleanToDarkThemeVariantConverter()
-        };
-
-        IsDarkMode.Bind(ToggleButton.IsCheckedProperty, isDarkModeCheckedBinding);
-        Application.Current!.Bind(Application.RequestedThemeVariantProperty, isDarkModeBinding);
-
+        _hoverColor = currentViewModel.HoverColor;
+        
         var alwaysOnTopBinding = new Binding
         {
-            Source = mainWindowViewModel,
-            Path = nameof(mainWindowViewModel.AlwaysOnTop)
+            Source = currentViewModel.StatusBarViewModel,
+            Path = nameof(currentViewModel.StatusBarViewModel.AlwaysOnTop),
         };
+        
+        var isDarkModeCheckedBinding = new Binding
+        {
+            Source = currentViewModel.StatusBarViewModel,
+            Path = nameof(currentViewModel.StatusBarViewModel.ThemeVariant),
+            Mode = BindingMode.OneWay
+        };
+        
         this.Bind(TopmostProperty, alwaysOnTopBinding);
+        Application.Current!.Bind(Application.RequestedThemeVariantProperty, isDarkModeCheckedBinding);
     }
 
     #endregion
@@ -90,11 +81,12 @@ public partial class MainWindow : Window
 
     private void PlayerInfoGrid_OnDoubleTapped(object? sender, TappedEventArgs e)
     {
-        if (sender is not DataGrid { DataContext: MainWindowViewModel mainWindowViewModel, CurrentColumn.Header: string clickedColumn } ||
+        if (sender is not DataGrid { DataContext: IMainWindowViewModel mainWindowViewModel, CurrentColumn.Header: string clickedColumn } ||
             e.Source is not ILogical logical ||
-            logical.GetLogicalParent<DataGridCell>()?.DataContext is not EveSquadronPlayerInformation playerInformation) return;
-
-        mainWindowViewModel.OpenZKillboardLinkFor(playerInformation, clickedColumn);
+            logical.GetLogicalParent<DataGridCell>()?.DataContext is not EveSquadronPlayerInformation playerInformation ||
+            !Enum.TryParse(clickedColumn, out EntityTypeEnum target)) return;
+        
+        mainWindowViewModel.OpenZKillboardLinkFor(playerInformation, target);
     }
 
     private void PlayerInfoGrid_OnCopyingRowClipboardContent(object? sender, DataGridRowClipboardEventArgs e)

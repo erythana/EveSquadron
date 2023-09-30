@@ -1,49 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reactive;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Media;
-using Avalonia.Styling;
 using Avalonia.Threading;
 using EveSquadron.Models;
 using EveSquadron.Models.EveSquadron;
 using EveSquadron.Models.Interfaces;
+using EveSquadron.ViewModels.Interfaces;
 using Microsoft.Extensions.Logging;
-using ReactiveUI;
 
 namespace EveSquadron.ViewModels;
 
-public class MainWindowViewModel : ViewModelBase
+public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 {
     #region member fields
 
     private readonly ObservableCollection<EveSquadronPlayerInformation> _eveSquadronPlayerInformation;
     private readonly IPlayerInformationDataAggregator _playerInformationDataAggregator;
-    private readonly IReleaseVersionChecker _releaseVersionChecker;
     private readonly Dictionary<int, int> _idCountDictionary;
-    private readonly DispatcherTimer _clipboardPollingTimer;
     private readonly ILogger<MainWindowViewModel> _logger;
-
-    private bool _alwaysOnTop;
-    private ThemeVariant _themeVariant;
-    private Task<bool?> _updateAvailable;
     private string? _previousClipboardContent = string.Empty;
+    private readonly DispatcherTimer _dispatcherTimer;
 
     #endregion
 
     #region constructor
 
-    public MainWindowViewModel(IPlayerInformationDataAggregator playerInformationDataAggregator, IReleaseVersionChecker releaseVersionChecker, IAppSettingsLoader settings, ILogger<MainWindowViewModel> logger)
+    public MainWindowViewModel(IStatusBarViewModel statusBarViewModel, IWhitelistManagementViewModel whitelistManagementViewModel, IPlayerInformationDataAggregator playerInformationDataAggregator,
+        IAppSettingsLoader settings, ILogger<MainWindowViewModel> logger)
     {
-        _themeVariant = ThemeVariant.Default;
-        _updateAvailable = Task.FromResult<bool?>(false);
         _idCountDictionary = new Dictionary<int, int>();
         _eveSquadronPlayerInformation = new ObservableCollection<EveSquadronPlayerInformation>();
         _playerInformationDataAggregator = playerInformationDataAggregator;
@@ -53,35 +45,51 @@ public class MainWindowViewModel : ViewModelBase
             _eveSquadronPlayerInformation.Clear();
             _idCountDictionary.Clear();
         };
-        
-        _releaseVersionChecker = releaseVersionChecker;
         _logger = logger;
 
-        var version = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly()!.Location).ProductVersion ?? "";
-        if (_releaseVersionChecker.TryParseVersionNumber(version, out var recognizedVersion))
-            UpdateAvailable = _releaseVersionChecker.IsNewReleaseAvailable(recognizedVersion.major, recognizedVersion.minor, recognizedVersion.patch);
+        StatusBarViewModel = statusBarViewModel;
+        StatusBarViewModel.PropertyChanged += OnStatusBarViewModelOnPropertyChanged;
 
-        UpdateClickedCommand = ReactiveCommand.Create(OnUpdateButtonClicked);
+        WhitelistManagementViewModel = whitelistManagementViewModel;
+        WhitelistManagementViewModel.PropertyChanged += OnWhitelistManagementViewModelOnPropertyChanged;
+
         EveSquadronPlayers = new DataGridCollectionView(_eveSquadronPlayerInformation);
-        ThemeVariant = settings.Theme switch
+
+        EveSquadronPlayers.Filter = WhitelistFilter;
+
+        InitializeFromSettings(settings);
+
+        var configuredPollingRate = settings.ClipboardPollingMilliseconds;
+        var timerTickRate = TryParseClipboardPollingRate(configuredPollingRate);
+
+        _dispatcherTimer = new DispatcherTimer(timerTickRate, DispatcherPriority.Background, ClipboardPollingTimerCallback)
         {
-            { } theme when theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Dark,
-            { } theme when theme.Equals("Light", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Light,
-            _ => ThemeVariant.Default
+            IsEnabled = true
         };
+    }
+
+    private void OnWhitelistManagementViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(WhitelistManagementViewModel.IsWindowVisible))
+        {
+            _dispatcherTimer.IsEnabled = !WhitelistManagementViewModel.IsWindowVisible;
+            EveSquadronPlayers?.Refresh();
+        }
+    }
+
+    private void OnStatusBarViewModelOnPropertyChanged(object? _, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(StatusBarViewModel.WhitelistActive))
+            EveSquadronPlayers?.Refresh();
+    }
+
+    private void InitializeFromSettings(IAppSettingsLoader settings)
+    {
         HoverColor = Color.TryParse(settings.HoverColor, out var color)
             ? color
             : Colors.Orange;
         ShowPortrait = !bool.TryParse(settings.ShowPortrait, out var showPortrait) || showPortrait;
         GridRowHeight = GetGridSize(settings.GridRowSize);
-
-        var configuredPollingRate = settings.ClipboardPollingMilliseconds;
-        var timerTickRate = TryParseClipboardPollingRate(configuredPollingRate);
-
-        _clipboardPollingTimer = new DispatcherTimer(timerTickRate, DispatcherPriority.Background, ClipboardPollingTimerCallback)
-        {
-            IsEnabled = true
-        };
     }
 
     #endregion
@@ -94,10 +102,13 @@ public class MainWindowViewModel : ViewModelBase
         if (clipboardContent == _previousClipboardContent || clipboardContent is null)
             return;
         _previousClipboardContent = clipboardContent;
-        
+
+        if (WhitelistManagementViewModel.IsWindowVisible) // prevent any further updates when the window is active - if it has been active we still have set the previous content so we don't update
+            return;
+
         await TryParseClipboardContentForEve(clipboardContent);
     }
-    
+
     //This whole method (+Event) is a workaround to provide a point where the IDs are loaded and we can work with the data from there. Each ID causes enumerations over the whole collection and UI refresh - try to get rid of that in the (close) future!
     private void OnParsedNewID(object? sender, (int? CorporationID, int? AllianceID) newIDs)
     {
@@ -128,47 +139,46 @@ public class MainWindowViewModel : ViewModelBase
 
     #region properties
 
-    public bool AlwaysOnTop {
-        get => _alwaysOnTop;
-        set => SetProperty(ref _alwaysOnTop, value);
-    }
+    public Color HoverColor { get; private set; }
 
-    public ReactiveCommand<Unit, Unit> UpdateClickedCommand { get; }
+    public bool ShowPortrait { get; private set; }
 
-    public Task<bool?> UpdateAvailable {
-        get => _updateAvailable;
-        private set => SetProperty(ref _updateAvailable, value);
-    }
-
-    public string LatestReleasePath {
-        get => _releaseVersionChecker.ReleasePath;
-    }
-
-    public ThemeVariant ThemeVariant {
-        get => _themeVariant;
-        set => SetProperty(ref _themeVariant, value);
-    }
-    
-    public Color HoverColor { get; }
-    
-    public bool ShowPortrait { get; }
-
-    public int GridRowHeight { get; }
+    public int GridRowHeight { get; private set; }
 
     // ReSharper disable once InconsistentNaming
 
     public DataGridCollectionView EveSquadronPlayers { get; }
 
+    public IStatusBarViewModel StatusBarViewModel { get; set; }
+
+    public IWhitelistManagementViewModel WhitelistManagementViewModel { get; }
+
     #endregion
 
     #region helper methods
 
+    private bool WhitelistFilter(object player)
+    {
+        if (player is not EveSquadronPlayerInformation playerInformation)
+            return false;
+
+        var excludedPlayers = WhitelistManagementViewModel.CurrentWhitelistEntries.Where(x => x.Type == EntityTypeEnum.Character);
+        var excludedCorporations = WhitelistManagementViewModel.CurrentWhitelistEntries.Where(x => x.Type == EntityTypeEnum.Corporation);
+        var excludedAlliances = WhitelistManagementViewModel.CurrentWhitelistEntries.Where(x => x.Type == EntityTypeEnum.Alliance);
+
+        var isExcludedPlayer = excludedPlayers.Any(x => x.Name == playerInformation.Character.Name);
+        var isExcludedCorp = excludedCorporations.Any(x => x.Name == playerInformation.Corporation?.Name);
+        var isExcludedAlliance = excludedAlliances.Any(x => x.Name == playerInformation.Alliance?.Name);
+
+        return !StatusBarViewModel.WhitelistActive || !(isExcludedPlayer || isExcludedCorp || isExcludedAlliance);
+    }
+
     private static TimeSpan TryParseClipboardPollingRate(string? configuredPollingRate)
     {
         if (double.TryParse(configuredPollingRate, out var pollingRate))
-            pollingRate = Math.Clamp(pollingRate, 100, 1000);
+            pollingRate = Math.Clamp(pollingRate, AppConstants.MinimalClipboardPollingMs, AppConstants.MaximalClipboardPollingMs);
         else
-            pollingRate = 250; //Use 250ms as fallback
+            pollingRate = AppConstants.DefaultClipboardPollingMs;
 
         var timerTickRate = TimeSpan.FromMilliseconds(pollingRate);
 
@@ -208,12 +218,8 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private void OnUpdateButtonClicked() =>
-        Process.Start(new ProcessStartInfo(LatestReleasePath)
-        {
-            UseShellExecute = true
-        });
-    
+
+
     private int GetGridSize(string? sizeMode = "big") => sizeMode?.ToLower() switch
     {
         "small" => 16,
@@ -225,13 +231,13 @@ public class MainWindowViewModel : ViewModelBase
 
     #region zKillboard Navigation
 
-    public void OpenZKillboardLinkFor(EveSquadronPlayerInformation target, string clickedColumn)
+    public void OpenZKillboardLinkFor(EveSquadronPlayerInformation target, EntityTypeEnum clickedColumn)
     {
         var targetUrl = clickedColumn switch
         {
-            MainDataGridHeaderNames.CharacterName => $"{AppConstants.ZKillboardUrls.Character}/{target.Character.ID}",
-            MainDataGridHeaderNames.Corporation when target.Corporation is not null => $"{AppConstants.ZKillboardUrls.Corporation}/{target.Corporation.ID}",
-            MainDataGridHeaderNames.Alliance when target.Alliance is not null => $"{AppConstants.ZKillboardUrls.Alliance}/{target.Alliance.ID}",
+            EntityTypeEnum.Character => $"{AppConstants.ZKillboardUrls.Character}/{target.Character.ID}",
+            EntityTypeEnum.Corporation when target.Corporation is not null => $"{AppConstants.ZKillboardUrls.Corporation}/{target.Corporation.ID}",
+            EntityTypeEnum.Alliance when target.Alliance is not null => $"{AppConstants.ZKillboardUrls.Alliance}/{target.Alliance.ID}",
             _ => string.Empty
         };
         if (string.IsNullOrWhiteSpace(targetUrl)) return;

@@ -31,7 +31,7 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
 
     #region constructor
 
-    public StatusBarViewModel(IOptions<ThemeOptions> themeOptions, IReleaseVersionChecker releaseVersionChecker, ILogger<IStatusBarViewModel> logger)
+    public StatusBarViewModel(IOptions<StatusOptions> statusOptions, IReleaseVersionChecker releaseVersionChecker, ILogger<IStatusBarViewModel> logger)
     {
         _releaseVersionChecker = releaseVersionChecker;
         _logger = logger;
@@ -45,13 +45,16 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
         OpenUpdateCommand = ReactiveCommand.Create(OnOpenUpdateCommand);
         OpenWhitelistCommand = ReactiveCommand.CreateFromTask(OnOpenWhitelistCommand);
         OpenSettingsCommand = ReactiveCommand.CreateFromTask(OnOpenSettingsCommand);
-        
-        ThemeVariant = themeOptions.Value.Theme switch
+
+        var options = statusOptions.Value;
+        ThemeVariant = options.Theme switch
         {
             { } theme when theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Dark,
             { } theme when theme.Equals("Light", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Light,
             _ => ThemeVariant.Default
         };
+
+        WhitelistActive = bool.TryParse(options.WhitelistActive, out var whitelistActive) && whitelistActive;
     }
     
     #endregion

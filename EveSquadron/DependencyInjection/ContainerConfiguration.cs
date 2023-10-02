@@ -64,7 +64,7 @@ public static class ContainerConfiguration
     private static IServiceCollection AddOptionMappings(this IServiceCollection builder)
     {
         AddOptionAndValidateDataAnnotations<EveSquadronOptions>(Configuration.GetSection("EveSquadronOptions"));
-        AddOptionAndValidateDataAnnotations<ThemeOptions>(Configuration.GetSection("EveSquadronOptions"));
+        AddOptionAndValidateDataAnnotations<StatusOptions>(Configuration.GetSection("StatusOptions"));
         AddOptionAndValidateDataAnnotations<ReleaseEndpointOptions>(Configuration.GetSection("Endpoints:Release"));
         AddOptionAndValidateDataAnnotations<ZkillboardEndpointOptions>(Configuration.GetSection("Endpoints:Zkillboard"));
         AddOptionAndValidateDataAnnotations<EveEndpointOptions>(Configuration.GetSection("Endpoints:EveESI"));

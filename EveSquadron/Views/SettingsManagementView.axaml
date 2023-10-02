@@ -11,7 +11,6 @@
     <StackPanel>
         <HeaderedContentControl Header="Application">
             <StackPanel>
-                <TextBlock Text="... custom database path"></TextBlock>
                 <TextBlock Text="... clipboard-polling rate (ms)"></TextBlock>
                 <TextBlock Text="... auto export paste checkbox"></TextBlock>
                 <TextBlock Text="... auto export csv path"></TextBlock>

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using EveSquadron.Models.EveSquadron.Interfaces;
+using EveSquadron.Models.Interfaces;
 
 namespace EveSquadron.Models;
 

@@ -2,9 +2,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using EveSquadron.DataAccess.Interfaces;
 using EveSquadron.DataRepositories.Interfaces;
-using EveSquadron.Models.Interfaces;
+using EveSquadron.Models.Options;
 using EveSquadron.Models.ZKillboard.Data;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace EveSquadron.DataRepositories;
 
@@ -21,13 +22,14 @@ public class ZKillboardDataRepository : IZKillboardDataRepository
     
     #region constructor
 
-    public ZKillboardDataRepository(IZKillboardRestDataAccess zKillboardRestDataAccess, IZKillboardEndpointsLoader endpoints, ILogger<ZKillboardDataRepository> logger)
+    public ZKillboardDataRepository(IZKillboardRestDataAccess zKillboardRestDataAccess, IOptions<ZkillboardEndpointOptions> endpointOptions, ILogger<ZKillboardDataRepository> logger)
     {
         _zKillboardRestDataAccess = zKillboardRestDataAccess;
         _logger = logger;
 
-        _characterEndpoint = endpoints.CharacterEndpoint;
-        _characterStatsEndpoint = endpoints.CharacterStatsEndpoint;
+        var options = endpointOptions.Value;
+        _characterEndpoint = options.CharacterEndpoint;
+        _characterStatsEndpoint = options.CharacterStatsEndpoint;
     }
 
     #endregion

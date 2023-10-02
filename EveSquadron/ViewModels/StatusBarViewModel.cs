@@ -7,9 +7,11 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Styling;
 using EveSquadron.Models.Interfaces;
+using EveSquadron.Models.Options;
 using EveSquadron.ViewModels.Interfaces;
 using EveSquadron.Views;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using ReactiveUI;
 
 namespace EveSquadron.ViewModels;
@@ -29,7 +31,7 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
 
     #region constructor
 
-    public StatusBarViewModel(IAppSettingsLoader settings, IReleaseVersionChecker releaseVersionChecker, ILogger<IStatusBarViewModel> logger)
+    public StatusBarViewModel(IOptions<ThemeOptions> themeOptions, IReleaseVersionChecker releaseVersionChecker, ILogger<IStatusBarViewModel> logger)
     {
         _releaseVersionChecker = releaseVersionChecker;
         _logger = logger;
@@ -42,8 +44,9 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
         
         OpenUpdateCommand = ReactiveCommand.Create(OnOpenUpdateCommand);
         OpenWhitelistCommand = ReactiveCommand.CreateFromTask(OnOpenWhitelistCommand);
+        OpenSettingsCommand = ReactiveCommand.CreateFromTask(OnOpenSettingsCommand);
         
-        ThemeVariant = settings.Theme switch
+        ThemeVariant = themeOptions.Value.Theme switch
         {
             { } theme when theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Dark,
             { } theme when theme.Equals("Light", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Light,
@@ -72,6 +75,8 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
 
     public ReactiveCommand<Unit, Unit> OpenUpdateCommand { get; }
     public ReactiveCommand<Unit, Unit> OpenWhitelistCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> OpenSettingsCommand { get; }
 
     public Task<bool?> UpdateAvailable {
         get => _updateAvailable;
@@ -114,8 +119,30 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
         {
             applicationLifetime.MainWindow!.IsEnabled = true;
         }
-        
-        
+    }
+    
+    private async Task OnOpenSettingsCommand()
+    {
+        if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime applicationLifetime)
+            return;
+
+        try  //ReactiveCommand
+        {
+            var dialog = new SettingsManagementView();
+            
+            if (Application.Current.DataContext is IMainWindowViewModel mainWindowViewModel)
+                dialog.DataContext = mainWindowViewModel.SettingsManagementViewModel;
+            await dialog.ShowDialog<ISettingsManagementViewModel?>(applicationLifetime.MainWindow!);
+        }
+        catch (Exception e)
+        {
+            _logger.LogCritical(e, "Can't open SettingsManagementView");
+            throw;
+        }
+        finally
+        {
+            applicationLifetime.MainWindow!.IsEnabled = true;
+        }
     }
     
     #endregion

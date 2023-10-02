@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using EveSquadron.Models;
-using EveSquadron.Models.EveSquadron.Interfaces;
+using EveSquadron.Models.Interfaces;
 using ReactiveUI;
 
 namespace EveSquadron.ViewModels.Interfaces;

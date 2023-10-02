@@ -7,12 +7,13 @@ using System.Reflection;
 using EveSquadron.DataAccess;
 using EveSquadron.DataAccess.Interfaces;
 using EveSquadron.Models;
-using EveSquadron.Models.EveSquadron.Interfaces;
 using EveSquadron.Models.Interfaces;
+using EveSquadron.Models.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.EventLog;
+using Microsoft.Extensions.Options;
 
 namespace EveSquadron.DependencyInjection;
 
@@ -20,7 +21,7 @@ public static class ContainerConfiguration
 {
     #region member fields
 
-    private static readonly IConfiguration _configuration;
+    private static readonly IConfiguration Configuration;
 
     #endregion
 
@@ -28,11 +29,15 @@ public static class ContainerConfiguration
 
     static ContainerConfiguration()
     {
-        _configuration = new ConfigurationBuilder()
+        var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
             .AddJsonFile("appsettings.Logging.json")
-            .AddJsonFile(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "EveSquadron.appsettings.json"), optional: true)
+            .Build();
+
+        Configuration = new ConfigurationBuilder()
+            .AddConfiguration(configuration)
+            .Add(new SqLiteConfigurationSource(configuration))
             .Build();
     }
 
@@ -42,6 +47,7 @@ public static class ContainerConfiguration
 
     public static IServiceCollection Configure(this IServiceCollection builder) => builder
         .AddConfiguration()
+        .AddOptionMappings()
         .AddLogging()
         .RegisterTransientsByConvention()
         .RegisterTransientsNonConvention()
@@ -51,13 +57,27 @@ public static class ContainerConfiguration
 
     private static IServiceCollection AddConfiguration(this IServiceCollection builder)
     {
-        builder.AddSingleton(_configuration);
+        builder.AddSingleton(Configuration);
         return builder;
+    }
+    
+    private static IServiceCollection AddOptionMappings(this IServiceCollection builder)
+    {
+        AddOptionAndValidateDataAnnotations<EveSquadronOptions>(Configuration.GetSection("EveSquadronOptions"));
+        AddOptionAndValidateDataAnnotations<ThemeOptions>(Configuration.GetSection("EveSquadronOptions"));
+        AddOptionAndValidateDataAnnotations<ReleaseEndpointOptions>(Configuration.GetSection("Endpoints:Release"));
+        AddOptionAndValidateDataAnnotations<ZkillboardEndpointOptions>(Configuration.GetSection("Endpoints:Zkillboard"));
+        AddOptionAndValidateDataAnnotations<EveEndpointOptions>(Configuration.GetSection("Endpoints:EveESI"));
+        return builder;
+
+        void AddOptionAndValidateDataAnnotations<T>(IConfiguration configuration) where T : class => builder.AddOptions<T>()
+                .Bind(configuration)
+                .ValidateDataAnnotations();
     }
 
     private static IServiceCollection AddLogging(this IServiceCollection builder)
     {
-        var loggingConfiguration = _configuration.GetSection("Logging");
+        var loggingConfiguration = Configuration.GetSection("Logging");
 
         return builder.AddLogging(config =>
         {

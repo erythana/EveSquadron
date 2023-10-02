@@ -6,7 +6,9 @@ using EveSquadron.DataAccess.Interfaces;
 using EveSquadron.DataRepositories.Interfaces;
 using EveSquadron.Models.EVE.Data;
 using EveSquadron.Models.Interfaces;
+using EveSquadron.Models.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace EveSquadron.DataRepositories;
 
@@ -26,15 +28,16 @@ public class EveDataRepository : IEveDataRepository
     
     #region constructor
 
-    public EveDataRepository(IEveRestDataAccess eveRestDataAccess, IEveESIEndpointsLoader endpoints, ILogger<EveDataRepository> logger)
+    public EveDataRepository(IEveRestDataAccess eveRestDataAccess, IOptions<EveEndpointOptions> endpointOptions, ILogger<EveDataRepository> logger)
     {
         _eveRestDataAccess = eveRestDataAccess;
         _logger = logger;
 
-        _universeEndpoint = endpoints.UniverseEndpoint;
-        _characterEndpoint = endpoints.CharacterEndpoint;
-        _killmailEndpoint = endpoints.KillmailEndpoint;
-        _portraitEndpoint = endpoints.PortraitEndpoint;
+        var option = endpointOptions.Value;
+        _universeEndpoint = option.UniverseEndpoint;
+        _characterEndpoint = option.CharacterEndpoint;
+        _killmailEndpoint = option.KillmailEndpoint;
+        _portraitEndpoint = option.PortraitEndpoint;
     }
 
     #endregion

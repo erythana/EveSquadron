@@ -11,6 +11,8 @@ public interface IMainWindowViewModel
     
     public IWhitelistManagementViewModel WhitelistManagementViewModel { get; }
     
+    public ISettingsManagementViewModel SettingsManagementViewModel { get; }
+    
     public Color HoverColor { get; }
     
     public bool ShowPortrait { get; }

@@ -52,9 +52,10 @@ public static class AppConstants
     
     #endregion
 
-    #region Whitelist DB Defaults
+    #region DB Defaults
 
-    public const string WhitelistDefaultDbName = "WhitelistDB.sqlite";
+    public const string SettingsDatabase = "EveSquadron.Database.sqlite";
+    public static string GetLocalConnectionString(string databaseFile) => $"Data Source={databaseFile};Version=3;";
 
     #endregion
 }

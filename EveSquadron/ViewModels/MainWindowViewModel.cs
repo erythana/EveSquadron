@@ -13,8 +13,10 @@ using Avalonia.Threading;
 using EveSquadron.Models;
 using EveSquadron.Models.EveSquadron;
 using EveSquadron.Models.Interfaces;
+using EveSquadron.Models.Options;
 using EveSquadron.ViewModels.Interfaces;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace EveSquadron.ViewModels;
 
@@ -27,14 +29,14 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     private readonly Dictionary<int, int> _idCountDictionary;
     private readonly ILogger<MainWindowViewModel> _logger;
     private string? _previousClipboardContent = string.Empty;
-    private readonly DispatcherTimer _dispatcherTimer;
+    private DispatcherTimer _dispatcherTimer;
 
     #endregion
 
     #region constructor
 
-    public MainWindowViewModel(IStatusBarViewModel statusBarViewModel, IWhitelistManagementViewModel whitelistManagementViewModel, IPlayerInformationDataAggregator playerInformationDataAggregator,
-        IAppSettingsLoader settings, ILogger<MainWindowViewModel> logger)
+    public MainWindowViewModel(IStatusBarViewModel statusBarViewModel, IWhitelistManagementViewModel whitelistManagementViewModel, ISettingsManagementViewModel settingsManagementViewModel, IPlayerInformationDataAggregator playerInformationDataAggregator,
+        IOptions<EveSquadronOptions> eveSquadronOptions, ILogger<MainWindowViewModel> logger)
     {
         _idCountDictionary = new Dictionary<int, int>();
         _eveSquadronPlayerInformation = new ObservableCollection<EveSquadronPlayerInformation>();
@@ -52,20 +54,20 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 
         WhitelistManagementViewModel = whitelistManagementViewModel;
         WhitelistManagementViewModel.PropertyChanged += OnWhitelistManagementViewModelOnPropertyChanged;
+        
+        SettingsManagementViewModel = settingsManagementViewModel;
+        SettingsManagementViewModel.PropertyChanged += OnSettingsManagementViewModelOnPropertyChanged;
 
         EveSquadronPlayers = new DataGridCollectionView(_eveSquadronPlayerInformation);
 
         EveSquadronPlayers.Filter = WhitelistFilter;
 
-        InitializeFromSettings(settings);
+        InitializeFrom(eveSquadronOptions);
+    }
 
-        var configuredPollingRate = settings.ClipboardPollingMilliseconds;
-        var timerTickRate = TryParseClipboardPollingRate(configuredPollingRate);
-
-        _dispatcherTimer = new DispatcherTimer(timerTickRate, DispatcherPriority.Background, ClipboardPollingTimerCallback)
-        {
-            IsEnabled = true
-        };
+    private void OnSettingsManagementViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        
     }
 
     private void OnWhitelistManagementViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -83,13 +85,19 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
             EveSquadronPlayers?.Refresh();
     }
 
-    private void InitializeFromSettings(IAppSettingsLoader settings)
+    private void InitializeFrom(IOptions<EveSquadronOptions> options)
     {
-        HoverColor = Color.TryParse(settings.HoverColor, out var color)
+        HoverColor = Color.TryParse(options.Value.HoverColor, out var color)
             ? color
             : Colors.Orange;
-        ShowPortrait = !bool.TryParse(settings.ShowPortrait, out var showPortrait) || showPortrait;
-        GridRowHeight = GetGridSize(settings.GridRowSize);
+        ShowPortrait = !bool.TryParse(options.Value.ShowPortrait, out var showPortrait) || showPortrait;
+        GridRowHeight = GetGridSize(options.Value.GridRowSize);
+        
+        var timerTickRate = TryParseClipboardPollingRate(options.Value.ClipboardPollingMilliseconds);
+        _dispatcherTimer = new DispatcherTimer(timerTickRate, DispatcherPriority.Background, ClipboardPollingTimerCallback)
+        {
+            IsEnabled = true
+        };
     }
 
     #endregion
@@ -103,7 +111,7 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
             return;
         _previousClipboardContent = clipboardContent;
 
-        if (WhitelistManagementViewModel.IsWindowVisible) // prevent any further updates when the window is active - if it has been active we still have set the previous content so we don't update
+        if (WhitelistManagementViewModel.IsWindowVisible) // TODO: More generic solution for multiple windows -- prevent any further updates when the window is active - if it has been active we still have set the previous content so we don't update
             return;
 
         await TryParseClipboardContentForEve(clipboardContent);
@@ -152,6 +160,8 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     public IStatusBarViewModel StatusBarViewModel { get; set; }
 
     public IWhitelistManagementViewModel WhitelistManagementViewModel { get; }
+    
+    public ISettingsManagementViewModel SettingsManagementViewModel { get; }
 
     #endregion
 

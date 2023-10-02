@@ -41,6 +41,13 @@
                 Margin="5,0" />
             <!-- Update Information - Material Icon "System Update" -->
             <Button
+                Command="{Binding OpenSettingsCommand}"
+                Margin="5,5"
+                Height="30"
+                Width="30"
+                DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
+                Content="Settings (icon)" />
+            <Button
                 Margin="5,5"
                 Height="30"
                 Width="30"

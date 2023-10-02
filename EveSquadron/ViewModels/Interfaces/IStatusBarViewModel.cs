@@ -17,6 +17,8 @@ public interface IStatusBarViewModel : INotifyPropertyChanged
     public ReactiveCommand<Unit, Unit> OpenUpdateCommand { get; }
     
     public ReactiveCommand<Unit, Unit> OpenWhitelistCommand { get; }
+    
+    public ReactiveCommand<Unit, Unit> OpenSettingsCommand { get; }
 
     public Task<bool?> UpdateAvailable { get; }
 

@@ -10,7 +10,6 @@ using DynamicData;
 using EveSquadron.DataRepositories.Interfaces;
 using EveSquadron.Models;
 using EveSquadron.Models.EveSquadron;
-using EveSquadron.Models.EveSquadron.Interfaces;
 using EveSquadron.Models.Interfaces;
 using EveSquadron.ViewModels.Interfaces;
 using Microsoft.Extensions.Logging;

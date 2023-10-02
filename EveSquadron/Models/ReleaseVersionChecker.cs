@@ -2,23 +2,25 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using EveSquadron.DataRepositories.Interfaces;
 using EveSquadron.Models.Interfaces;
+using EveSquadron.Models.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace EveSquadron.Models;
 
 public class GithubReleaseVersionChecker : IReleaseVersionChecker
 {
     private readonly IGithubReleaseDataRepository _githubReleaseDataRepository;
-    private readonly IReleaseSettingsLoader _releaseSettingsLoader;
+    private readonly IOptions<ReleaseEndpointOptions> _releaseOptions;
     private readonly ILogger<GithubReleaseVersionChecker> _logger;
 
-    public GithubReleaseVersionChecker(IGithubReleaseDataRepository githubReleaseDataRepository, IReleaseSettingsLoader releaseSettingsLoader, ILogger<GithubReleaseVersionChecker> logger)
+    public GithubReleaseVersionChecker(IGithubReleaseDataRepository githubReleaseDataRepository, IOptions<ReleaseEndpointOptions> releaseOptions, ILogger<GithubReleaseVersionChecker> logger)
     {
         _githubReleaseDataRepository = githubReleaseDataRepository;
-        _releaseSettingsLoader = releaseSettingsLoader;
+        _releaseOptions = releaseOptions;
         _logger = logger;
 
-        ReleasePath = _releaseSettingsLoader.ReleasePath;
+        ReleasePath = _releaseOptions.Value.ReleasePath;
     }
 
     public string ReleasePath { get; }
@@ -49,7 +51,7 @@ public class GithubReleaseVersionChecker : IReleaseVersionChecker
     /// <returns>Returns true when a new release is available, false when the current version is the latest, or null when there was a problem getting the servers version number.</returns>
     public async Task<bool?> IsNewReleaseAvailable(int currentMajor, int currentMinor, int currentPatch)
     {
-        var releaseVersionEndpoint = _releaseSettingsLoader.ReleaseVersionAPIEndpoint;
+        var releaseVersionEndpoint = _releaseOptions.Value.ReleaseVersionAPIEndpoint;
 
         _logger.LogDebug($"Trying to get release version from '{releaseVersionEndpoint}'");
         var githubRelease = await _githubReleaseDataRepository.GetLatestReleaseInformationFrom(releaseVersionEndpoint);

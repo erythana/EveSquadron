@@ -1,6 +1,6 @@
-using EveSquadron.Models.EveSquadron.Interfaces;
+using EveSquadron.Models.Interfaces;
 
-namespace EveSquadron.Models.EveSquadron;
+namespace EveSquadron.Models;
 
 public class WhitelistEntry : ModelBase, IWhitelistEntry
 {

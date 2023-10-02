@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using EveSquadron.Models.EveSquadron.Interfaces;
+using EveSquadron.Models.Interfaces;
 
 namespace EveSquadron.DataRepositories.Interfaces;
 

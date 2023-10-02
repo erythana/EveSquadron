@@ -1,4 +1,4 @@
-namespace EveSquadron.Models.EveSquadron.Interfaces;
+namespace EveSquadron.Models.Interfaces;
 
 public interface IWhitelistEntry
 {

@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="EveSquadron.Views.SettingsManagementView"
+        Title="SettingsManagementView"
+        MinWidth="550"
+        DataContext="{Binding SettingsManagementViewModel}">
+
+    <StackPanel>
+        <HeaderedContentControl Header="Application">
+            <StackPanel>
+                <TextBlock Text="... custom database path"></TextBlock>
+                <TextBlock Text="... clipboard-polling rate (ms)"></TextBlock>
+                <TextBlock Text="... auto export paste checkbox"></TextBlock>
+                <TextBlock Text="... auto export csv path"></TextBlock>
+            </StackPanel>
+        </HeaderedContentControl>
+
+        <HeaderedContentControl Header="Appearance">
+            <StackPanel>
+                <TextBlock Text="Theme DRP"></TextBlock>
+                <TextBlock Text="Hover Color DRP"></TextBlock>
+                <TextBlock Text="Show Portraits"></TextBlock>
+                <TextBlock Text="Grid Row Size"></TextBlock>
+            </StackPanel>
+        </HeaderedContentControl>
+    </StackPanel>
+
+</Window>

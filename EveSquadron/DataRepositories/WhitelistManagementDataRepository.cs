@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using EveSquadron.DataAccess.Interfaces;
 using EveSquadron.DataRepositories.Interfaces;
 using EveSquadron.Models.EveSquadron;
-using EveSquadron.Models.EveSquadron.Interfaces;
 using EveSquadron.Models.Interfaces;
 using EveSquadron.Models.ZKillboard.Data;
 using Microsoft.Extensions.Logging;
@@ -17,23 +16,16 @@ public class WhitelistManagementDataRepository : IWhitelistManagementDataReposit
     #region member fields
 
     private readonly IWhitelistManagementSqLiteDataAccess _whitelistManagementSqLiteDataAccess;
-    private readonly IWhitelistManagementEndpointLoader _endpoint;
     private readonly ILogger<ZKillboardDataRepository> _logger;
 
     #endregion
 
     #region constructor
 
-    public WhitelistManagementDataRepository(IWhitelistManagementSqLiteDataAccess whitelistManagementSqLiteDataAccess, IWhitelistManagementEndpointLoader endpoint, ILogger<ZKillboardDataRepository> logger)
+    public WhitelistManagementDataRepository(IWhitelistManagementSqLiteDataAccess whitelistManagementSqLiteDataAccess, ILogger<ZKillboardDataRepository> logger)
     {
         _whitelistManagementSqLiteDataAccess = whitelistManagementSqLiteDataAccess;
-        _endpoint = endpoint;
         _logger = logger;
-
-        var fileInformation = new FileInfo(endpoint.WhitelistManagementEndpoint);
-
-        if (!fileInformation.Exists)
-            whitelistManagementSqLiteDataAccess.CreateAndConnectToDBFile(fileInformation.FullName);
     }
     
     #endregion

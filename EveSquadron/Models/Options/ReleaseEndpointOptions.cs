@@ -4,6 +4,8 @@ namespace EveSquadron.Models.Options;
 
 public class ReleaseEndpointOptions
 {
+    public const string Section = "Endpoints:Release";
+    
     [Required]
     public string ReleasePath { get; set; }
     

@@ -8,8 +8,6 @@ namespace EveSquadron.ViewModels.Interfaces;
 
 public interface IStatusBarViewModel : INotifyPropertyChanged
 {
-    public ThemeVariant ThemeVariant { get; set; }
-    
     public bool WhitelistActive { get; set; }
     
     public bool AlwaysOnTop { get; set; }

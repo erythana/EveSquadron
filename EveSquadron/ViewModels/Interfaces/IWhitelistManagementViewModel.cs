@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using EveSquadron.Models;
+using EveSquadron.Models.Enums;
 using EveSquadron.Models.Interfaces;
 using ReactiveUI;
 

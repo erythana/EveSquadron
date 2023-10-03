@@ -16,13 +16,13 @@ public class WhitelistManagementDataRepository : IWhitelistManagementDataReposit
     #region member fields
 
     private readonly IWhitelistManagementSqLiteDataAccess _whitelistManagementSqLiteDataAccess;
-    private readonly ILogger<ZKillboardDataRepository> _logger;
+    private readonly ILogger<IWhitelistManagementDataRepository> _logger;
 
     #endregion
 
     #region constructor
 
-    public WhitelistManagementDataRepository(IWhitelistManagementSqLiteDataAccess whitelistManagementSqLiteDataAccess, ILogger<ZKillboardDataRepository> logger)
+    public WhitelistManagementDataRepository(IWhitelistManagementSqLiteDataAccess whitelistManagementSqLiteDataAccess, ILogger<IWhitelistManagementDataRepository> logger)
     {
         _whitelistManagementSqLiteDataAccess = whitelistManagementSqLiteDataAccess;
         _logger = logger;

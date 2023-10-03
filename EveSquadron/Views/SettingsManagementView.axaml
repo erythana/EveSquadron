@@ -2,29 +2,66 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:Avalonia.Markup.Xaml.Converters;assembly=Avalonia.Markup.Xaml"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EveSquadron.Views.SettingsManagementView"
         Title="SettingsManagementView"
         MinWidth="550"
         DataContext="{Binding SettingsManagementViewModel}">
+<Window.Resources>
+    <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+</Window.Resources>
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Bottom">
+            <DockPanel.Styles>
+                <Style Selector=":is(Layoutable)">
+                    <Setter Property="Margin" Value="2, 2" />
+                </Style>
+            </DockPanel.Styles>
+            <Button Content="Save" Command="{Binding SaveApplicationSettingsCommand}" />
+        </DockPanel>
 
-    <StackPanel>
-        <HeaderedContentControl Header="Application">
-            <StackPanel>
-                <TextBlock Text="... clipboard-polling rate (ms)"></TextBlock>
-                <TextBlock Text="... auto export paste checkbox"></TextBlock>
-                <TextBlock Text="... auto export csv path"></TextBlock>
-            </StackPanel>
-        </HeaderedContentControl>
+        <StackPanel>
+            <HeaderedContentControl Header="Application">
+                <StackPanel>
+                    <TextBlock Text="... clipboard-polling rate (ms)"></TextBlock>
+                    <NumericUpDown Minimum="{Binding MinimumClipboardPolling}"
+                                   Maximum="{Binding MaximumClipboardPolling}" 
+                                   Increment="50"
+                                   Value="{Binding ClipboardPolling}" />
+                    <CheckBox Content="Auto Export Scans" IsChecked="{Binding AutoExport}" />
+                    <StackPanel Orientation="Horizontal" IsEnabled="{Binding AutoExport}">
+                        <TextBlock Text="{Binding AutoExportFile}" IsEnabled="False" />
+                        <Button Content="Open File Dialog Icon" Command="{Binding OpenAutoExportFolderPickerCommand}" />
+                    </StackPanel>
+                </StackPanel>
+            </HeaderedContentControl>
 
-        <HeaderedContentControl Header="Appearance">
-            <StackPanel>
-                <TextBlock Text="Theme DRP"></TextBlock>
-                <TextBlock Text="Hover Color DRP"></TextBlock>
-                <TextBlock Text="Show Portraits"></TextBlock>
-                <TextBlock Text="Grid Row Size"></TextBlock>
-            </StackPanel>
-        </HeaderedContentControl>
-    </StackPanel>
-
+            <HeaderedContentControl Header="Appearance">
+                <StackPanel>
+                    <ComboBox
+                        ItemsSource="{Binding AvailableThemes, Mode=OneTime}"
+                        SelectedItem="{Binding Theme, Mode=TwoWay}" />
+                    <ComboBox
+                        ItemsSource="{Binding AvailableHoverColors, Mode=OneTime}"
+                        SelectedItem="{Binding HoverColor, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Width="150">
+                                    <Rectangle Width="16" Height="16" Fill="{Binding Converter={StaticResource ColorToBrushConverter}}" Margin="0,0,4,0"/>
+                                    <TextBlock Text="{Binding }" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <CheckBox Content="Whitelist Active" IsChecked="{Binding WhitelistActive}" />
+                    <CheckBox Content="Show portraits" IsChecked="{Binding ShowPortrait}" />
+                    <CheckBox Content="Always on top" IsChecked="{Binding AlwaysOnTop}" />
+                    <ComboBox
+                        ItemsSource="{Binding AvailableGridRowSizes, Mode=OneTime}"
+                        SelectedItem="{Binding GridRowSize, Mode=TwoWay}" />
+                </StackPanel>
+            </HeaderedContentControl>
+        </StackPanel>
+    </DockPanel>
 </Window>

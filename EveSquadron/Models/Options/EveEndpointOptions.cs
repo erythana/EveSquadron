@@ -4,6 +4,8 @@ namespace EveSquadron.Models.Options;
 
 public class EveEndpointOptions
 {
+    public const string Section = "Endpoints:EveESI";
+    
     [Required]
     public string UniverseEndpoint { get; set; }
     

@@ -63,11 +63,11 @@ public static class ContainerConfiguration
     
     private static IServiceCollection AddOptionMappings(this IServiceCollection builder)
     {
-        AddOptionAndValidateDataAnnotations<EveSquadronOptions>(Configuration.GetSection("EveSquadronOptions"));
-        AddOptionAndValidateDataAnnotations<StatusOptions>(Configuration.GetSection("StatusOptions"));
-        AddOptionAndValidateDataAnnotations<ReleaseEndpointOptions>(Configuration.GetSection("Endpoints:Release"));
-        AddOptionAndValidateDataAnnotations<ZkillboardEndpointOptions>(Configuration.GetSection("Endpoints:Zkillboard"));
-        AddOptionAndValidateDataAnnotations<EveEndpointOptions>(Configuration.GetSection("Endpoints:EveESI"));
+        AddOptionAndValidateDataAnnotations<EveSquadronOptions>(Configuration.GetSection(EveSquadronOptions.Section));
+        AddOptionAndValidateDataAnnotations<StatusOptions>(Configuration.GetSection(StatusOptions.Section));
+        AddOptionAndValidateDataAnnotations<ReleaseEndpointOptions>(Configuration.GetSection(ReleaseEndpointOptions.Section));
+        AddOptionAndValidateDataAnnotations<ZkillboardEndpointOptions>(Configuration.GetSection(ZkillboardEndpointOptions.Section));
+        AddOptionAndValidateDataAnnotations<EveEndpointOptions>(Configuration.GetSection(EveEndpointOptions.Section));
         return builder;
 
         void AddOptionAndValidateDataAnnotations<T>(IConfiguration configuration) where T : class => builder.AddOptions<T>()

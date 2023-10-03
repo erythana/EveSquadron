@@ -1,3 +1,4 @@
+using EveSquadron.Models.Enums;
 using EveSquadron.Models.Interfaces;
 
 namespace EveSquadron.Models;

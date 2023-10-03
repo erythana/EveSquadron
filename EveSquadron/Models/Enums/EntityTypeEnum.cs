@@ -1,4 +1,4 @@
-namespace EveSquadron.Models;
+namespace EveSquadron.Models.Enums;
 
 public enum EntityTypeEnum
 {

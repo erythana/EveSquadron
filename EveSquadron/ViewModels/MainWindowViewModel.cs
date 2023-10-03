@@ -9,8 +9,10 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Media;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using EveSquadron.Models;
+using EveSquadron.Models.Enums;
 using EveSquadron.Models.EveSquadron;
 using EveSquadron.Models.Interfaces;
 using EveSquadron.Models.Options;
@@ -30,6 +32,10 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     private readonly ILogger<MainWindowViewModel> _logger;
     private string? _previousClipboardContent = string.Empty;
     private DispatcherTimer _dispatcherTimer;
+    private ThemeVariant _themeVariant;
+    private Color _hoverColor;
+    private bool _showPortrait;
+    private int _gridRowHeight;
 
     #endregion
 
@@ -65,34 +71,11 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         InitializeFrom(eveSquadronOptions);
     }
 
-    private void OnSettingsManagementViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        
-    }
-
-    private void OnWhitelistManagementViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(WhitelistManagementViewModel.IsWindowVisible))
-        {
-            _dispatcherTimer.IsEnabled = !WhitelistManagementViewModel.IsWindowVisible;
-            EveSquadronPlayers?.Refresh();
-        }
-    }
-
-    private void OnStatusBarViewModelOnPropertyChanged(object? _, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(StatusBarViewModel.WhitelistActive))
-            EveSquadronPlayers?.Refresh();
-    }
-
     private void InitializeFrom(IOptions<EveSquadronOptions> options)
     {
-        HoverColor = Color.TryParse(options.Value.HoverColor, out var color)
-            ? color
-            : Colors.Orange;
+        HoverColor = SettingConversionHelper.StringToColorConverter(options.Value.HoverColor);
         ShowPortrait = !bool.TryParse(options.Value.ShowPortrait, out var showPortrait) || showPortrait;
         GridRowHeight = GetGridSize(options.Value.GridRowSize);
-        
         var timerTickRate = TryParseClipboardPollingRate(options.Value.ClipboardPollingMilliseconds);
         _dispatcherTimer = new DispatcherTimer(timerTickRate, DispatcherPriority.Background, ClipboardPollingTimerCallback)
         {
@@ -147,11 +130,25 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 
     #region properties
 
-    public Color HoverColor { get; private set; }
+    public Color HoverColor {
+        get => _hoverColor;
+        private set => SetProperty(ref _hoverColor, value);
+    }
 
-    public bool ShowPortrait { get; private set; }
+    public bool ShowPortrait {
+        get => _showPortrait;
+        private set => SetProperty(ref _showPortrait, value);
+    }
 
-    public int GridRowHeight { get; private set; }
+    public int GridRowHeight {
+        get => _gridRowHeight;
+        private set => SetProperty(ref _gridRowHeight, value);
+    }
+    
+    public ThemeVariant ThemeVariant {
+        get => _themeVariant;
+        set => SetProperty(ref _themeVariant, value);
+    }
 
     // ReSharper disable once InconsistentNaming
 
@@ -256,6 +253,50 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         {
             UseShellExecute = true
         });
+    }
+
+    #endregion
+
+    #region ViewModel INPC Handler
+
+    private void OnSettingsManagementViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (sender is not ISettingsManagementViewModel settingsManagementViewModel)
+            return;
+        
+        switch (e.PropertyName)
+        {
+            case nameof(SettingsManagementViewModel.Theme):
+                ThemeVariant = settingsManagementViewModel.Theme;
+                break;
+            case nameof(SettingsManagementViewModel.HoverColor):
+                HoverColor = settingsManagementViewModel.HoverColor;
+                break;
+            case nameof(SettingsManagementViewModel.AlwaysOnTop):
+                StatusBarViewModel.AlwaysOnTop = settingsManagementViewModel.AlwaysOnTop;
+                break;
+            case nameof(settingsManagementViewModel.WhitelistActive):
+                StatusBarViewModel.WhitelistActive = settingsManagementViewModel.WhitelistActive;
+                break;
+            case nameof(settingsManagementViewModel.ShowPortrait):
+                ShowPortrait = settingsManagementViewModel.ShowPortrait;
+                break;
+        }
+    }
+
+    private void OnWhitelistManagementViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(WhitelistManagementViewModel.IsWindowVisible))
+        {
+            _dispatcherTimer.IsEnabled = !WhitelistManagementViewModel.IsWindowVisible;
+            EveSquadronPlayers?.Refresh();
+        }
+    }
+
+    private void OnStatusBarViewModelOnPropertyChanged(object? _, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(StatusBarViewModel.WhitelistActive))
+            EveSquadronPlayers?.Refresh();
     }
 
     #endregion

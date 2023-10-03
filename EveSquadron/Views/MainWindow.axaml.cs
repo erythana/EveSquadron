@@ -11,6 +11,7 @@ using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using EveSquadron.Models;
+using EveSquadron.Models.Enums;
 using EveSquadron.Models.EveSquadron;
 using EveSquadron.ViewModels.Interfaces;
 
@@ -60,8 +61,8 @@ public partial class MainWindow : Window
         
         var isDarkModeCheckedBinding = new Binding
         {
-            Source = currentViewModel.StatusBarViewModel,
-            Path = nameof(currentViewModel.StatusBarViewModel.ThemeVariant),
+            Source = currentViewModel,
+            Path = nameof(currentViewModel.ThemeVariant),
             Mode = BindingMode.OneWay
         };
         

@@ -1,9 +1,10 @@
 using System.Data;
 using System.Data.SQLite;
 using Dapper;
+using EveSquadron.Models;
 using Microsoft.Extensions.Configuration;
 
-namespace EveSquadron.Models;
+namespace EveSquadron.DataAccess;
 
 public partial class SqLiteConfigurationSource : IConfigurationSource
 {

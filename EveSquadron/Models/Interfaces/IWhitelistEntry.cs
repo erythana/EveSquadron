@@ -1,3 +1,5 @@
+using EveSquadron.Models.Enums;
+
 namespace EveSquadron.Models.Interfaces;
 
 public interface IWhitelistEntry

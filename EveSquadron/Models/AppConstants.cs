@@ -1,4 +1,6 @@
 using System.Text.Json;
+using Avalonia.Media;
+using EveSquadron.Models.Enums;
 
 namespace EveSquadron.Models;
 
@@ -12,6 +14,8 @@ public static class AppConstants
     public const int MinimalClipboardPollingMs = 100;
     public const int MaximalClipboardPollingMs = 20000;
     public const int DefaultClipboardPollingMs = 250;
+    public static Color DefaultHoverColor = Colors.Orange;
+    public static GridRowSizeEnum DefaultGridRowSize = GridRowSizeEnum.Large;
 
     #endregion
 

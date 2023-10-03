@@ -35,10 +35,6 @@
                 IsChecked="{Binding AlwaysOnTop}"
                 Content="Always on top"
                 Margin="5,0" />
-            <CheckBox
-                IsChecked="{Binding ThemeVariant, Converter={StaticResource BooleanToThemeVariantConverter}}"
-                Content="Dark-Mode"
-                Margin="5,0" />
             <!-- Open Settings View - Material Icon "Settings" -->
             <Button
                 Command="{Binding OpenSettingsCommand}"

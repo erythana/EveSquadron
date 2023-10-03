@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Styling;
+using EveSquadron.Models;
 using EveSquadron.Models.Interfaces;
 using EveSquadron.Models.Options;
 using EveSquadron.ViewModels.Interfaces;
@@ -24,7 +25,6 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
     private readonly ILogger<IStatusBarViewModel> _logger;
     private bool _alwaysOnTop;
     private Task<bool?> _updateAvailable;
-    private ThemeVariant _themeVariant;
     private bool _whitelistActive;
 
     #endregion
@@ -36,7 +36,6 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
         _releaseVersionChecker = releaseVersionChecker;
         _logger = logger;
         _updateAvailable = Task.FromResult<bool?>(false);
-        _themeVariant = ThemeVariant.Default;
         
         var version = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly()!.Location).ProductVersion ?? "";
         if (_releaseVersionChecker.TryParseVersionNumber(version, out var recognizedVersion))
@@ -47,25 +46,14 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
         OpenSettingsCommand = ReactiveCommand.CreateFromTask(OnOpenSettingsCommand);
 
         var options = statusOptions.Value;
-        ThemeVariant = options.Theme switch
-        {
-            { } theme when theme.Equals("Dark", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Dark,
-            { } theme when theme.Equals("Light", StringComparison.InvariantCultureIgnoreCase) => ThemeVariant.Light,
-            _ => ThemeVariant.Default
-        };
-
         WhitelistActive = bool.TryParse(options.WhitelistActive, out var whitelistActive) && whitelistActive;
+        AlwaysOnTop = bool.TryParse(options.AlwaysOnTop, out var alwaysOnTop) && alwaysOnTop;
     }
     
     #endregion
 
     #region properties
     
-    public ThemeVariant ThemeVariant {
-        get => _themeVariant;
-        set => SetProperty(ref _themeVariant, value);
-    }
-
     public bool WhitelistActive {
         get => _whitelistActive;
         set => SetProperty(ref _whitelistActive, value);

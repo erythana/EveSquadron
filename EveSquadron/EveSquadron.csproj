@@ -63,11 +63,8 @@
         <DependentUpon>SettingsManagementView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Models\SqLiteConfigurationSource.SqLiteStatements.cs">
-        <DependentUpon>SqLiteConfigurationSource.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Models\SqLiteConfigurationProvider.SqLiteStatements.cs">
-        <DependentUpon>SqLiteConfigurationProvider.cs</DependentUpon>
+      <Compile Update="DataAccess\ApplicationSettingsDataAccess.SqLiteStatements.cs">
+        <DependentUpon>ApplicationSettingsDataAccess.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 

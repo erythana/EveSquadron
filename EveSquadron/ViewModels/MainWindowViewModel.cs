@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -31,11 +32,13 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     private readonly Dictionary<int, int> _idCountDictionary;
     private readonly ILogger<MainWindowViewModel> _logger;
     private string? _previousClipboardContent = string.Empty;
+    private GridRowSizeEnum _gridRowHeight;
+    private Color _hoverColor;
     private DispatcherTimer _dispatcherTimer;
     private ThemeVariant _themeVariant;
-    private Color _hoverColor;
+    private string _autoExportFile;
     private bool _showPortrait;
-    private int _gridRowHeight;
+    private bool _autoExport;
 
     #endregion
 
@@ -52,6 +55,8 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         {
             _eveSquadronPlayerInformation.Clear();
             _idCountDictionary.Clear();
+            if (AutoExport)
+                TryExportToCSV(AutoExportFile);
         };
         _logger = logger;
 
@@ -71,11 +76,38 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         InitializeFrom(eveSquadronOptions);
     }
 
+    private void TryExportToCSV(string autoExportFile)
+    {
+        if (string.IsNullOrWhiteSpace(autoExportFile))
+            return;
+        var fileInfo = new FileInfo(autoExportFile);
+        try
+        {
+            //Write deserializer for evesquadronplayerinformation
+
+            var csv = "";
+
+            var fileStream = fileInfo.OpenWrite();
+            
+            
+            
+            File.WriteAllText(fileInfo.FullName, csv);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
+    }
+
     private void InitializeFrom(IOptions<EveSquadronOptions> options)
     {
+        AutoExport = bool.TryParse(options.Value.AutoExport, out var autoExport) && autoExport;
+        AutoExportFile = options.Value.AutoExportFile;
         HoverColor = SettingConversionHelper.StringToColorConverter(options.Value.HoverColor);
-        ShowPortrait = !bool.TryParse(options.Value.ShowPortrait, out var showPortrait) || showPortrait;
-        GridRowHeight = GetGridSize(options.Value.GridRowSize);
+        ShowPortrait = bool.TryParse(options.Value.ShowPortrait, out var showPortrait) && showPortrait;
+        GridRowHeight = Enum.TryParse(options.Value.GridRowSize, out GridRowSizeEnum parsedValue) ? parsedValue : AppConstants.DefaultGridRowSize; 
         var timerTickRate = TryParseClipboardPollingRate(options.Value.ClipboardPollingMilliseconds);
         _dispatcherTimer = new DispatcherTimer(timerTickRate, DispatcherPriority.Background, ClipboardPollingTimerCallback)
         {
@@ -140,11 +172,21 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         private set => SetProperty(ref _showPortrait, value);
     }
 
-    public int GridRowHeight {
+    public GridRowSizeEnum GridRowHeight {
         get => _gridRowHeight;
         private set => SetProperty(ref _gridRowHeight, value);
     }
-    
+
+    public bool AutoExport {
+        get => _autoExport;
+        private set => SetProperty(ref _autoExport, value);
+    }
+
+    public string AutoExportFile {
+        get => _autoExportFile;
+        private set => SetProperty(ref _autoExportFile, value);
+    }
+
     public ThemeVariant ThemeVariant {
         get => _themeVariant;
         set => SetProperty(ref _themeVariant, value);
@@ -224,16 +266,7 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
             _logger.LogError(e, "Could not load player information. Check input from clipboard!.");
         }
     }
-
-
-
-    private int GetGridSize(string? sizeMode = "big") => sizeMode?.ToLower() switch
-    {
-        "small" => 16,
-        "medium" => 24,
-        _ => 32,
-    };
-
+    
     #endregion
 
     #region zKillboard Navigation
@@ -280,6 +313,12 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
                 break;
             case nameof(settingsManagementViewModel.ShowPortrait):
                 ShowPortrait = settingsManagementViewModel.ShowPortrait;
+                break;
+            case nameof(settingsManagementViewModel.GridRowSize):
+                GridRowHeight = settingsManagementViewModel.GridRowSize;
+                break;
+            case nameof(settingsManagementViewModel.AutoExportFile):
+                AutoExportFile = settingsManagementViewModel.AutoExportFile;
                 break;
         }
     }

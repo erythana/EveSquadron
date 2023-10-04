@@ -6,62 +6,88 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="EveSquadron.Views.SettingsManagementView"
         Title="SettingsManagementView"
-        MinWidth="550"
+        SizeToContent="WidthAndHeight"
+        Topmost="True"
+        CanResize="False"
         DataContext="{Binding SettingsManagementViewModel}">
-<Window.Resources>
-    <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
-</Window.Resources>
-    <DockPanel>
-        <DockPanel DockPanel.Dock="Bottom">
-            <DockPanel.Styles>
-                <Style Selector=":is(Layoutable)">
-                    <Setter Property="Margin" Value="2, 2" />
-                </Style>
-            </DockPanel.Styles>
-            <Button Content="Save" Command="{Binding SaveApplicationSettingsCommand}" />
-        </DockPanel>
-
-        <StackPanel>
-            <HeaderedContentControl Header="Application">
-                <StackPanel>
-                    <TextBlock Text="... clipboard-polling rate (ms)"></TextBlock>
-                    <NumericUpDown Minimum="{Binding MinimumClipboardPolling}"
-                                   Maximum="{Binding MaximumClipboardPolling}" 
-                                   Increment="50"
-                                   Value="{Binding ClipboardPolling}" />
-                    <CheckBox Content="Auto Export Scans" IsChecked="{Binding AutoExport}" />
-                    <StackPanel Orientation="Horizontal" IsEnabled="{Binding AutoExport}">
-                        <TextBlock Text="{Binding AutoExportFile}" IsEnabled="False" />
-                        <Button Content="Open File Dialog Icon" Command="{Binding OpenAutoExportFolderPickerCommand}" />
+    <Window.Resources>
+        <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+    </Window.Resources>
+    <Window.Styles>
+        <Style Selector=":is(Control).ContentElement">
+            <Setter Property="Margin" Value="5,2" />
+        </Style>
+    </Window.Styles>
+    <HeaderedContentControl Header="Application Settings">
+        <DockPanel>
+            <DockPanel DockPanel.Dock="Bottom">
+                <DockPanel.Styles>
+                    <Style Selector=":is(Layoutable)">
+                        <Setter Property="Margin" Value="2, 2" />
+                    </Style>
+                </DockPanel.Styles>
+                <Button Content="Save" Command="{Binding SaveApplicationSettingsCommand}" />
+            </DockPanel>
+            <StackPanel>
+                <HeaderedContentControl Header="Application">
+                    <StackPanel>
+                        <TextBlock Text="Clipboard-Polling (ms)" Classes="ContentElement" />
+                        <NumericUpDown HorizontalAlignment="Left"
+                                       Minimum="{Binding MinimumClipboardPolling}"
+                                       Maximum="{Binding MaximumClipboardPolling}"
+                                       Increment="50"
+                                       Value="{Binding ClipboardPolling}"
+                                       Width="250"
+                                       Classes="ContentElement" />
+                        <StackPanel Classes="ContentElement">
+                            <CheckBox Content="Auto Export Scans" IsChecked="{Binding AutoExport}" />
+                            <TextBlock Text="Export path" />
+                            <StackPanel Orientation="Horizontal" IsEnabled="{Binding AutoExport}"
+                                        Classes="ContentElement">
+                                <TextBox Text="{Binding AutoExportFile}" IsReadOnly="True" Width="400" />
+                                <Button Command="{Binding OpenAutoExportFolderPickerCommand}">
+                                    <!-- material icon "file open" -->
+                                    <PathIcon 
+                                        Data="M220-80q-24 0-42-18t-18-42v-680q0-24 18-42t42-18h340l240 240v270h-60v-230H520v-220H220v680h410v60H220Zm658 1L750-207v125h-60v-228h228v60H792l128 128-42 43Zm-658-61v-680 680Z">
+                                    </PathIcon>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-            </HeaderedContentControl>
+                </HeaderedContentControl>
 
-            <HeaderedContentControl Header="Appearance">
-                <StackPanel>
-                    <ComboBox
-                        ItemsSource="{Binding AvailableThemes, Mode=OneTime}"
-                        SelectedItem="{Binding Theme, Mode=TwoWay}" />
-                    <ComboBox
-                        ItemsSource="{Binding AvailableHoverColors, Mode=OneTime}"
-                        SelectedItem="{Binding HoverColor, Mode=TwoWay}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" Width="150">
-                                    <Rectangle Width="16" Height="16" Fill="{Binding Converter={StaticResource ColorToBrushConverter}}" Margin="0,0,4,0"/>
-                                    <TextBlock Text="{Binding }" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <CheckBox Content="Whitelist Active" IsChecked="{Binding WhitelistActive}" />
-                    <CheckBox Content="Show portraits" IsChecked="{Binding ShowPortrait}" />
-                    <CheckBox Content="Always on top" IsChecked="{Binding AlwaysOnTop}" />
-                    <ComboBox
-                        ItemsSource="{Binding AvailableGridRowSizes, Mode=OneTime}"
-                        SelectedItem="{Binding GridRowSize, Mode=TwoWay}" />
-                </StackPanel>
-            </HeaderedContentControl>
-        </StackPanel>
-    </DockPanel>
+                <HeaderedContentControl Header="Appearance">
+                    <StackPanel>
+                        <ComboBox
+                            ItemsSource="{Binding AvailableThemes, Mode=OneTime}"
+                            SelectedItem="{Binding Theme, Mode=TwoWay}" Classes="ContentElement" />
+                        <ComboBox
+                            ItemsSource="{Binding AvailableHoverColors, Mode=OneTime}"
+                            SelectedItem="{Binding HoverColor, Mode=TwoWay}" Classes="ContentElement">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Width="150">
+                                        <Rectangle Width="16" Height="16"
+                                                   Fill="{Binding Converter={StaticResource ColorToBrushConverter}}"
+                                                   Margin="0,0,4,0" />
+                                        <TextBlock Text="{Binding }" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <CheckBox Content="Whitelist enabled" IsChecked="{Binding WhitelistActive}"
+                                  Classes="ContentElement" />
+                        <CheckBox Content="Always on top" IsChecked="{Binding AlwaysOnTop}" Classes="ContentElement" />
+                        <CheckBox Content="Show portraits" IsChecked="{Binding ShowPortrait}" Classes="ContentElement" />
+                        <StackPanel Classes="ContentElement">
+                            <TextBlock Text="Row-Height" />
+                            <ComboBox
+                                ItemsSource="{Binding AvailableGridRowSizes, Mode=OneTime}"
+                                SelectedItem="{Binding GridRowSize, Mode=TwoWay}" />
+                        </StackPanel>
+                    </StackPanel>
+                </HeaderedContentControl>
+            </StackPanel>
+        </DockPanel>
+    </HeaderedContentControl>
 </Window>

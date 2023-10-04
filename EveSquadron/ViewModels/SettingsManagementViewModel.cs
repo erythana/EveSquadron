@@ -1,9 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
+using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using EveSquadron.DataRepositories.Interfaces;
 using EveSquadron.Models;
@@ -13,6 +18,7 @@ using EveSquadron.ViewModels.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ReactiveUI;
+using EveSquadron.Extensions;
 
 namespace EveSquadron.ViewModels;
 
@@ -65,13 +71,32 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     {
         try
         {
+            if (Application.Current!.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime applicationLifetime ||
+                applicationLifetime.Windows.FirstOrDefault(x => x.DataContext == this) is not { } window)
+                return;
+                
+            var file = await GetCsvTargetFileFromSaveFilePickerAsync(window);
+
+            var filePath = file?.Path.AbsolutePath;
+            if (string.IsNullOrWhiteSpace(filePath))
+                return;
             
+            AutoExportFile = CreateFile(filePath);;
         }
         catch (Exception e)
         {
             _logger.LogCritical(e, "Could not open folder picker dialog!");
             throw;
         }
+    }
+
+    private static string CreateFile(string file)
+    {
+        var fileInfo = new FileInfo(file);
+        if (!fileInfo.Exists && fileInfo.Directory!.HasWriteAccess(true))
+            fileInfo.Create();
+
+        return fileInfo.FullName;
     }
 
     private async Task OnSaveApplicationSettingsCommand()
@@ -227,5 +252,18 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     private IEnumerable<ConfigurationValue> GetListOfWriteableSettings() => 
         _settingsToSave.Select(x => new ConfigurationValue(){Name = x.Key, Value = x.Value});
 
+    private async static Task<IStorageFile?> GetCsvTargetFileFromSaveFilePickerAsync(TopLevel topLevel) => await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
+        { 
+            Title = "Save into CSV File",
+            DefaultExtension = "*.csv",
+            SuggestedFileName = "EveSquadron-Export.csv",
+            FileTypeChoices = new List<FilePickerFileType>{ new("CSV")
+            {
+                Patterns = new[]{"*.csv"},
+                MimeTypes = new[]{"text/*"},
+            }},
+            ShowOverwritePrompt = true
+        });
+    
     #endregion
 }

@@ -1,6 +1,6 @@
+using System.IO;
 using Avalonia.Media;
 using Avalonia.Styling;
-using EveSquadron.Models;
 using EveSquadron.Models.Enums;
 using EveSquadron.Models.EveSquadron;
 
@@ -20,7 +20,10 @@ public interface IMainWindowViewModel
     
     public bool ShowPortrait { get; }
 
-    public int GridRowHeight { get; }
+    public GridRowSizeEnum GridRowHeight { get; }
+    
+    public bool AutoExport { get; }
+    public string AutoExportFile { get; }
     
     void OpenZKillboardLinkFor(EveSquadronPlayerInformation playerInformation, EntityTypeEnum clickedColumn);
 }

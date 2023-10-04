@@ -12,7 +12,7 @@ public static class AppConstants
     #region Setting Defaults
 
     public const int MinimalClipboardPollingMs = 100;
-    public const int MaximalClipboardPollingMs = 20000;
+    public const int MaximalClipboardPollingMs = 2000;
     public const int DefaultClipboardPollingMs = 250;
     public static Color DefaultHoverColor = Colors.Orange;
     public static GridRowSizeEnum DefaultGridRowSize = GridRowSizeEnum.Large;

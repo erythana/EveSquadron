@@ -5,7 +5,7 @@ namespace EveSquadron.Extensions;
 
 public static class DirectoryHelper
 {
-    public static bool HasWriteAccess(DirectoryInfo directory, bool throwIfFails = false)
+    public static bool HasWriteAccess(this DirectoryInfo directory, bool throwIfFails = false)
     {
         try
         {

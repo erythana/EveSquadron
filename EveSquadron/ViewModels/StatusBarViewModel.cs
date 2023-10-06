@@ -5,8 +5,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Styling;
-using EveSquadron.Models;
 using EveSquadron.Models.Interfaces;
 using EveSquadron.Models.Options;
 using EveSquadron.ViewModels.Interfaces;
@@ -137,4 +135,5 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
     }
     
     #endregion
+    public bool IsViewVisible { get; set; }
 }

@@ -35,7 +35,7 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
 
     #region events
     
-    public event EventHandler<(int? CorporationID, int? AllianceID)>? ParsedNewID;
+    public event EventHandler<EveSquadronPlayerInformation>? ParsedNewID;
     public event EventHandler? OnValidPaste;
 
     #endregion
@@ -77,7 +77,7 @@ public class PlayerInformationDataAggregator : IPlayerInformationDataAggregator
         currentPlayer.Corporation = eveNameLookups.FirstOrDefault(c => c.ID == charInfo.CorporationID);
         currentPlayer.Alliance = eveNameLookups.FirstOrDefault(a => a.ID == charInfo.AllianceID);
         
-        ParsedNewID.Invoke(this, (currentPlayer.Corporation?.ID, currentPlayer.Alliance?.ID));
+        ParsedNewID?.Invoke(this, currentPlayer);
     }
 
     private Lazy<Task<EveSquadronPlayerDetails>> GetLazyPlayerDetails(EveNameIDMapping character) =>

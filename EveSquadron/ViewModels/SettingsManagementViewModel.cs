@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -18,7 +17,6 @@ using EveSquadron.ViewModels.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ReactiveUI;
-using EveSquadron.Extensions;
 
 namespace EveSquadron.ViewModels;
 
@@ -33,7 +31,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     private bool _showPortrait;
     private bool _alwaysOnTop;
     private Color _hoverColor;
-    private string _autoExportFile;
+    private string _ExportFile;
     private GridRowSizeEnum _gridRowSize;
     private ThemeVariant _theme;
     
@@ -51,7 +49,9 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         _settingsToSave = new Dictionary<string, string>();
 
         SaveApplicationSettingsCommand = ReactiveCommand.CreateFromTask(OnSaveApplicationSettingsCommand);
-        OpenAutoExportFolderPickerCommand = ReactiveCommand.CreateFromTask(OnOpenAutoExportFolderPickerCommand);
+        OpenExportFilePickerCommand = ReactiveCommand.CreateFromTask(OnOpenAutoExportFolderPickerCommand);
+        ClearExportFileCommand = ReactiveCommand.Create(OnClearExportFileCommand);
+        
         MinimumClipboardPolling = AppConstants.MinimalClipboardPollingMs;
         MaximumClipboardPolling = AppConstants.MaximalClipboardPollingMs;
         AvailableGridRowSizes = Enum.GetValues<GridRowSizeEnum>();
@@ -69,7 +69,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
 
     private async Task OnOpenAutoExportFolderPickerCommand()
     {
-        try
+        try  //ReactiveCommand
         {
             if (Application.Current!.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime applicationLifetime ||
                 applicationLifetime.Windows.FirstOrDefault(x => x.DataContext == this) is not { } window)
@@ -78,10 +78,10 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
             var file = await GetCsvTargetFileFromSaveFilePickerAsync(window);
 
             var filePath = file?.Path.AbsolutePath;
-            if (string.IsNullOrWhiteSpace(filePath))
+            if (string.IsNullOrWhiteSpace(filePath) || !ExportFileHelper.IsValidExportFile(filePath))
                 return;
             
-            AutoExportFile = CreateFile(filePath);;
+            ExportFile = filePath;
         }
         catch (Exception e)
         {
@@ -90,18 +90,9 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         }
     }
 
-    private static string CreateFile(string file)
-    {
-        var fileInfo = new FileInfo(file);
-        if (!fileInfo.Exists && fileInfo.Directory!.HasWriteAccess(true))
-            fileInfo.Create();
-
-        return fileInfo.FullName;
-    }
-
     private async Task OnSaveApplicationSettingsCommand()
     {
-        try
+        try  //ReactiveCommand
         {
             var saveableSettings = GetListOfWriteableSettings();
             await _applicationSettingDataRepository.SaveApplicationSettings(saveableSettings);
@@ -114,12 +105,18 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         }
     }
     
+    private void OnClearExportFileCommand()
+    {
+        ExportFile = "";
+    }
+    
     #endregion
 
     #region properties
 
     public IReactiveCommand SaveApplicationSettingsCommand { get; }
-    public IReactiveCommand OpenAutoExportFolderPickerCommand { get; }
+    public IReactiveCommand OpenExportFilePickerCommand { get; }
+    public IReactiveCommand ClearExportFileCommand { get; }
     public int MinimumClipboardPolling { get; }
     public int MaximumClipboardPolling { get; }
 
@@ -128,7 +125,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         set
         {
             SetProperty(ref _clipboardPolling, value);
-            AddToSaveableDictionary(EveSquadronOptions.Section, nameof(ClipboardPolling), value.ToString());
+            AddToSaveableSettings(EveSquadronOptions.Section, nameof(ClipboardPolling), value.ToString());
         }
     }
 
@@ -137,7 +134,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         set
         {
             SetProperty(ref _autoExport, value);
-            AddToSaveableDictionary(EveSquadronOptions.Section, nameof(AutoExport), value.ToString());
+            AddToSaveableSettings(EveSquadronOptions.Section, nameof(AutoExport), value.ToString());
         }
     }
 
@@ -146,7 +143,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         set
         {
             SetProperty(ref _whitelistActive, value);
-            AddToSaveableDictionary(StatusOptions.Section, nameof(WhitelistActive), value.ToString());
+            AddToSaveableSettings(StatusOptions.Section, nameof(WhitelistActive), value.ToString());
         }
     }
 
@@ -155,7 +152,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         set
         {
             SetProperty(ref _showPortrait, value);
-            AddToSaveableDictionary(EveSquadronOptions.Section, nameof(ShowPortrait), value.ToString());
+            AddToSaveableSettings(EveSquadronOptions.Section, nameof(ShowPortrait), value.ToString());
         }
     }
 
@@ -164,7 +161,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         set
         {
             SetProperty(ref _alwaysOnTop, value);
-            AddToSaveableDictionary(StatusOptions.Section, nameof(AlwaysOnTop), value.ToString());
+            AddToSaveableSettings(StatusOptions.Section, nameof(AlwaysOnTop), value.ToString());
         }
     }
 
@@ -173,16 +170,16 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         set
         {
             SetProperty(ref _hoverColor, value);
-            AddToSaveableDictionary(EveSquadronOptions.Section, nameof(HoverColor), value.ToString());
+            AddToSaveableSettings(EveSquadronOptions.Section, nameof(HoverColor), value.ToString());
         }
     }
 
-    public string AutoExportFile {
-        get => _autoExportFile;
+    public string ExportFile {
+        get => _ExportFile;
         set
         {
-            SetProperty(ref _autoExportFile, value);
-            AddToSaveableDictionary(EveSquadronOptions.Section, nameof(AutoExportFile), value);
+            SetProperty(ref _ExportFile, value);
+            AddToSaveableSettings(EveSquadronOptions.Section, nameof(ExportFile), value);
         }
     }
 
@@ -191,7 +188,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         set
         {
             SetProperty(ref _gridRowSize, value);
-            AddToSaveableDictionary(EveSquadronOptions.Section, nameof(GridRowSize), value.ToString());
+            AddToSaveableSettings(EveSquadronOptions.Section, nameof(GridRowSize), value.ToString());
         }
     }
 
@@ -200,7 +197,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         set
         {
             SetProperty(ref _theme, value);
-            AddToSaveableDictionary(EveSquadronOptions.Section, nameof(Theme), value.ToString());
+            AddToSaveableSettings(EveSquadronOptions.Section, nameof(Theme), value.ToString());
         }
     }
 
@@ -227,7 +224,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         ClipboardPolling = int.TryParse(eveSquadronOptions.Value.ClipboardPollingMilliseconds, out var polling) ? polling : AppConstants.DefaultClipboardPollingMs;
         HoverColor = SettingConversionHelper.StringToColorConverter(eveSquadronOptions.Value.HoverColor);
         Theme = SettingConversionHelper.StringToThemeConverter(eveSquadronOptions.Value.Theme);
-        AutoExportFile = eveSquadronOptions.Value.AutoExportFile;
+        ExportFile = eveSquadronOptions.Value.AutoExportFile;
         AutoExport = bool.TryParse(eveSquadronOptions.Value.AutoExport, out var autoExport) && autoExport;
         ShowPortrait = bool.TryParse(eveSquadronOptions.Value.ShowPortrait, out var showPortrait) && showPortrait;
         AlwaysOnTop = bool.TryParse(statusOptions.Value.AlwaysOnTop, out var alwaysOnTop) && alwaysOnTop;
@@ -240,9 +237,9 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         IOptions<T> ResolveOptionsFromType<T>() where T : class => (IOptions<T>)serviceProvider.GetService(typeof(IOptions<T>))!;
     }
 
-    private void AddToSaveableDictionary(string sectionTarget, string? name, string? value)
+    private void AddToSaveableSettings(string sectionTarget, string name, string value)
     {
-        if (name is null || value is null)
+        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(value))
             return;
         
         if (!_settingsToSave.TryAdd($"{sectionTarget}:{name}", value))
@@ -250,10 +247,11 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     }
     
     private IEnumerable<ConfigurationValue> GetListOfWriteableSettings() => 
-        _settingsToSave.Select(x => new ConfigurationValue(){Name = x.Key, Value = x.Value});
+        _settingsToSave.Select(x => new ConfigurationValue {Name = x.Key, Value = x.Value});
 
-    private async static Task<IStorageFile?> GetCsvTargetFileFromSaveFilePickerAsync(TopLevel topLevel) => await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions()
+    private async static Task<IStorageFile?> GetCsvTargetFileFromSaveFilePickerAsync(TopLevel topLevel) => await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         { 
+            ShowOverwritePrompt = false,
             Title = "Save into CSV File",
             DefaultExtension = "*.csv",
             SuggestedFileName = "EveSquadron-Export.csv",
@@ -261,8 +259,8 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
             {
                 Patterns = new[]{"*.csv"},
                 MimeTypes = new[]{"text/*"},
-            }},
-            ShowOverwritePrompt = true
+            }}
+            
         });
     
     #endregion

@@ -17,11 +17,24 @@
         <vm:DesignTimeMainWindowViewModel />
     </Design.DataContext>
     <Window.Resources>
-        <converters:BooleanToThemeVariantConverter x:Key="BooleanToThemeVariantConverter" />
         <converters:GroupCountVisibilityConverter x:Key="GroupCountVisibilityConverter" />
+        <converters:ExportFilePathToVisibleConverter x:Key="ExportFilePathToVisibleConverter" />
     </Window.Resources>
     <DockPanel>
-        <DockPanel DataContext="{Binding StatusBarViewModel}" Margin="10,0" DockPanel.Dock="Bottom" Height="40">
+        <DockPanel DockPanel.Dock="Bottom" Height="40">
+            <Button ToolTip.Tip="Export all"
+                    HorizontalAlignment="Center"
+                    Command="{Binding ExportPlayerInformationCommand}"
+                    Margin="10,0,0,0"
+                    Height="30"
+                    Width="30"
+                    IsVisible="{Binding ExportFilePath, Converter={StaticResource ExportFilePathToVisibleConverter}, Mode=OneWay}">
+                <!-- material icon download -->
+                <PathIcon 
+                    Data="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z">
+                </PathIcon>
+            </Button>
+            <DockPanel DataContext="{Binding StatusBarViewModel}" Margin="10,0" >
             <CheckBox
                 IsChecked="{Binding WhitelistActive}"
                 Content="Whitelist"
@@ -60,7 +73,8 @@
                                 <Template>
                                     <StackPanel>
                                         <TextBlock Text="Update available!" />
-                                        <TextBlock Text="{Binding LatestReleasePath, StringFormat='Click here to navigate to {0}'}" />
+                                        <TextBlock
+                                            Text="{Binding LatestReleasePath, StringFormat='Click here to navigate to {0}'}" />
                                     </StackPanel>
                                 </Template>
                             </Setter.Value>
@@ -101,6 +115,8 @@
                     Data="M122 911v-71h99l-5-7q-58-66-88-128.483Q98 642.034 98 580q0-121.482 74-214.241Q246 273 362 243v96q-77 24-123 91.144Q193 497.287 193 580q0 48 15.5 90.5T264 750l24 21v-98h72v238H122Zm357.877-128Q464 783 452.5 771.377q-11.5-11.623-11.5-27.5t11.623-27.377q11.623-11.5 27.5-11.5t27.377 11.623q11.5 11.623 11.5 27.5T507.377 771.5q-11.623 11.5-27.5 11.5ZM446 632V366h72v266h-72Zm151 278v-97q77-23 123-90.144Q766 655.713 766 573q0-50-16.5-93T695 402l-24-21v98h-72V241h238v71H737l6 7q64.606 59.71 91.303 125.891Q861 511.071 861 573q0 120.482-74.5 213.741Q712 880 597 910Z" />
             </Button>
         </DockPanel>
+        </DockPanel>
+        
 
         <DataGrid
             x:Name="PlayerInfoGrid"
@@ -128,37 +144,62 @@
                 </Style>
             </DataGrid.Styles>
             <DataGrid.Columns>
-                <DataGridTemplateColumn ClipboardContentBinding="{Binding CharacterImage}" IsVisible="{Binding ShowPortrait}" Width="Auto">
+                <DataGridTemplateColumn ClipboardContentBinding="{Binding CharacterImage}"
+                                        IsVisible="{Binding ShowPortrait}" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image Source="{Binding CharacterImage^, FallbackValue='Loading...', Mode=OneWay}" Height="{Binding RowHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}" Stretch="Uniform" />
+                            <Image Source="{Binding CharacterImage^, FallbackValue='Loading...', Mode=OneWay}"
+                                   Height="{Binding RowHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}"
+                                   Stretch="Uniform" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.CharacterName}"
                                     Binding="{Binding Character.Name, Mode=OneWay}" />
-               
+
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.SecurityStatus}"
                                     Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}, Mode=OneWay}" />
 
-                <DataGridTemplateColumn Header="{x:Static m:MainDataGridHeaderNames.Corporation}" SortMemberPath="Corporation.Name" ClipboardContentBinding="{Binding Corporation.Name}">
+                <DataGridTemplateColumn Header="{x:Static m:MainDataGridHeaderNames.Corporation}"
+                                        SortMemberPath="Corporation.Name"
+                                        ClipboardContentBinding="{Binding Corporation.Name}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="5,5">
                                 <TextBlock Text="{Binding Corporation.Name, Mode=OneWay}" />
-                                <TextBlock Text="{Binding CorporationPasteCount, StringFormat=' [{0}]'}" IsVisible="{Binding CorporationPasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}" />
+                                <TextBlock Text="{Binding CorporationPasteCount, StringFormat=' [{0}]'}"
+                                           IsVisible="{Binding CorporationPasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                
-                <DataGridTemplateColumn Header="{x:Static m:MainDataGridHeaderNames.Alliance}" SortMemberPath="Alliance.Name" ClipboardContentBinding="{Binding Alliance.Name}">
+
+                <DataGridTemplateColumn Header="{x:Static m:MainDataGridHeaderNames.Alliance}"
+                                        SortMemberPath="Alliance.Name"
+                                        ClipboardContentBinding="{Binding Alliance.Name}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="5,5">
                                 <TextBlock Text="{Binding Alliance.Name, Mode=OneWay}" />
-                                <TextBlock Text="{Binding AlliancePasteCount, StringFormat=' [{0}]'}" IsVisible="{Binding AlliancePasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}" />
+                                <TextBlock Text="{Binding AlliancePasteCount, StringFormat=' [{0}]'}"
+                                           IsVisible="{Binding AlliancePasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}" />
                             </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn CanUserSort="false" CanUserResize="False" IsVisible="{Binding ExportFilePath, Converter={StaticResource ExportFilePathToVisibleConverter}}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                                <Button ToolTip.Tip="Export this player"
+                                        HorizontalAlignment="Center"
+                                        ZIndex="2"
+                                        Command="{Binding #PlayerInfoGrid.DataContext.ExportPlayerInformationCommand}" CommandParameter="{Binding}" Margin="2,0">
+                                    <!-- material icon download -->
+                                    <PathIcon 
+                                        Data="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z">
+                                    </PathIcon>
+                                </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

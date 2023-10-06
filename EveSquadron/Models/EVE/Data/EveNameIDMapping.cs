@@ -1,3 +1,5 @@
+using CsvHelper.Configuration.Attributes;
+
 namespace EveSquadron.Models.EVE.Data;
 
 public class EveNameIDMapping

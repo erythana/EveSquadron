@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -20,6 +19,7 @@ using EveSquadron.Models.Options;
 using EveSquadron.ViewModels.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ReactiveUI;
 
 namespace EveSquadron.ViewModels;
 
@@ -29,6 +29,7 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 
     private readonly ObservableCollection<EveSquadronPlayerInformation> _eveSquadronPlayerInformation;
     private readonly IPlayerInformationDataAggregator _playerInformationDataAggregator;
+    private readonly IEveSquadronCsvExport _csvExport;
     private readonly Dictionary<int, int> _idCountDictionary;
     private readonly ILogger<MainWindowViewModel> _logger;
     private string? _previousClipboardContent = string.Empty;
@@ -36,36 +37,35 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     private Color _hoverColor;
     private DispatcherTimer _dispatcherTimer;
     private ThemeVariant _themeVariant;
-    private string _autoExportFile;
+    private string _exportFilePath;
     private bool _showPortrait;
     private bool _autoExport;
+    private DateTime _lastScanned;
 
     #endregion
 
     #region constructor
 
-    public MainWindowViewModel(IStatusBarViewModel statusBarViewModel, IWhitelistManagementViewModel whitelistManagementViewModel, ISettingsManagementViewModel settingsManagementViewModel, IPlayerInformationDataAggregator playerInformationDataAggregator,
+    public MainWindowViewModel(IStatusBarViewModel statusBarViewModel, IWhitelistManagementViewModel whitelistManagementViewModel, ISettingsManagementViewModel settingsManagementViewModel,
+        IPlayerInformationDataAggregator playerInformationDataAggregator, IEveSquadronCsvExport csvExport,
         IOptions<EveSquadronOptions> eveSquadronOptions, ILogger<MainWindowViewModel> logger)
     {
         _idCountDictionary = new Dictionary<int, int>();
         _eveSquadronPlayerInformation = new ObservableCollection<EveSquadronPlayerInformation>();
         _playerInformationDataAggregator = playerInformationDataAggregator;
+        _csvExport = csvExport;
         _playerInformationDataAggregator.ParsedNewID += OnParsedNewID;
-        _playerInformationDataAggregator.OnValidPaste += (_, _) =>
-        {
-            _eveSquadronPlayerInformation.Clear();
-            _idCountDictionary.Clear();
-            if (AutoExport)
-                TryExportToCSV(AutoExportFile);
-        };
+        _playerInformationDataAggregator.OnValidPaste += OnValidPaste;
         _logger = logger;
+
+        ExportPlayerInformationCommand = ReactiveCommand.CreateFromTask<EveSquadronPlayerInformation>(OnExportPlayerInformationCommand);
 
         StatusBarViewModel = statusBarViewModel;
         StatusBarViewModel.PropertyChanged += OnStatusBarViewModelOnPropertyChanged;
 
         WhitelistManagementViewModel = whitelistManagementViewModel;
         WhitelistManagementViewModel.PropertyChanged += OnWhitelistManagementViewModelOnPropertyChanged;
-        
+
         SettingsManagementViewModel = settingsManagementViewModel;
         SettingsManagementViewModel.PropertyChanged += OnSettingsManagementViewModelOnPropertyChanged;
 
@@ -76,38 +76,29 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         InitializeFrom(eveSquadronOptions);
     }
 
-    private void TryExportToCSV(string autoExportFile)
+    private async Task OnExportPlayerInformationCommand(EveSquadronPlayerInformation? exportPlayer)
     {
-        if (string.IsNullOrWhiteSpace(autoExportFile))
-            return;
-        var fileInfo = new FileInfo(autoExportFile);
-        try
+        try //ReactiveCommand
         {
-            //Write deserializer for evesquadronplayerinformation
-
-            var csv = "";
-
-            var fileStream = fileInfo.OpenWrite();
-            
-            
-            
-            File.WriteAllText(fileInfo.FullName, csv);
+            foreach (var playerInformation in exportPlayer is not null ? Enumerable.Repeat(exportPlayer, 1) : _eveSquadronPlayerInformation) // when exportPlayer is null, export all of them
+                await _csvExport.ExportToCsv(ExportFilePath, playerInformation, _lastScanned);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError("Could not (manually) export player information", e);
             throw;
         }
-        
     }
 
     private void InitializeFrom(IOptions<EveSquadronOptions> options)
     {
         AutoExport = bool.TryParse(options.Value.AutoExport, out var autoExport) && autoExport;
-        AutoExportFile = options.Value.AutoExportFile;
+        ExportFilePath = options.Value.AutoExportFile;
         HoverColor = SettingConversionHelper.StringToColorConverter(options.Value.HoverColor);
         ShowPortrait = bool.TryParse(options.Value.ShowPortrait, out var showPortrait) && showPortrait;
-        GridRowHeight = Enum.TryParse(options.Value.GridRowSize, out GridRowSizeEnum parsedValue) ? parsedValue : AppConstants.DefaultGridRowSize; 
+        GridRowHeight = Enum.TryParse(options.Value.GridRowSize, out GridRowSizeEnum parsedValue)
+            ? parsedValue
+            : AppConstants.DefaultGridRowSize;
         var timerTickRate = TryParseClipboardPollingRate(options.Value.ClipboardPollingMilliseconds);
         _dispatcherTimer = new DispatcherTimer(timerTickRate, DispatcherPriority.Background, ClipboardPollingTimerCallback)
         {
@@ -126,36 +117,48 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
             return;
         _previousClipboardContent = clipboardContent;
 
-        if (WhitelistManagementViewModel.IsWindowVisible) // TODO: More generic solution for multiple windows -- prevent any further updates when the window is active - if it has been active we still have set the previous content so we don't update
+        if (WhitelistManagementViewModel.IsWindowVisible) // prevent any further updates when the window is active - if it has been active we still have set the previous content so we don't update
             return;
 
         await TryParseClipboardContentForEve(clipboardContent);
     }
 
     //This whole method (+Event) is a workaround to provide a point where the IDs are loaded and we can work with the data from there. Each ID causes enumerations over the whole collection and UI refresh - try to get rid of that in the (close) future!
-    private void OnParsedNewID(object? sender, (int? CorporationID, int? AllianceID) newIDs)
+    private void OnParsedNewID(object? sender, EveSquadronPlayerInformation parsedPlayer)
     {
-        if (newIDs.CorporationID is not null)
+        if (parsedPlayer.Corporation?.ID is not null)
         {
-            if (!_idCountDictionary.TryAdd(newIDs.CorporationID.Value, 1))
-                _idCountDictionary[newIDs.CorporationID.Value] += 1;
+            if (!_idCountDictionary.TryAdd(parsedPlayer.Corporation.ID, 1))
+                _idCountDictionary[parsedPlayer.Corporation.ID] += 1;
 
-            var corpMembers = _eveSquadronPlayerInformation.Where(x => x.Corporation?.ID == newIDs.CorporationID).ToList();
+            var corpMembers = _eveSquadronPlayerInformation.Where(x => x.Corporation?.ID == parsedPlayer.Corporation.ID).ToList();
             foreach (var member in corpMembers)
                 member.CorporationPasteCount = corpMembers.Count;
         }
 
-        if (newIDs.AllianceID is not null)
+        if (parsedPlayer.Alliance?.ID is not null)
         {
-            if (!_idCountDictionary.TryAdd(newIDs.AllianceID.Value, 1))
-                _idCountDictionary[newIDs.AllianceID.Value] += 1;
+            if (!_idCountDictionary.TryAdd(parsedPlayer.Alliance.ID, 1))
+                _idCountDictionary[parsedPlayer.Alliance.ID] += 1;
 
-            var allianceMembers = _eveSquadronPlayerInformation.Where(x => x.Alliance?.ID == newIDs.AllianceID).ToList();
+            var allianceMembers = _eveSquadronPlayerInformation.Where(x => x.Alliance?.ID == parsedPlayer.Alliance.ID).ToList();
             foreach (var member in allianceMembers)
                 member.AlliancePasteCount = allianceMembers.Count;
         }
 
+        if (AutoExport)
+            _csvExport.ExportToCsv(ExportFilePath, parsedPlayer, _lastScanned);
+
         Dispatcher.UIThread.InvokeAsync(() => EveSquadronPlayers.Refresh());
+
+
+    }
+
+    private void OnValidPaste(object? o, EventArgs eventArgs)
+    {
+        _eveSquadronPlayerInformation.Clear();
+        _idCountDictionary.Clear();
+        _lastScanned = DateTime.Now;
     }
 
     #endregion
@@ -182,10 +185,12 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         private set => SetProperty(ref _autoExport, value);
     }
 
-    public string AutoExportFile {
-        get => _autoExportFile;
-        private set => SetProperty(ref _autoExportFile, value);
+    public string ExportFilePath {
+        get => _exportFilePath;
+        private set => SetProperty(ref _exportFilePath, value);
     }
+    
+    public IReactiveCommand ExportPlayerInformationCommand { get; }
 
     public ThemeVariant ThemeVariant {
         get => _themeVariant;
@@ -199,7 +204,7 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     public IStatusBarViewModel StatusBarViewModel { get; set; }
 
     public IWhitelistManagementViewModel WhitelistManagementViewModel { get; }
-    
+
     public ISettingsManagementViewModel SettingsManagementViewModel { get; }
 
     #endregion
@@ -266,7 +271,7 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
             _logger.LogError(e, "Could not load player information. Check input from clipboard!.");
         }
     }
-    
+
     #endregion
 
     #region zKillboard Navigation
@@ -296,7 +301,7 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     {
         if (sender is not ISettingsManagementViewModel settingsManagementViewModel)
             return;
-        
+
         switch (e.PropertyName)
         {
             case nameof(SettingsManagementViewModel.Theme):
@@ -317,8 +322,8 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
             case nameof(settingsManagementViewModel.GridRowSize):
                 GridRowHeight = settingsManagementViewModel.GridRowSize;
                 break;
-            case nameof(settingsManagementViewModel.AutoExportFile):
-                AutoExportFile = settingsManagementViewModel.AutoExportFile;
+            case nameof(settingsManagementViewModel.ExportFile):
+                ExportFilePath = settingsManagementViewModel.ExportFile;
                 break;
         }
     }

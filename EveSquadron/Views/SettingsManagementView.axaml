@@ -44,11 +44,17 @@
                             <TextBlock Text="Export path" />
                             <StackPanel Orientation="Horizontal" IsEnabled="{Binding AutoExport}"
                                         Classes="ContentElement">
-                                <TextBox Text="{Binding AutoExportFile}" IsReadOnly="True" Width="400" />
-                                <Button Command="{Binding OpenAutoExportFolderPickerCommand}">
+                                <TextBox Text="{Binding ExportFile}" IsReadOnly="True" Width="400" />
+                                <Button Command="{Binding OpenExportFilePickerCommand}">
                                     <!-- material icon "file open" -->
-                                    <PathIcon 
+                                    <PathIcon
                                         Data="M220-80q-24 0-42-18t-18-42v-680q0-24 18-42t42-18h340l240 240v270h-60v-230H520v-220H220v680h410v60H220Zm658 1L750-207v125h-60v-228h228v60H792l128 128-42 43Zm-658-61v-680 680Z">
+                                    </PathIcon>
+                                </Button>
+                                <Button Command="{Binding ClearExportFileCommand}">
+                                    <!-- material icon "backspace" -->
+                                    <PathIcon
+                                        Data="M360-200q-22 0-40-11.5T289-241L120-480l169-239q13-18 31-29.5t40-11.5h420q24.75 0 42.375 17.625T840-700v440q0 24.75-17.625 42.375T780-200H360Zm420-60v-440 440Zm-431 0h431v-440H349L195-480l154 220Zm99-66 112-112 112 112 43-43-113-111 111-111-43-43-110 112-112-112-43 43 113 111-113 111 43 43Z">
                                     </PathIcon>
                                 </Button>
                             </StackPanel>
@@ -58,23 +64,30 @@
 
                 <HeaderedContentControl Header="Appearance">
                     <StackPanel>
-                        <ComboBox
-                            ItemsSource="{Binding AvailableThemes, Mode=OneTime}"
-                            SelectedItem="{Binding Theme, Mode=TwoWay}" Classes="ContentElement" />
-                        <ComboBox
-                            ItemsSource="{Binding AvailableHoverColors, Mode=OneTime}"
-                            SelectedItem="{Binding HoverColor, Mode=TwoWay}" Classes="ContentElement">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Width="150">
-                                        <Rectangle Width="16" Height="16"
-                                                   Fill="{Binding Converter={StaticResource ColorToBrushConverter}}"
-                                                   Margin="0,0,4,0" />
-                                        <TextBlock Text="{Binding }" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
+                        <StackPanel Classes="ContentElement">
+                            <TextBlock Text="Theme"></TextBlock>
+                            <ComboBox
+                                ItemsSource="{Binding AvailableThemes, Mode=OneTime}"
+                                SelectedItem="{Binding Theme, Mode=TwoWay}" Classes="ContentElement" />
+                        </StackPanel>
+                        <StackPanel Classes="ContentElement">
+                            <TextBlock Text="Hover color"></TextBlock>
+                            <ComboBox
+                                ItemsSource="{Binding AvailableHoverColors, Mode=OneTime}"
+                                SelectedItem="{Binding HoverColor, Mode=TwoWay}" Classes="ContentElement">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Width="150">
+                                            <Rectangle Width="16" Height="16"
+                                                       Fill="{Binding Converter={StaticResource ColorToBrushConverter}}"
+                                                       Margin="0,0,4,0" />
+                                            <TextBlock Text="{Binding }" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                        
                         <CheckBox Content="Whitelist enabled" IsChecked="{Binding WhitelistActive}"
                                   Classes="ContentElement" />
                         <CheckBox Content="Always on top" IsChecked="{Binding AlwaysOnTop}" Classes="ContentElement" />

@@ -70,7 +70,6 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         SettingsManagementViewModel.PropertyChanged += OnSettingsManagementViewModelOnPropertyChanged;
 
         EveSquadronPlayers = new DataGridCollectionView(_eveSquadronPlayerInformation);
-
         EveSquadronPlayers.Filter = WhitelistFilter;
 
         InitializeFrom(eveSquadronOptions);
@@ -80,7 +79,7 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     {
         try //ReactiveCommand
         {
-            foreach (var playerInformation in exportPlayer is not null ? Enumerable.Repeat(exportPlayer, 1) : _eveSquadronPlayerInformation) // when exportPlayer is null, export all of them
+            foreach (var playerInformation in exportPlayer is not null ? Enumerable.Repeat(exportPlayer, 1) : EveSquadronPlayers.Cast<EveSquadronPlayerInformation>()) // when exportPlayer is null, export all of them (with whitelisting)
                 await _csvExport.ExportToCsv(ExportFilePath, playerInformation, _lastScanned);
         }
         catch (Exception e)

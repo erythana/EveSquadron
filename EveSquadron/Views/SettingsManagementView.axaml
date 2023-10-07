@@ -42,7 +42,10 @@
                         <StackPanel Classes="ContentElement">
                             <TextBlock Text="Export path" />
                             <StackPanel Orientation="Horizontal" Classes="ContentElement">
-                                <TextBox Text="{Binding ExportFile}" IsReadOnly="True" Width="400" />
+                                <TextBox Text="{Binding ExportFile}" 
+                                         IsReadOnly="True"
+                                         Width="400"
+                                         Margin="2,0" />
                                 <Button Command="{Binding OpenExportFilePickerCommand}">
                                     <!-- material icon "file open" -->
                                     <PathIcon

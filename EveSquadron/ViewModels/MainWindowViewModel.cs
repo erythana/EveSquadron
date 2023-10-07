@@ -321,6 +321,9 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
             case nameof(settingsManagementViewModel.GridRowSize):
                 GridRowHeight = settingsManagementViewModel.GridRowSize;
                 break;
+            case nameof(settingsManagementViewModel.AutoExport):
+                AutoExport = settingsManagementViewModel.AutoExport;
+                break;
             case nameof(settingsManagementViewModel.ExportFile):
                 ExportFilePath = settingsManagementViewModel.ExportFile;
                 break;

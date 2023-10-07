@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Avalonia;
 using Avalonia.ReactiveUI;
 using EveSquadron.DependencyInjection;
@@ -23,6 +24,9 @@ internal class Program
 
         try
         {
+            if (!Directory.Exists(AppConstants.ConfigurationDirectory))
+                Directory.CreateDirectory(AppConstants.ConfigurationDirectory);
+            
             BuildAvaloniaApp()
                 .StartWithClassicDesktopLifetime(args);
         }

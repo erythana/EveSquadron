@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 
@@ -10,7 +9,7 @@ public static class ConnectionStringHelper
     {
         var connectionString = configuration.GetConnectionString("EveSquadron");
         return string.IsNullOrWhiteSpace(connectionString)
-            ? AppConstants.GetLocalConnectionString(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), AppConstants.SettingsDatabase))
+            ? AppConstants.GetLocalConnectionString(Path.Combine(AppConstants.ConfigurationDirectory, AppConstants.SettingsDatabase))
             : connectionString;
     }
 }

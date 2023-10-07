@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Text.Json;
 using Avalonia.Media;
 using EveSquadron.Models.Enums;
@@ -8,6 +10,7 @@ public static class AppConstants
 {
     public const string ApplicationName = "Eve Squadron";
     public const string UserAgentHeader = $"{ApplicationName} - erythanadevsup@gmail.com";
+    public static readonly string ConfigurationDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ApplicationName);
 
     #region Setting Defaults
 
@@ -15,7 +18,7 @@ public static class AppConstants
     public const int MaximalClipboardPollingMs = 2000;
     public const int DefaultClipboardPollingMs = 250;
     public static Color DefaultHoverColor = Colors.Orange;
-    public static GridRowSizeEnum DefaultGridRowSize = GridRowSizeEnum.Large;
+    public const GridRowSizeEnum DefaultGridRowSize = GridRowSizeEnum.Large;
 
     #endregion
 

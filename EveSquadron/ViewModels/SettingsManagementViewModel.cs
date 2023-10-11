@@ -32,7 +32,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     private bool _showPortrait;
     private bool _alwaysOnTop;
     private Color _hoverColor;
-    private string _ExportFile;
+    private string _exportFile;
     private GridRowSizeEnum _gridRowSize;
     private ThemeVariant _theme;
     
@@ -176,10 +176,10 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     }
 
     public string ExportFile {
-        get => _ExportFile;
+        get => _exportFile;
         set
         {
-            SetProperty(ref _ExportFile, value);
+            SetProperty(ref _exportFile, value);
             AddToSaveableSettings(EveSquadronOptions.Section, nameof(ExportFile), value);
         }
     }
@@ -222,10 +222,10 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         var eveSquadronOptions = ResolveOptionsFromType<EveSquadronOptions>();
         var statusOptions = ResolveOptionsFromType<StatusOptions>();
         
-        ClipboardPolling = int.TryParse(eveSquadronOptions.Value.ClipboardPollingMilliseconds, out var polling) ? polling : AppConstants.DefaultClipboardPollingMs;
+        ClipboardPolling = int.TryParse(eveSquadronOptions.Value.ClipboardPolling, out var polling) ? polling : AppConstants.DefaultClipboardPollingMs;
         HoverColor = SettingConversionHelper.StringToColorConverter(eveSquadronOptions.Value.HoverColor);
         Theme = SettingConversionHelper.StringToThemeConverter(eveSquadronOptions.Value.Theme);
-        ExportFile = eveSquadronOptions.Value.AutoExportFile;
+        ExportFile = eveSquadronOptions.Value.ExportFile;
         AutoExport = bool.TryParse(eveSquadronOptions.Value.AutoExport, out var autoExport) && autoExport;
         ShowPortrait = bool.TryParse(eveSquadronOptions.Value.ShowPortrait, out var showPortrait) && showPortrait;
         AlwaysOnTop = bool.TryParse(statusOptions.Value.AlwaysOnTop, out var alwaysOnTop) && alwaysOnTop;
@@ -240,7 +240,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
 
     private void AddToSaveableSettings(string sectionTarget, string name, string value)
     {
-        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(name))
             return;
         
         if (!_settingsToSave.TryAdd($"{sectionTarget}:{name}", value))

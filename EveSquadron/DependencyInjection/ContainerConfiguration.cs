@@ -116,7 +116,6 @@ public static class ContainerConfiguration
 
 
     private static IServiceCollection RegisterSingletons(this IServiceCollection builder) => builder
-        .AddSingleton<ViewLocator>()
         .AddSingleton<IEqualityComparer<IWhitelistEntry>, WhitelistEntityEqualityComparer>();
 
     private static IServiceCollection RegisterHttpClients(this IServiceCollection builder)

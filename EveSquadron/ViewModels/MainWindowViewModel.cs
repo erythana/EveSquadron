@@ -92,13 +92,14 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     private void InitializeFrom(IOptions<EveSquadronOptions> options)
     {
         AutoExport = bool.TryParse(options.Value.AutoExport, out var autoExport) && autoExport;
-        ExportFilePath = options.Value.AutoExportFile;
+        ExportFilePath = options.Value.ExportFile;
+        ThemeVariant = SettingConversionHelper.StringToThemeConverter(options.Value.Theme);
         HoverColor = SettingConversionHelper.StringToColorConverter(options.Value.HoverColor);
         ShowPortrait = bool.TryParse(options.Value.ShowPortrait, out var showPortrait) && showPortrait;
         GridRowHeight = Enum.TryParse(options.Value.GridRowSize, out GridRowSizeEnum parsedValue)
             ? parsedValue
             : AppConstants.DefaultGridRowSize;
-        var timerTickRate = TryParseClipboardPollingRate(options.Value.ClipboardPollingMilliseconds);
+        var timerTickRate = TryParseClipboardPollingRate(options.Value.ClipboardPolling);
         _dispatcherTimer = new DispatcherTimer(timerTickRate, DispatcherPriority.Background, ClipboardPollingTimerCallback)
         {
             IsEnabled = true

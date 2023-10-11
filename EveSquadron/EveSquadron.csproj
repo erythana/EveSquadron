@@ -12,6 +12,8 @@
         <PublishSingleFile>true</PublishSingleFile>
         <SelfContained>true</SelfContained>
         <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+        <DebugType>None</DebugType>
+        <DebugSymbols>False</DebugSymbols>
     </PropertyGroup>
 
     <ItemGroup>

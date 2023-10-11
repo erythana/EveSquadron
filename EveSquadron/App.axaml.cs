@@ -22,7 +22,6 @@ public class App : Application
     public override void Initialize()
     {
         Resources[typeof(IServiceProvider)] = _serviceCollection;
-        DataTemplates.Add(_serviceCollection.GetRequiredService<ViewLocator>());
         AvaloniaXamlLoader.Load(this);
     }
 

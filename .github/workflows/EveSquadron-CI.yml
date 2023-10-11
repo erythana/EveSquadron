@@ -24,25 +24,25 @@ jobs:
     - name: Install .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '7.0.x'
+        dotnet-version: '8.0.x'
 
     # Publish EveSquadron-Linux (x64)
     - name: Publish EveSquadron-Linux (x64)
       run:  |
         $tag=$(git describe --tags --abbrev=0)
-        dotnet publish "./EveSquadron/EveSquadron.csproj" -c Release -o ./EveSquadron-Linux -r linux-x64 --self-contained true -p:Version="$tag"
+        dotnet publish "./EveSquadron/EveSquadron.csproj" -c Release -o ./EveSquadron-Linux -r linux-x64 -p:Version="$tag"
 
     # Publish EveSquadron-Windows (x64)
     - name: Publish EveSquadron-Windows (x64)
       run: |
         $tag=$(git describe --tags --abbrev=0)
-        dotnet publish "./EveSquadron/EveSquadron.csproj" -c Release -o ./EveSquadron-Windows -r win-x64 --self-contained true -p:OutputType="WinExe" -p:Version="$tag"
+        dotnet publish "./EveSquadron/EveSquadron.csproj" -c Release -o ./EveSquadron-Windows -r win-x64 -p:OutputType="WinExe" -p:Version="$tag"
 
     # Publish EveSquadron-MacOS (x64)
     - name: Publish EveSquadron-MacOS (x64)
       run:  |
         $tag=$(git describe --tags --abbrev=0)
-        dotnet publish "./EveSquadron/EveSquadron.csproj" -c Release -o ./EveSquadron-MacOS -r osx-x64 --self-contained true -p:Version="$tag"
+        dotnet publish "./EveSquadron/EveSquadron.csproj" -c Release -o ./EveSquadron-MacOS -r osx-x64 -p:Version="$tag"
 
     - name: Upload Linux artifacts
       uses: actions/upload-artifact@v3

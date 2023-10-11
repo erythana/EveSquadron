@@ -2,7 +2,7 @@ using System;
 using Avalonia.Media;
 using Avalonia.Styling;
 
-namespace EveSquadron.Models;
+namespace EveSquadron.Models.Helper;
 
 public static class SettingConversionHelper
 {

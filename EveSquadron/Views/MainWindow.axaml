@@ -120,7 +120,7 @@
 
         <DataGrid
             x:Name="PlayerInfoGrid"
-            Items="{Binding EveSquadronPlayers}"
+            ItemsSource="{Binding EveSquadronPlayers}"
             CanUserReorderColumns="True"
             CanUserResizeColumns="True"
             CanUserSortColumns="True"

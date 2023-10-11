@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Media;
 using Avalonia.Styling;
@@ -14,6 +13,7 @@ using Avalonia.Threading;
 using EveSquadron.Models;
 using EveSquadron.Models.Enums;
 using EveSquadron.Models.EveSquadron;
+using EveSquadron.Models.Helper;
 using EveSquadron.Models.Interfaces;
 using EveSquadron.Models.Options;
 using EveSquadron.ViewModels.Interfaces;
@@ -84,7 +84,7 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         }
         catch (Exception e)
         {
-            _logger.LogError("Could not (manually) export player information", e);
+            _logger.LogError(e, "Error during (manual) export of player information");
             throw;
         }
     }
@@ -111,7 +111,7 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
 
     private async void ClipboardPollingTimerCallback(object? sender, EventArgs e)
     {
-        var clipboardContent = await Application.Current!.Clipboard!.GetTextAsync();
+        var clipboardContent = await ApplicationHelper.GetMainWindow()!.Clipboard!.GetTextAsync();
         if (clipboardContent == _previousClipboardContent || clipboardContent is null)
             return;
         _previousClipboardContent = clipboardContent;
@@ -219,9 +219,9 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         var excludedCorporations = WhitelistManagementViewModel.CurrentWhitelistEntries.Where(x => x.Type == EntityTypeEnum.Corporation);
         var excludedAlliances = WhitelistManagementViewModel.CurrentWhitelistEntries.Where(x => x.Type == EntityTypeEnum.Alliance);
 
-        var isExcludedPlayer = excludedPlayers.Any(x => x.Name == playerInformation.Character.Name);
-        var isExcludedCorp = excludedCorporations.Any(x => x.Name == playerInformation.Corporation?.Name);
-        var isExcludedAlliance = excludedAlliances.Any(x => x.Name == playerInformation.Alliance?.Name);
+        var isExcludedPlayer = excludedPlayers.Any(x => string.Equals(x.Name, playerInformation.Character.Name, StringComparison.InvariantCultureIgnoreCase));
+        var isExcludedCorp = excludedCorporations.Any(x => string.Equals(x.Name, playerInformation.Corporation?.Name, StringComparison.InvariantCultureIgnoreCase));
+        var isExcludedAlliance = excludedAlliances.Any(x => string.Equals(x.Name, playerInformation.Alliance?.Name, StringComparison.InvariantCultureIgnoreCase));
 
         return !StatusBarViewModel.WhitelistActive || !(isExcludedPlayer || isExcludedCorp || isExcludedAlliance);
     }
@@ -335,14 +335,14 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         if (e.PropertyName == nameof(WhitelistManagementViewModel.IsWindowVisible))
         {
             _dispatcherTimer.IsEnabled = !WhitelistManagementViewModel.IsWindowVisible;
-            EveSquadronPlayers?.Refresh();
+            EveSquadronPlayers.Refresh();
         }
     }
 
     private void OnStatusBarViewModelOnPropertyChanged(object? _, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(StatusBarViewModel.WhitelistActive))
-            EveSquadronPlayers?.Refresh();
+            EveSquadronPlayers.Refresh();
     }
 
     #endregion

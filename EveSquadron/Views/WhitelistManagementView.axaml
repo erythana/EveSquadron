@@ -37,7 +37,7 @@
         </DockPanel>
         <DataGrid
             x:Name="WhitelistGrid"
-            Items="{Binding CurrentWhitelistEntries}"
+            ItemsSource="{Binding CurrentWhitelistEntries}"
             CanUserReorderColumns="True"
             CanUserResizeColumns="True"
             CanUserSortColumns="True">

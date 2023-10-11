@@ -12,6 +12,7 @@ using Avalonia.Styling;
 using EveSquadron.DataRepositories.Interfaces;
 using EveSquadron.Models;
 using EveSquadron.Models.Enums;
+using EveSquadron.Models.Helper;
 using EveSquadron.Models.Options;
 using EveSquadron.ViewModels.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -71,8 +72,8 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     {
         try  //ReactiveCommand
         {
-            if (Application.Current!.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime applicationLifetime ||
-                applicationLifetime.Windows.FirstOrDefault(x => x.DataContext == this) is not { } window)
+            var window = ApplicationHelper.GetMainWindow();
+            if (window is null)
                 return;
                 
             var file = await GetCsvTargetFileFromSaveFilePickerAsync(window);

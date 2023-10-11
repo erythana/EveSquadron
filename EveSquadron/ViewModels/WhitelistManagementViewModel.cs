@@ -3,14 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Avalonia;
 using DynamicData;
 using EveSquadron.DataRepositories.Interfaces;
 using EveSquadron.Models;
 using EveSquadron.Models.Enums;
-using EveSquadron.Models.EveSquadron;
+using EveSquadron.Models.Helper;
 using EveSquadron.Models.Interfaces;
 using EveSquadron.ViewModels.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -53,7 +51,7 @@ public class WhitelistManagementViewModel : ViewModelBase, IWhitelistManagementV
     
     private async Task OnImportClipboardWhitelistCommand()
     {
-        var clipboardContent = await Application.Current!.Clipboard!.GetTextAsync();
+        var clipboardContent = await ApplicationHelper.GetMainWindow()!.Clipboard!.GetTextAsync();
         if (clipboardContent is null)
             return;
         

@@ -1,4 +1,4 @@
-using EveSquadron.Models;
+using EveSquadron.Models.Helper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 

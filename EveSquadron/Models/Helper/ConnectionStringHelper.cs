@@ -1,7 +1,7 @@
 using System.IO;
 using Microsoft.Extensions.Configuration;
 
-namespace EveSquadron.Models;
+namespace EveSquadron.Models.Helper;
 
 public static class ConnectionStringHelper
 {

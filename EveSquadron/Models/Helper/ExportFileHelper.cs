@@ -1,7 +1,7 @@
 using System.IO;
 using EveSquadron.Extensions;
 
-namespace EveSquadron.Models;
+namespace EveSquadron.Models.Helper;
 
 public static class ExportFileHelper
 {

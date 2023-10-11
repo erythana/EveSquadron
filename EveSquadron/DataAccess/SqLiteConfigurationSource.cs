@@ -1,7 +1,7 @@
 using System.Data;
 using System.Data.SQLite;
 using Dapper;
-using EveSquadron.Models;
+using EveSquadron.Models.Helper;
 using Microsoft.Extensions.Configuration;
 
 namespace EveSquadron.DataAccess;

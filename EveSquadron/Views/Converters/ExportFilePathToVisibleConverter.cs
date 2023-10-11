@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
-using EveSquadron.Models;
+using EveSquadron.Models.Helper;
 
 namespace EveSquadron.Views.Converters;
 

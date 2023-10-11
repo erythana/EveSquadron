@@ -17,9 +17,8 @@ internal class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        
-        var services = BuildServices();
-        var startupLogger = services.GetRequiredService<ILogger<Program>>();
+        var minimalServices = new ServiceCollection().ConfigureMinimal().BuildServiceProvider();
+        var startupLogger = minimalServices.GetRequiredService<ILogger<Program>>();
 
         try
         {

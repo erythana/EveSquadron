@@ -12,72 +12,72 @@ using EveSquadron.Models.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.EventLog;
-using Microsoft.Extensions.Options;
 
 namespace EveSquadron.DependencyInjection;
 
 public static class ContainerConfiguration
 {
-    #region member fields
-
-    private static readonly IConfiguration Configuration;
-
-    #endregion
-
-    #region constructor
-
-    static ContainerConfiguration()
+    private static IConfigurationBuilder GetConfigurationBuilderDefaults()
     {
-        var configuration = new ConfigurationBuilder()
+        return new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
-            .AddJsonFile("appsettings.Logging.json")
-            .Build();
-
-        Configuration = new ConfigurationBuilder()
-            .AddConfiguration(configuration)
-            .Add(new SqLiteConfigurationSource(configuration))
-            .Build();
+            .AddJsonFile("appsettings.Logging.json");
     }
-
-    #endregion
 
     #region Container Initialization/Configuration
 
-    public static IServiceCollection Configure(this IServiceCollection builder) => builder
-        .AddConfiguration()
-        .AddOptionMappings()
-        .AddLogging()
-        .RegisterTransientsByConvention()
-        .RegisterTransientsNonConvention()
-        .RegisterSingletons()
-        .RegisterHttpClients();
-
-
-    private static IServiceCollection AddConfiguration(this IServiceCollection builder)
+    public static IServiceCollection ConfigureMinimal(this IServiceCollection builder)
     {
-        builder.AddSingleton(Configuration);
-        return builder;
-    }
-    
-    private static IServiceCollection AddOptionMappings(this IServiceCollection builder)
-    {
-        AddOptionAndValidateDataAnnotations<EveSquadronOptions>(Configuration.GetSection(EveSquadronOptions.Section));
-        AddOptionAndValidateDataAnnotations<StatusOptions>(Configuration.GetSection(StatusOptions.Section));
-        AddOptionAndValidateDataAnnotations<ReleaseEndpointOptions>(Configuration.GetSection(ReleaseEndpointOptions.Section));
-        AddOptionAndValidateDataAnnotations<ZkillboardEndpointOptions>(Configuration.GetSection(ZkillboardEndpointOptions.Section));
-        AddOptionAndValidateDataAnnotations<EveEndpointOptions>(Configuration.GetSection(EveEndpointOptions.Section));
-        return builder;
-
-        void AddOptionAndValidateDataAnnotations<T>(IConfiguration configuration) where T : class => builder.AddOptions<T>()
-                .Bind(configuration)
-                .ValidateDataAnnotations();
+        var minimalConfiguration = GetConfigurationBuilderDefaults().Build();
+        return builder
+            .AddConfiguration(minimalConfiguration)
+            .AddLogging(minimalConfiguration);
     }
 
-    private static IServiceCollection AddLogging(this IServiceCollection builder)
+    public static IServiceCollection Configure(this IServiceCollection builder)
     {
-        var loggingConfiguration = Configuration.GetSection("Logging");
+        var minimalConfiguration = GetConfigurationBuilderDefaults()
+            .Build();
+
+        var configuration = new ConfigurationBuilder()
+            .AddConfiguration(minimalConfiguration)
+            .Add(new SqLiteConfigurationSource(minimalConfiguration))
+            .Build();
+
+        return builder.ConfigureMinimal()
+            .AddOptionMappings(configuration)
+            .RegisterTransientsByConvention()
+            .RegisterTransientsNonConvention()
+            .RegisterSingletons()
+            .RegisterHttpClients();
+    }
+
+
+    private static IServiceCollection AddConfiguration(this IServiceCollection builder, IConfiguration configuration)
+    {
+        builder.AddSingleton(configuration);
+        return builder;
+    }
+
+    private static IServiceCollection AddOptionMappings(this IServiceCollection builder, IConfiguration configuration)
+    {
+        AddOptionAndValidateDataAnnotations<EveSquadronOptions>(configuration.GetSection(EveSquadronOptions.Section));
+        AddOptionAndValidateDataAnnotations<StatusOptions>(configuration.GetSection(StatusOptions.Section));
+        AddOptionAndValidateDataAnnotations<ReleaseEndpointOptions>(configuration.GetSection(ReleaseEndpointOptions.Section));
+        AddOptionAndValidateDataAnnotations<ZkillboardEndpointOptions>(configuration.GetSection(ZkillboardEndpointOptions.Section));
+        AddOptionAndValidateDataAnnotations<EveEndpointOptions>(configuration.GetSection(EveEndpointOptions.Section));
+        return builder;
+
+        void AddOptionAndValidateDataAnnotations<T>(IConfiguration config) where T : class => builder
+            .AddOptions<T>()
+            .Bind(config)
+            .ValidateDataAnnotations();
+    }
+
+    private static IServiceCollection AddLogging(this IServiceCollection builder, IConfiguration configuration)
+    {
+        var loggingConfiguration = configuration.GetSection("Logging");
 
         return builder.AddLogging(config =>
         {
@@ -113,7 +113,7 @@ public static class ContainerConfiguration
     private static IServiceCollection RegisterTransientsNonConvention(this IServiceCollection builder) => builder
         .AddTransient<IReleaseVersionChecker, GithubReleaseVersionChecker>()
         .AddTransient(typeof(IClipboardToWhitelistEntitiesParser<>), typeof(ClipboardToWhitelistEntitiesParser<>));
-        
+
 
     private static IServiceCollection RegisterSingletons(this IServiceCollection builder) => builder
         .AddSingleton<ViewLocator>()

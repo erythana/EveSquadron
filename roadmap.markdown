@@ -1,13 +1,6 @@
 # Roadmap
 Some things to come in the future.
 
-### More detailed Information
-
-With the new backend, it will be possible to display more detailed information, such as
-* Average size of the attackers group
-* Kills/Losses over the last week
-* ... and probably more
-
 ### Caching and Cache Invalidation
 
 At the moment, every clipboard copy query results in a query to the API.<br />

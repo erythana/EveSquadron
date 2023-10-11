@@ -5,13 +5,12 @@
 ![EveSquadron-CI](https://github.com/erythana/EveSquadron/actions/workflows/EveSquadron-CI.yml/badge.svg)
 ![EveSquadron-CD](https://github.com/erythana/EveSquadron/actions/workflows/EveSquadron-CD.yml/badge.svg)
 <br />
-This tool is still in early development, but it should work just fine for now.<br />
-However, there may be some bugs or glitches that need to be addressed, so please keep this in mind.<br />
-Please report them to me if you encounter any problems.
+While this tool is still in its development-phase, it should already work without any problems.<br/>
+If you encounter any bugs, please report them to me at 'Github Issues' or in-game via a message to 'Christian Gaterau'.
 
 ## How to Use
 
-To use this tool, simply copy the name of the player you're interested in from your local or chat window.<br />
+To use this tool, simply copy the name of the player you're interested in from your local- or chat window.<br />
 The tool will automatically retrieve the player's information and display additional metrics in a tooltip.
 
 ### Instructions for using EveSquadron
@@ -68,6 +67,10 @@ It's easy to use, and provides all the data you need to stay on top of the lates
 Here is the [Roadmap](./roadmap.markdown) for this tool.
 If you have any feature requests or suggestions for improvements, please don't hesitate to reach out!<br />
 You can send an in-game mail to *Christian Gaterau* with your feedback or create an issue on Github.
+
+As of release 0.5, two capsuleers already proposed features:<br />
+* Whitelisting pilots 
+* Scan-Export of whole view/specific pilots
 
 ## Feedback and Donations
 

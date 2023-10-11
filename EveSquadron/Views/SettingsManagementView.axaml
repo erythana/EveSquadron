@@ -7,7 +7,6 @@
         x:Class="EveSquadron.Views.SettingsManagementView"
         Title="SettingsManagementView"
         SizeToContent="WidthAndHeight"
-        Topmost="True"
         CanResize="False"
         DataContext="{Binding SettingsManagementViewModel}">
     <Window.Resources>

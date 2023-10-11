@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
@@ -15,6 +13,7 @@ using EveSquadron.Models.Enums;
 using EveSquadron.Models.Helper;
 using EveSquadron.Models.Options;
 using EveSquadron.ViewModels.Interfaces;
+using EveSquadron.Views;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ReactiveUI;
@@ -72,7 +71,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     {
         try  //ReactiveCommand
         {
-            var window = ApplicationHelper.GetMainWindow();
+            var window = ApplicationHelper.GetWindowWithDataContext(this);
             if (window is null)
                 return;
                 
@@ -261,7 +260,6 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
                 Patterns = new[]{"*.csv"},
                 MimeTypes = new[]{"text/*"},
             }}
-            
         });
     
     #endregion

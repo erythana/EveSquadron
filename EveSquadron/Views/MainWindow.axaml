@@ -142,6 +142,9 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
+                <Style Selector=":is(TextBlock):is(Layoutable)">
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                </Style>
             </DataGrid.Styles>
             <DataGrid.Columns>
                 <DataGridTemplateColumn ClipboardContentBinding="{Binding CharacterImage}"
@@ -155,20 +158,24 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.CharacterName}"
-                                    Binding="{Binding Character.Name, Mode=OneWay}" />
+                                    Binding="{Binding Character.Name, Mode=OneWay}" 
+                                    FontSize="{Binding GridRowHeight}" />
 
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.SecurityStatus}"
-                                    Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}, Mode=OneWay}" />
+                                    Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}, Mode=OneWay}"
+                                    FontSize="{Binding GridRowHeight}" />
 
                 <DataGridTemplateColumn Header="{x:Static m:MainDataGridHeaderNames.Corporation}"
                                         SortMemberPath="Corporation.Name"
                                         ClipboardContentBinding="{Binding Corporation.Name}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Margin="5,5">
-                                <TextBlock Text="{Binding Corporation.Name, Mode=OneWay}" />
+                            <StackPanel Orientation="Horizontal" Margin="5,0">
+                                <TextBlock Text="{Binding Corporation.Name, Mode=OneWay}" 
+                                           FontSize="{Binding DataContext.GridRowHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
                                 <TextBlock Text="{Binding CorporationPasteCount, StringFormat=' [{0}]'}"
-                                           IsVisible="{Binding CorporationPasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}" />
+                                           IsVisible="{Binding CorporationPasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}"
+                                           FontSize="{Binding DataContext.GridRowHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}"  />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -179,10 +186,12 @@
                                         ClipboardContentBinding="{Binding Alliance.Name}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Margin="5,5">
-                                <TextBlock Text="{Binding Alliance.Name, Mode=OneWay}" />
+                            <StackPanel Orientation="Horizontal" Margin="5, 0">
+                                <TextBlock Text="{Binding Alliance.Name, Mode=OneWay}"
+                                           FontSize="{Binding DataContext.GridRowHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
                                 <TextBlock Text="{Binding AlliancePasteCount, StringFormat=' [{0}]'}"
-                                           IsVisible="{Binding AlliancePasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}" />
+                                           IsVisible="{Binding AlliancePasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}"
+                                           FontSize="{Binding DataContext.GridRowHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -194,10 +203,13 @@
                                 <Button ToolTip.Tip="Export this player"
                                         HorizontalAlignment="Center"
                                         ZIndex="2"
-                                        Command="{Binding #PlayerInfoGrid.DataContext.ExportPlayerInformationCommand}" CommandParameter="{Binding}" Margin="2,0">
+                                        Command="{Binding #PlayerInfoGrid.DataContext.ExportPlayerInformationCommand}" CommandParameter="{Binding}" Margin="2,0"
+                                        >
                                     <!-- material icon download -->
                                     <PathIcon 
-                                        Data="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z">
+                                        Data="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z"
+                                        Height="{Binding RowHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}"
+                                        Width="{Binding RowHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}">
                                     </PathIcon>
                                 </Button>
                         </DataTemplate>

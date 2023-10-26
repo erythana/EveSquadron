@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
@@ -49,25 +50,38 @@ public partial class MainWindow : Window
         if (DataContext is not IMainWindowViewModel currentViewModel)
             return;
 
+        _hoverColor = currentViewModel.HoverColor;
+        currentViewModel.PropertyChanged += OnCurrentViewModelPropertyChanged;
+
         Title = AppConstants.ApplicationName;
 
-        _hoverColor = currentViewModel.HoverColor;
-        
         var alwaysOnTopBinding = new Binding
         {
             Source = currentViewModel.StatusBarViewModel,
             Path = nameof(currentViewModel.StatusBarViewModel.AlwaysOnTop),
         };
-        
+
         var isDarkModeCheckedBinding = new Binding
         {
             Source = currentViewModel,
             Path = nameof(currentViewModel.ThemeVariant),
             Mode = BindingMode.OneWay
         };
-        
+
         this.Bind(TopmostProperty, alwaysOnTopBinding);
         Application.Current!.Bind(Application.RequestedThemeVariantProperty, isDarkModeCheckedBinding);
+    }
+
+    private void OnCurrentViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (sender is not IMainWindowViewModel mainWindowViewModel)
+            return;
+
+        _hoverColor = e.PropertyName switch
+        {
+            nameof(mainWindowViewModel.HoverColor) => mainWindowViewModel.HoverColor,
+            _ => _hoverColor
+        };
     }
 
     #endregion
@@ -86,17 +100,16 @@ public partial class MainWindow : Window
             e.Source is not ILogical logical ||
             logical.GetLogicalParent<DataGridCell>()?.DataContext is not EveSquadronPlayerInformation playerInformation ||
             !Enum.TryParse(clickedColumn, out EntityTypeEnum target)) return;
-        
+
         mainWindowViewModel.OpenZKillboardLinkFor(playerInformation, target);
     }
 
     private void PlayerInfoGrid_OnCopyingRowClipboardContent(object? sender, DataGridRowClipboardEventArgs e)
     {
         var rowContent = e.ClipboardRowContent.ToList();
-        foreach (var cellContent in rowContent)
+        foreach (var cellContent in rowContent.Where(cellContent => cellContent.Content is Task<Bitmap>))
         {
-            if (cellContent.Content is Task<Bitmap>)
-                e.ClipboardRowContent.Remove(cellContent); //Exclude Images from copy
+            e.ClipboardRowContent.Remove(cellContent); //Exclude Images from copy
         }
     }
 
@@ -125,7 +138,7 @@ public partial class MainWindow : Window
 
         dataGridRow.Background = new SolidColorBrush(_hoverColor);
     }
-    
+
     private void PlayerInfoGrid_OnLoadingRow(object? sender, DataGridRowEventArgs e) =>
         _visibleDataGridRows.Add(e.Row);
 

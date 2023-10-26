@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Avalonia.Media;
 using Avalonia.Styling;
 using EveSquadron.Models.Enums;
@@ -6,7 +7,7 @@ using ReactiveUI;
 
 namespace EveSquadron.ViewModels.Interfaces;
 
-public interface IMainWindowViewModel
+public interface IMainWindowViewModel : INotifyPropertyChanged
 {
     public IStatusBarViewModel StatusBarViewModel { get; }
     

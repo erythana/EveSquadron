@@ -9,4 +9,7 @@ public sealed class DesignTimeMainWindowViewModel : MainWindowViewModel
         if (!Avalonia.Controls.Design.IsDesignMode)
             throw new PlatformNotSupportedException("This ViewModel is only allowed during DesignTime");
     }
+    
+    
+    
 }

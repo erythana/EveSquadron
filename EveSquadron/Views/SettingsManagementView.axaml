@@ -31,13 +31,15 @@
                 <HeaderedContentControl Header="Application">
                     <StackPanel>
                         <TextBlock Text="Clipboard-Polling (ms)" Classes="ContentElement" />
-                        <NumericUpDown HorizontalAlignment="Left"
-                                       Minimum="{Binding MinimumClipboardPolling}"
-                                       Maximum="{Binding MaximumClipboardPolling}"
-                                       Increment="50"
-                                       Value="{Binding ClipboardPolling}"
-                                       Width="250"
-                                       Classes="ContentElement" />
+                        <Border Classes="ContentElement">
+                            <NumericUpDown HorizontalAlignment="Left"
+                                           Minimum="{Binding MinimumClipboardPolling}"
+                                           Maximum="{Binding MaximumClipboardPolling}"
+                                           Increment="50"
+                                           Value="{Binding ClipboardPolling}"
+                                           Width="250"
+                                           Classes="ContentElement" />
+                        </Border>
                         <StackPanel Classes="ContentElement">
                             <TextBlock Text="Export path" />
                             <StackPanel Orientation="Horizontal" Classes="ContentElement">

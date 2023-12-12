@@ -20,104 +20,125 @@
         <converters:GroupCountVisibilityConverter x:Key="GroupCountVisibilityConverter" />
         <converters:ExportFilePathToVisibleConverter x:Key="ExportFilePathToVisibleConverter" />
     </Window.Resources>
-    <DockPanel>
-        <DockPanel DockPanel.Dock="Bottom" Height="40">
-            <Button ToolTip.Tip="Export all"
-                    HorizontalAlignment="Center"
-                    Command="{Binding ExportPlayerInformationCommand}"
-                    Margin="10,0,0,0"
-                    Height="30"
-                    Width="30"
-                    IsVisible="{Binding ExportFilePath, Converter={StaticResource ExportFilePathToVisibleConverter}, Mode=OneWay}">
-                <!-- material icon download -->
-                <PathIcon 
-                    Data="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z">
-                </PathIcon>
-            </Button>
-            <DockPanel DataContext="{Binding StatusBarViewModel}" Margin="10,0" >
-            <CheckBox
-                IsChecked="{Binding WhitelistActive}"
-                Content="Whitelist"
-                Margin="5,0" />
-            <Button
-                Command="{Binding OpenWhitelistCommand}"
-                Content="Manage Whitelist"
-                Margin="5,0"
-                IsVisible="{Binding WhitelistActive}" />
-            <CheckBox
-                IsChecked="{Binding AlwaysOnTop}"
-                Content="Always on top"
-                Margin="5,0" />
-            <!-- Open Settings View - Material Icon "Settings" -->
-            <Button
-                Command="{Binding OpenSettingsCommand}"
-                Margin="5,5"
-                Height="30"
-                Width="30"
-                DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
-                <PathIcon
-                    Data="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
-            </Button>
-            <!-- Update Information - Material Icon "System Update" -->
-            <Button
-                Margin="5,5"
-                Height="30"
-                Width="30"
-                Command="{Binding OpenUpdateCommand}"
-                DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center"
-                IsVisible="{Binding !UpdateAvailable^, FallbackValue=False, Converter={x:Static BoolConverters.Not}}"><!-- We negate the UpdateAvailable so we can use the builtin BoolConverters -->
-                <Button.Styles>
-                    <Style Selector="Button">
-                        <Setter Property="ToolTip.Tip">
-                            <Setter.Value>
-                                <Template>
-                                    <StackPanel>
-                                        <TextBlock Text="Update available!" />
-                                        <TextBlock
-                                            Text="{Binding LatestReleasePath, StringFormat='Click here to navigate to {0}'}" />
-                                    </StackPanel>
-                                </Template>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Button.Styles>
-                <PathIcon
-                    Foreground="Orange"
-                    Data="M260 1016q-24 0-42-18t-18-42V196q0-24 18-42t42-18h440q24 0 42 18t18 42v760q0 24-18 42t-42 18H260Zm0-90v30h440v-30H260Zm0-60h440V286H260v580Zm220-128L325 583l43-43 82 82V428h60v194l82-82 43 43-155 155ZM260 226h440v-30H260v30Zm0 0v-30 30Zm0 700v30-30Z">
-                </PathIcon>
-            </Button>
-            <!-- Update Fetch Error - Material Icon "Sync Problem" -->
-            <Button
-                Margin="5,5"
-                Height="30"
-                Width="30"
-                Click="OnFetchErrorClick"
-                IsVisible="{Binding UpdateAvailable^, FallbackValue=False, Converter={x:Static ObjectConverters.IsNull}}"
-                DockPanel.Dock="Right"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center">
-                <Button.Styles>
-                    <Style Selector="Button">
-                        <Setter Property="ToolTip.Tip">
-                            <Setter.Value>
-                                <Template>
-                                    <StackPanel>
-                                        <TextBlock Text="Could not fetch information from release servers!" />
-                                        <TextBlock Text="{Binding LatestReleasePath}" />
-                                    </StackPanel>
-                                </Template>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Button.Styles>
-                <PathIcon
-                    Foreground="Red"
-                    Data="M122 911v-71h99l-5-7q-58-66-88-128.483Q98 642.034 98 580q0-121.482 74-214.241Q246 273 362 243v96q-77 24-123 91.144Q193 497.287 193 580q0 48 15.5 90.5T264 750l24 21v-98h72v238H122Zm357.877-128Q464 783 452.5 771.377q-11.5-11.623-11.5-27.5t11.623-27.377q11.623-11.5 27.5-11.5t27.377 11.623q11.5 11.623 11.5 27.5T507.377 771.5q-11.623 11.5-27.5 11.5ZM446 632V366h72v266h-72Zm151 278v-97q77-23 123-90.144Q766 655.713 766 573q0-50-16.5-93T695 402l-24-21v98h-72V241h238v71H737l6 7q64.606 59.71 91.303 125.891Q861 511.071 861 573q0 120.482-74.5 213.741Q712 880 597 910Z" />
-            </Button>
-        </DockPanel>
-        </DockPanel>
-        
+    <SplitView PanePlacement="Right" 
+               DisplayMode="CompactOverlay"
+               IsPaneOpen="{Binding IsChecked, ElementName=ToggleSidebar}"
+               CompactPaneLength="15"
+               OpenPaneLength="180"
+               PaneClosing="SplitView_OnPaneClosing">
+        <SplitView.Pane>
+            <DockPanel LastChildFill="True">
+                <ToggleButton Name="ToggleSidebar" VerticalAlignment="Stretch" />
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom"
+                            HorizontalAlignment="Right">
+                                        <!-- Update Fetch Error - Material Icon "Sync Problem" -->
+                    <Button
+                        Margin="5,5"
+                        Height="30"
+                        Width="30"
+                        Click="OnFetchErrorClick"
+                        DataContext="{Binding StatusBarViewModel}"
+                        IsVisible="{Binding UpdateAvailable^, FallbackValue=True, Converter={x:Static ObjectConverters.IsNull}}"
+                        VerticalAlignment="Center">
+                        <Button.Styles>
+                            <Style Selector="Button">
+                                <Setter Property="ToolTip.Tip">
+                                    <Setter.Value>
+                                        <Template>
+                                            <StackPanel>
+                                                <TextBlock Text="Could not fetch information from release servers!" />
+                                                <TextBlock Text="{Binding LatestReleasePath}" />
+                                            </StackPanel>
+                                        </Template>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Styles>
+                        <PathIcon
+                            Foreground="Red"
+                            Data="M122 911v-71h99l-5-7q-58-66-88-128.483Q98 642.034 98 580q0-121.482 74-214.241Q246 273 362 243v96q-77 24-123 91.144Q193 497.287 193 580q0 48 15.5 90.5T264 750l24 21v-98h72v238H122Zm357.877-128Q464 783 452.5 771.377q-11.5-11.623-11.5-27.5t11.623-27.377q11.623-11.5 27.5-11.5t27.377 11.623q11.5 11.623 11.5 27.5T507.377 771.5q-11.623 11.5-27.5 11.5ZM446 632V366h72v266h-72Zm151 278v-97q77-23 123-90.144Q766 655.713 766 573q0-50-16.5-93T695 402l-24-21v98h-72V241h238v71H737l6 7q64.606 59.71 91.303 125.891Q861 511.071 861 573q0 120.482-74.5 213.741Q712 880 597 910Z" />
+                    </Button>
+                    <!-- Update Information - Material Icon "System Update" -->
+                    <Button
+                        Margin="5,5"
+                        Height="30"
+                        Width="30"
+                        DataContext="{Binding StatusBarViewModel}"
+                        Command="{Binding OpenUpdateCommand}"
+                        IsVisible="{Binding !UpdateAvailable^, FallbackValue=False, Converter={x:Static BoolConverters.Not}}"><!-- We negate the UpdateAvailable so we can use the builtin BoolConverters -->
+                        <Button.Styles>
+                            <Style Selector="Button">
+                                <Setter Property="ToolTip.Tip">
+                                    <Setter.Value>
+                                        <Template>
+                                            <StackPanel>
+                                                <TextBlock Text="Update available!" />
+                                                <TextBlock
+                                                    Text="{Binding LatestReleasePath, StringFormat='Click here to navigate to {0}'}" />
+                                            </StackPanel>
+                                        </Template>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Styles>
+                        <PathIcon
+                            Foreground="Orange"
+                            Data="M260 1016q-24 0-42-18t-18-42V196q0-24 18-42t42-18h440q24 0 42 18t18 42v760q0 24-18 42t-42 18H260Zm0-90v30h440v-30H260Zm0-60h440V286H260v580Zm220-128L325 583l43-43 82 82V428h60v194l82-82 43 43-155 155ZM260 226h440v-30H260v30Zm0 0v-30 30Zm0 700v30-30Z">
+                        </PathIcon>
+                    </Button>
+                    <Button ToolTip.Tip="Export all"
+                            HorizontalAlignment="Center"
+                            Command="{Binding ExportPlayerInformationCommand}"
+                            Margin="5,5"
+                            Height="30"
+                            Width="30">
+                        <Button.IsVisible>
+                            <MultiBinding Converter="{x:Static BoolConverters.And}">
+                                <Binding Path="IsChecked" ElementName="ToggleSidebar" />
+                                <Binding Path="ExportFilePath" Converter="{StaticResource ExportFilePathToVisibleConverter}" Mode="OneWay" />
+                            </MultiBinding>
+                        </Button.IsVisible>
+                        <!-- material icon download -->
+                        <PathIcon
+                            Data="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z">
+                        </PathIcon>
+                    </Button>
+                    <!-- Open Settings View - Material Icon "Settings" -->
+                    <Button
+                        DataContext="{Binding StatusBarViewModel}"
+                        Command="{Binding OpenSettingsCommand}"
+                        Margin="5,5"
+                        Height="30"
+                        Width="30"
+                        VerticalAlignment="Center">
+                        <PathIcon
+                            Data="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z" />
+                    </Button>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Center" DockPanel.Dock="Top"
+                            IsVisible="{Binding IsChecked,ElementName=ToggleSidebar}"
+                            DataContext="{Binding StatusBarViewModel}" Margin="10,0">
+                    <CheckBox
+                        IsChecked="{Binding WhitelistActive}"
+                        Content="Whitelist"
+                        DockPanel.Dock="Top"
+                        Margin="5,0" />
+                    <Button
+                        Command="{Binding OpenWhitelistCommand}"
+                        Content="Manage Whitelist"
+                        DockPanel.Dock="Top"
+                        Margin="5,0"
+                        IsVisible="{Binding WhitelistActive}" />
+                    <CheckBox
+                        IsChecked="{Binding AlwaysOnTop}"
+                        Content="Always on top"
+                        DockPanel.Dock="Top"
+                        Margin="5,0" />
+                </StackPanel>
 
+            </DockPanel>
+
+        </SplitView.Pane>
         <DataGrid
             x:Name="PlayerInfoGrid"
             ItemsSource="{Binding EveSquadronPlayers}"
@@ -158,7 +179,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.CharacterName}"
-                                    Binding="{Binding Character.Name, Mode=OneWay}" 
+                                    Binding="{Binding Character.Name, Mode=OneWay}"
                                     FontSize="{Binding GridRowHeight}" />
 
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.SecurityStatus}"
@@ -171,11 +192,11 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="5,0">
-                                <TextBlock Text="{Binding Corporation.Name, Mode=OneWay}" 
+                                <TextBlock Text="{Binding Corporation.Name, Mode=OneWay}"
                                            FontSize="{Binding DataContext.GridRowHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
                                 <TextBlock Text="{Binding CorporationPasteCount, StringFormat=' [{0}]'}"
                                            IsVisible="{Binding CorporationPasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}"
-                                           FontSize="{Binding DataContext.GridRowHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}"  />
+                                           FontSize="{Binding DataContext.GridRowHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -197,27 +218,29 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn CanUserSort="false" CanUserResize="False" IsVisible="{Binding ExportFilePath, Converter={StaticResource ExportFilePathToVisibleConverter}}">
+                <DataGridTemplateColumn CanUserSort="false" CanUserResize="False"
+                                        IsVisible="{Binding ExportFilePath, Converter={StaticResource ExportFilePathToVisibleConverter}}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                                <Button ToolTip.Tip="Export this player"
-                                        HorizontalAlignment="Center"
-                                        ZIndex="2"
-                                        Command="{Binding #PlayerInfoGrid.DataContext.ExportPlayerInformationCommand}" CommandParameter="{Binding}" Margin="2,0"
-                                        >
-                                    <!-- material icon download -->
-                                    <PathIcon 
-                                        Data="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z"
-                                        Height="{Binding RowHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}"
-                                        Width="{Binding RowHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}">
-                                    </PathIcon>
-                                </Button>
+                            <Button ToolTip.Tip="Export this player"
+                                    HorizontalAlignment="Center"
+                                    ZIndex="2"
+                                    Command="{Binding #PlayerInfoGrid.DataContext.ExportPlayerInformationCommand}"
+                                    CommandParameter="{Binding}" 
+                                    Margin="2,0">
+                                <!-- material icon download -->
+                                <PathIcon
+                                    Data="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z"
+                                    Height="{Binding RowHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}"
+                                    Width="{Binding RowHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}">
+                                </PathIcon>
+                            </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
             <!-- ReSharper restore Xaml.BindingWithContextNotResolved -->
         </DataGrid>
-    </DockPanel>
+    </SplitView>
 
 </Window>

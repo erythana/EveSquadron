@@ -146,4 +146,12 @@ public partial class MainWindow : Window
         _visibleDataGridRows.Remove(e.Row);
 
     #endregion
+
+    private void SplitView_OnPaneClosing(object? sender, CancelRoutedEventArgs e)
+    {
+        if (ToggleSidebar is null)
+            return;
+
+        ToggleSidebar.IsChecked = false;
+    }
 }

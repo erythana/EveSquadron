@@ -6,9 +6,10 @@
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
-        <LangVersion>11</LangVersion>
         <Company>Eve Squadron</Company>
         <Product>Eve Squadron</Product>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <PublishSingleFile>true</PublishSingleFile>
         <SelfContained>true</SelfContained>
         <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
@@ -35,24 +36,24 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.5-rc1" />
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.5-rc1" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.5-rc1" />
+        <PackageReference Include="Avalonia" Version="11.0.6" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.6" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.6" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.5-rc1" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.5-rc1" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5-rc1" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.6" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.6" />
         <PackageReference Include="CsvHelper" Version="30.0.1"/>
-        <PackageReference Include="Dapper" Version="2.1.4" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0-rc.2.23479.6" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.2.23479.6" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0-rc.2.23479.6" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0-rc.2.23479.6" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0-rc.2.23479.6" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0-rc.2.23479.6" />
-        <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="8.0.0-rc.2.23479.6" />
-        <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="8.0.0-rc.2.23479.6" />
-        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0-rc.2.23479.6" />
+        <PackageReference Include="Dapper" Version="2.1.24" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
         <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118"/>
     </ItemGroup>

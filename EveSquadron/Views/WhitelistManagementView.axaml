@@ -8,7 +8,9 @@
         x:Name="WhitelistWindow"
         Loaded="Control_OnLoaded"
         Closing="Window_OnClosing"
-        MinWidth="550">
+        MinWidth="550"
+        MaxWidth="550"
+        Height="600">
 
     <DockPanel LastChildFill="True">
         <DockPanel DockPanel.Dock="Bottom">

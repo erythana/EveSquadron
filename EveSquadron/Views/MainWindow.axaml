@@ -87,7 +87,7 @@
                             Data="M260 1016q-24 0-42-18t-18-42V196q0-24 18-42t42-18h440q24 0 42 18t18 42v760q0 24-18 42t-42 18H260Zm0-90v30h440v-30H260Zm0-60h440V286H260v580Zm220-128L325 583l43-43 82 82V428h60v194l82-82 43 43-155 155ZM260 226h440v-30H260v30Zm0 0v-30 30Zm0 700v30-30Z">
                         </PathIcon>
                     </Button>
-                    <Button ToolTip.Tip="Export all"
+                    <Button ToolTip.Tip="Export all active players"
                             HorizontalAlignment="Center"
                             Command="{Binding ExportPlayerInformationCommand}"
                             Margin="5,5"
@@ -233,12 +233,13 @@
                                     ZIndex="2"
                                     Command="{Binding #PlayerInfoGrid.DataContext.ExportPlayerInformationCommand}"
                                     CommandParameter="{Binding}" 
-                                    Margin="2,0">
-                                <!-- material icon download -->
-                                <PathIcon
-                                    Data="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z"
+                                    Margin="2,0"
+                                    Background="Transparent"
                                     Height="{Binding RowHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}"
                                     Width="{Binding RowHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}">
+                                <!-- material icon download -->
+                                <PathIcon
+                                    Data="M480-313 287-506l43-43 120 120v-371h60v371l120-120 43 43-193 193ZM220-160q-24 0-42-18t-18-42v-143h60v143h520v-143h60v143q0 24-18 42t-42 18H220Z">
                                 </PathIcon>
                             </Button>
                         </DataTemplate>

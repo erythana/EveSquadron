@@ -12,6 +12,10 @@
         MinWidth="550"
         Width="800"
         Height="500"
+        SystemDecorations="BorderOnly"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaToDecorationsHint="True"
+        PointerPressed="InputElement_OnPointerPressed"
         IsEnabled="{Binding  WhitelistManagementViewModel.IsWindowVisible, Mode=OneWay, Converter={x:Static BoolConverters.Not}}">
     <Design.DataContext>
         <vm:DesignTimeMainWindowViewModel />
@@ -27,7 +31,7 @@
                OpenPaneLength="180"
                PaneClosing="SplitView_OnPaneClosing">
         <SplitView.Pane>
-            <DockPanel LastChildFill="True">
+            <DockPanel LastChildFill="True" PointerPressed="InputElement_OnPointerPressed">
                 <ToggleButton Name="ToggleSidebar" VerticalAlignment="Stretch" />
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom"
                             HorizontalAlignment="Right">
@@ -180,23 +184,23 @@
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.CharacterName}"
                                     Binding="{Binding Character.Name, Mode=OneWay}"
-                                    FontSize="{Binding GridRowHeight}" />
-
+                                    FontSize="{Binding GridFontSize}" />
+                
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.SecurityStatus}"
                                     Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}, Mode=OneWay}"
-                                    FontSize="{Binding GridRowHeight}" />
+                                    FontSize="{Binding GridFontSize}" />
 
                 <DataGridTemplateColumn Header="{x:Static m:MainDataGridHeaderNames.Corporation}"
                                         SortMemberPath="Corporation.Name"
                                         ClipboardContentBinding="{Binding Corporation.Name}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Margin="5,0">
+                            <StackPanel Orientation="Horizontal" Margin="5, 0">
                                 <TextBlock Text="{Binding Corporation.Name, Mode=OneWay}"
-                                           FontSize="{Binding DataContext.GridRowHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
+                                           FontSize="{Binding DataContext.GridFontSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
                                 <TextBlock Text="{Binding CorporationPasteCount, StringFormat=' [{0}]'}"
                                            IsVisible="{Binding CorporationPasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}"
-                                           FontSize="{Binding DataContext.GridRowHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
+                                           FontSize="{Binding DataContext.GridFontSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -209,10 +213,10 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="5, 0">
                                 <TextBlock Text="{Binding Alliance.Name, Mode=OneWay}"
-                                           FontSize="{Binding DataContext.GridRowHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
+                                           FontSize="{Binding DataContext.GridFontSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
                                 <TextBlock Text="{Binding AlliancePasteCount, StringFormat=' [{0}]'}"
                                            IsVisible="{Binding AlliancePasteCount, Converter={StaticResource GroupCountVisibilityConverter}, Mode=OneWay}"
-                                           FontSize="{Binding DataContext.GridRowHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
+                                           FontSize="{Binding DataContext.GridFontSize, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGrid}}}" />
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

@@ -1,6 +1,6 @@
 namespace EveSquadron.Models.Enums;
 
-public enum GridRowSizeEnum
+public enum GridFontSizeEnum
 {
     Tiny = 8,
     Small = 16,

@@ -32,7 +32,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     private bool _alwaysOnTop;
     private Color _hoverColor;
     private string _exportFile;
-    private GridRowSizeEnum _gridRowSize;
+    private GridFontSizeEnum _gridFontSize;
     private ThemeVariant _theme;
     
     private Dictionary<string, string> _settingsToSave;
@@ -54,7 +54,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         
         MinimumClipboardPolling = AppConstants.MinimalClipboardPollingMs;
         MaximumClipboardPolling = AppConstants.MaximalClipboardPollingMs;
-        AvailableGridRowSizes = Enum.GetValues<GridRowSizeEnum>();
+        AvailableGridFontSizes = Enum.GetValues<GridFontSizeEnum>();
         AvailableThemes = new List<ThemeVariant>
         {
             ThemeVariant.Default,
@@ -183,12 +183,12 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         }
     }
 
-    public GridRowSizeEnum GridRowSize {
-        get => _gridRowSize;
+    public GridFontSizeEnum GridFontSize {
+        get => _gridFontSize;
         set
         {
-            SetProperty(ref _gridRowSize, value);
-            AddToSaveableSettings(EveSquadronOptions.Section, nameof(GridRowSize), value.ToString());
+            SetProperty(ref _gridFontSize, value);
+            AddToSaveableSettings(EveSquadronOptions.Section, nameof(GridFontSize), value.ToString());
         }
     }
 
@@ -203,7 +203,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
 
     public IEnumerable<ThemeVariant> AvailableThemes { get; set; }
     public IEnumerable<Color> AvailableHoverColors { get; set; }
-    public IEnumerable<GridRowSizeEnum> AvailableGridRowSizes { get; set; }
+    public IEnumerable<GridFontSizeEnum> AvailableGridFontSizes { get; set; }
 
     #endregion
 
@@ -218,25 +218,25 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     
     private void LoadAndSetSavedSettingsFromOptions(IServiceProvider serviceProvider)
     {
-        var eveSquadronOptions = ResolveOptionsFromType<EveSquadronOptions>();
-        var statusOptions = ResolveOptionsFromType<StatusOptions>();
+        var eveSquadronOptions = ResolveOptionsFromType<EveSquadronOptions>(serviceProvider);
+        var statusOptions = ResolveOptionsFromType<StatusOptions>(serviceProvider);
         
         ClipboardPolling = int.TryParse(eveSquadronOptions.Value.ClipboardPolling, out var polling) ? polling : AppConstants.DefaultClipboardPollingMs;
         HoverColor = SettingConversionHelper.StringToColorConverter(eveSquadronOptions.Value.HoverColor);
         Theme = SettingConversionHelper.StringToThemeConverter(eveSquadronOptions.Value.Theme);
-        ExportFile = eveSquadronOptions.Value.ExportFile;
+        ExportFile = eveSquadronOptions.Value.ExportFile ?? string.Empty;
         AutoExport = bool.TryParse(eveSquadronOptions.Value.AutoExport, out var autoExport) && autoExport;
         ShowPortrait = bool.TryParse(eveSquadronOptions.Value.ShowPortrait, out var showPortrait) && showPortrait;
         AlwaysOnTop = bool.TryParse(statusOptions.Value.AlwaysOnTop, out var alwaysOnTop) && alwaysOnTop;
         WhitelistActive = bool.TryParse(statusOptions.Value.WhitelistActive, out var whitelistActive) && whitelistActive;
 
-        GridRowSize = Enum.TryParse(eveSquadronOptions.Value.GridRowSize, out GridRowSizeEnum rowSize)
+        GridFontSize = Enum.TryParse(eveSquadronOptions.Value.GridFontSize, out GridFontSizeEnum rowSize)
             ? rowSize
-            : AppConstants.DefaultGridRowSize;
-        
-        IOptions<T> ResolveOptionsFromType<T>() where T : class => (IOptions<T>)serviceProvider.GetService(typeof(IOptions<T>))!;
+            : AppConstants.DefaultGridFontSize;
     }
-
+    
+    private IOptions<T> ResolveOptionsFromType<T>(IServiceProvider serviceProvider) where T : class => (IOptions<T>)serviceProvider.GetService(typeof(IOptions<T>))!;
+    
     private void AddToSaveableSettings(string sectionTarget, string name, string value)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -249,7 +249,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     private IEnumerable<ConfigurationValue> GetListOfWriteableSettings() => 
         _settingsToSave.Select(x => new ConfigurationValue {Name = x.Key, Value = x.Value});
 
-    private async static Task<IStorageFile?> GetCsvTargetFileFromSaveFilePickerAsync(TopLevel topLevel) => await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+    private static async Task<IStorageFile?> GetCsvTargetFileFromSaveFilePickerAsync(TopLevel topLevel) => await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         { 
             ShowOverwritePrompt = false,
             Title = "Save into CSV File",

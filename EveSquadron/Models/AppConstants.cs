@@ -17,8 +17,8 @@ public static class AppConstants
     public const int MinimalClipboardPollingMs = 100;
     public const int MaximalClipboardPollingMs = 2000;
     public const int DefaultClipboardPollingMs = 250;
-    public static Color DefaultHoverColor = Colors.Orange;
-    public const GridRowSizeEnum DefaultGridRowSize = GridRowSizeEnum.Large;
+    public static readonly Color DefaultHoverColor = Colors.Orange;
+    public const GridFontSizeEnum DefaultGridFontSize = GridFontSizeEnum.Medium;
 
     #endregion
 

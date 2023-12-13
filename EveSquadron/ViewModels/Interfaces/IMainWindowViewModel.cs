@@ -23,9 +23,12 @@ public interface IMainWindowViewModel : INotifyPropertyChanged
     
     public bool ShowPortrait { get; }
 
-    public GridRowSizeEnum GridRowHeight { get; }
+    public GridFontSizeEnum GridFontSize { get; }
+    
+    public double GridRowHeight { get; }
     
     public bool AutoExport { get; }
+    
     public string ExportFilePath { get; }
     
     void OpenZKillboardLinkFor(EveSquadronPlayerInformation playerInformation, EntityTypeEnum clickedColumn);

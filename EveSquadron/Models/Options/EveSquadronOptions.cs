@@ -8,7 +8,7 @@ public class EveSquadronOptions
         public string ClipboardPolling { get; set; }
         public string HoverColor { get; set;}
         public string ShowPortrait { get; set;}
-        public string GridRowSize { get; set;}
+        public string GridFontSize { get; set;}
         public string AutoExport { get; set;}
         public string ExportFile { get; set;}
 }

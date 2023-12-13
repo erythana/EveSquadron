@@ -68,7 +68,6 @@ public class EveSquadronPlayerDetails : ModelBase
         get => _latestKillboardActivity;
         set => SetProperty(ref _latestKillboardActivity, value);
     }
-    //public Task<EveDetailedKillInformation?>? LatestKill { get; set; }
 
     #endregion
 

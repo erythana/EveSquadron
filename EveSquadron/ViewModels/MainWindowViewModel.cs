@@ -33,7 +33,7 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
     private readonly Dictionary<int, int> _idCountDictionary;
     private readonly ILogger<MainWindowViewModel> _logger;
     private string? _previousClipboardContent = string.Empty;
-    private GridRowSizeEnum _gridRowHeight;
+    private GridFontSizeEnum _gridFontSize;
     private Color _hoverColor;
     private DispatcherTimer _dispatcherTimer;
     private ThemeVariant _themeVariant;
@@ -96,9 +96,9 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         ThemeVariant = SettingConversionHelper.StringToThemeConverter(options.Value.Theme);
         HoverColor = SettingConversionHelper.StringToColorConverter(options.Value.HoverColor);
         ShowPortrait = bool.TryParse(options.Value.ShowPortrait, out var showPortrait) && showPortrait;
-        GridRowHeight = Enum.TryParse(options.Value.GridRowSize, out GridRowSizeEnum parsedValue)
+        GridFontSize = Enum.TryParse(options.Value.GridFontSize, out GridFontSizeEnum parsedValue)
             ? parsedValue
-            : AppConstants.DefaultGridRowSize;
+            : AppConstants.DefaultGridFontSize;
         var timerTickRate = TryParseClipboardPollingRate(options.Value.ClipboardPolling);
         _dispatcherTimer = new DispatcherTimer(timerTickRate, DispatcherPriority.Background, ClipboardPollingTimerCallback)
         {
@@ -175,10 +175,17 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         private set => SetProperty(ref _showPortrait, value);
     }
 
-    public GridRowSizeEnum GridRowHeight {
-        get => _gridRowHeight;
-        private set => SetProperty(ref _gridRowHeight, value);
+    public GridFontSizeEnum GridFontSize
+    {
+        get => _gridFontSize;
+        private set
+        {
+            SetProperty(ref _gridFontSize, value);
+            RaisePropertyChanged(nameof(GridRowHeight));
+        }
     }
+
+    public double GridRowHeight => (double)_gridFontSize + (double)_gridFontSize/4;
 
     public bool AutoExport {
         get => _autoExport;
@@ -319,8 +326,8 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
             case nameof(settingsManagementViewModel.ShowPortrait):
                 ShowPortrait = settingsManagementViewModel.ShowPortrait;
                 break;
-            case nameof(settingsManagementViewModel.GridRowSize):
-                GridRowHeight = settingsManagementViewModel.GridRowSize;
+            case nameof(settingsManagementViewModel.GridFontSize):
+                GridFontSize = settingsManagementViewModel.GridFontSize;
                 break;
             case nameof(settingsManagementViewModel.AutoExport):
                 AutoExport = settingsManagementViewModel.AutoExport;

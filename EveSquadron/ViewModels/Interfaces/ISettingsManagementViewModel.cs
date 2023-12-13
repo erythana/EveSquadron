@@ -24,6 +24,6 @@ public interface ISettingsManagementViewModel : INotifyPropertyChanged
     public bool WhitelistActive { get; }
     public bool ShowPortrait { get; }
     public bool AlwaysOnTop { get; }
-    public IEnumerable<GridRowSizeEnum> AvailableGridRowSizes { get; }
-    public GridRowSizeEnum GridRowSize { get; }
+    public IEnumerable<GridFontSizeEnum> AvailableGridFontSizes { get; }
+    public GridFontSizeEnum GridFontSize { get; }
 }

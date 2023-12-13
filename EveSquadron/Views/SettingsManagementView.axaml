@@ -98,8 +98,8 @@
                         <StackPanel Classes="ContentElement">
                             <TextBlock Text="Row-Height" />
                             <ComboBox
-                                ItemsSource="{Binding AvailableGridRowSizes, Mode=OneTime}"
-                                SelectedItem="{Binding GridRowSize, Mode=TwoWay}" />
+                                ItemsSource="{Binding AvailableGridFontSizes, Mode=OneTime}"
+                                SelectedItem="{Binding GridFontSize, Mode=TwoWay}" />
                         </StackPanel>
                     </StackPanel>
                 </HeaderedContentControl>

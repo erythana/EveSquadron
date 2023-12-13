@@ -43,7 +43,7 @@ public partial class MainWindow : Window
 
     #region overrides
 
-    override protected void OnDataContextChanged(EventArgs e)
+    protected override void OnDataContextChanged(EventArgs e)
     {
         base.OnDataContextChanged(e);
 
@@ -139,14 +139,12 @@ public partial class MainWindow : Window
         dataGridRow.Background = new SolidColorBrush(_hoverColor);
     }
 
-    private void PlayerInfoGrid_OnLoadingRow(object? sender, DataGridRowEventArgs e) =>
-        _visibleDataGridRows.Add(e.Row);
+    private void PlayerInfoGrid_OnLoadingRow(object? sender, DataGridRowEventArgs e) 
+        => _visibleDataGridRows.Add(e.Row);
 
-    private void PlayerInfoGrid_OnUnloadingRow(object? sender, DataGridRowEventArgs e) =>
-        _visibleDataGridRows.Remove(e.Row);
-
-    #endregion
-
+    private void PlayerInfoGrid_OnUnloadingRow(object? sender, DataGridRowEventArgs e) 
+        => _visibleDataGridRows.Remove(e.Row);
+    
     private void SplitView_OnPaneClosing(object? sender, CancelRoutedEventArgs e)
     {
         if (ToggleSidebar is null)
@@ -154,4 +152,14 @@ public partial class MainWindow : Window
 
         ToggleSidebar.IsChecked = false;
     }
+
+    private void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (e.Source is StyledElement { Parent.TemplatedParent: DataGridColumnHeader })
+            return;
+        InvalidateMeasure();
+        BeginMoveDrag(e);
+    }
+
+    #endregion
 }

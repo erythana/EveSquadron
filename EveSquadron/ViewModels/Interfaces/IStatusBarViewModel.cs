@@ -11,6 +11,7 @@ public interface IStatusBarViewModel : INotifyPropertyChanged
     public bool WhitelistActive { get; set; }
     
     public bool AlwaysOnTop { get; set; }
+    public bool CompactUI { get; set; }
 
     public ReactiveCommand<Unit, Unit> OpenUpdateCommand { get; }
     

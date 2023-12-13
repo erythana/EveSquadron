@@ -15,6 +15,7 @@ using EveSquadron.Models;
 using EveSquadron.Models.Enums;
 using EveSquadron.Models.EveSquadron;
 using EveSquadron.ViewModels.Interfaces;
+using EveSquadron.Views.Converters;
 
 namespace EveSquadron.Views;
 
@@ -60,6 +61,13 @@ public partial class MainWindow : Window
             Source = currentViewModel.StatusBarViewModel,
             Path = nameof(currentViewModel.StatusBarViewModel.AlwaysOnTop),
         };
+        
+        var compactUIBinding = new Binding
+        {
+            Source = currentViewModel.StatusBarViewModel,
+            Path = nameof(currentViewModel.StatusBarViewModel.CompactUI),
+            Converter = new BoolToCompactSystemDecorationsConverter()
+        };
 
         var isDarkModeCheckedBinding = new Binding
         {
@@ -69,6 +77,7 @@ public partial class MainWindow : Window
         };
 
         this.Bind(TopmostProperty, alwaysOnTopBinding);
+        this.Bind(SystemDecorationsProperty, compactUIBinding);
         Application.Current!.Bind(Application.RequestedThemeVariantProperty, isDarkModeCheckedBinding);
     }
 

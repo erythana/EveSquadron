@@ -37,6 +37,7 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     
     private Dictionary<string, string> _settingsToSave;
     private bool _whitelistActive;
+    private bool _compactUI;
 
     #endregion
 
@@ -165,6 +166,13 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         }
     }
 
+    public bool CompactUI { get => _compactUI;
+        set
+        {
+            SetProperty(ref _compactUI, value);
+            AddToSaveableSettings(StatusOptions.Section, nameof(CompactUI), value.ToString());
+        } }
+
     public Color HoverColor {
         get => _hoverColor;
         set
@@ -227,12 +235,13 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         ExportFile = eveSquadronOptions.Value.ExportFile ?? string.Empty;
         AutoExport = bool.TryParse(eveSquadronOptions.Value.AutoExport, out var autoExport) && autoExport;
         ShowPortrait = bool.TryParse(eveSquadronOptions.Value.ShowPortrait, out var showPortrait) && showPortrait;
-        AlwaysOnTop = bool.TryParse(statusOptions.Value.AlwaysOnTop, out var alwaysOnTop) && alwaysOnTop;
-        WhitelistActive = bool.TryParse(statusOptions.Value.WhitelistActive, out var whitelistActive) && whitelistActive;
-
         GridFontSize = Enum.TryParse(eveSquadronOptions.Value.GridFontSize, out GridFontSizeEnum rowSize)
             ? rowSize
             : AppConstants.DefaultGridFontSize;
+        
+        AlwaysOnTop = bool.TryParse(statusOptions.Value.AlwaysOnTop, out var alwaysOnTop) && alwaysOnTop;
+        CompactUI = bool.TryParse(statusOptions.Value.CompactUI, out var compactUI) && compactUI;
+        WhitelistActive = bool.TryParse(statusOptions.Value.WhitelistActive, out var whitelistActive) && whitelistActive;
     }
     
     private IOptions<T> ResolveOptionsFromType<T>(IServiceProvider serviceProvider) where T : class => (IOptions<T>)serviceProvider.GetService(typeof(IOptions<T>))!;
@@ -249,18 +258,18 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     private IEnumerable<ConfigurationValue> GetListOfWriteableSettings() => 
         _settingsToSave.Select(x => new ConfigurationValue {Name = x.Key, Value = x.Value});
 
-    private static async Task<IStorageFile?> GetCsvTargetFileFromSaveFilePickerAsync(TopLevel topLevel) => await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-        { 
-            ShowOverwritePrompt = false,
-            Title = "Save into CSV File",
-            DefaultExtension = "*.csv",
-            SuggestedFileName = "EveSquadron-Export.csv",
-            FileTypeChoices = new List<FilePickerFileType>{ new("CSV")
-            {
-                Patterns = new[]{"*.csv"},
-                MimeTypes = new[]{"text/*"},
-            }}
-        });
+    private static Task<IStorageFile?> GetCsvTargetFileFromSaveFilePickerAsync(TopLevel topLevel) => topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+    { 
+        ShowOverwritePrompt = false,
+        Title = "Save into CSV File",
+        DefaultExtension = "*.csv",
+        SuggestedFileName = "EveSquadron-Export.csv",
+        FileTypeChoices = new List<FilePickerFileType>{ new("CSV")
+        {
+            Patterns = new[]{"*.csv"},
+            MimeTypes = new[]{"text/*"},
+        }}
+    });
     
     #endregion
 }

@@ -91,12 +91,12 @@
                             </ComboBox>
                         </StackPanel>
                         
-                        <CheckBox Content="Whitelist enabled" IsChecked="{Binding WhitelistActive}"
-                                  Classes="ContentElement" />
-                        <CheckBox Content="Always on top" IsChecked="{Binding AlwaysOnTop}" Classes="ContentElement" />
                         <CheckBox Content="Show portraits" IsChecked="{Binding ShowPortrait}" Classes="ContentElement" />
+                        <CheckBox Content="Whitelist enabled" IsChecked="{Binding WhitelistActive}" Classes="ContentElement" />
+                        <CheckBox Content="Always on top" IsChecked="{Binding AlwaysOnTop}" Classes="ContentElement" />
+                        <CheckBox Content="Compact UI" IsChecked="{Binding CompactUI}" Classes="ContentElement" />
                         <StackPanel Classes="ContentElement">
-                            <TextBlock Text="Row-Height" />
+                            <TextBlock Text="Player-Grid Height" />
                             <ComboBox
                                 ItemsSource="{Binding AvailableGridFontSizes, Mode=OneTime}"
                                 SelectedItem="{Binding GridFontSize, Mode=TwoWay}" />

@@ -12,9 +12,6 @@
         MinWidth="550"
         Width="800"
         Height="500"
-        SystemDecorations="BorderOnly"
-        ExtendClientAreaChromeHints="NoChrome"
-        ExtendClientAreaToDecorationsHint="True"
         PointerPressed="InputElement_OnPointerPressed"
         IsEnabled="{Binding  WhitelistManagementViewModel.IsWindowVisible, Mode=OneWay, Converter={x:Static BoolConverters.Not}}">
     <Design.DataContext>
@@ -136,6 +133,11 @@
                     <CheckBox
                         IsChecked="{Binding AlwaysOnTop}"
                         Content="Always on top"
+                        DockPanel.Dock="Top"
+                        Margin="5,0" />
+                    <CheckBox
+                        IsChecked="{Binding CompactUI}"
+                        Content="Compact UI"
                         DockPanel.Dock="Top"
                         Margin="5,0" />
                 </StackPanel>

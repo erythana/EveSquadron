@@ -24,6 +24,7 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
     private bool _alwaysOnTop;
     private Task<bool?> _updateAvailable;
     private bool _whitelistActive;
+    private bool _compactUI;
 
     #endregion
 
@@ -46,6 +47,7 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
         var options = statusOptions.Value;
         WhitelistActive = bool.TryParse(options.WhitelistActive, out var whitelistActive) && whitelistActive;
         AlwaysOnTop = bool.TryParse(options.AlwaysOnTop, out var alwaysOnTop) && alwaysOnTop;
+        CompactUI = bool.TryParse(options.CompactUI, out var compactUI) && compactUI;
     }
     
     #endregion
@@ -60,6 +62,12 @@ public class StatusBarViewModel : ViewModelBase, IStatusBarViewModel
     public bool AlwaysOnTop {
         get => _alwaysOnTop;
         set => SetProperty(ref _alwaysOnTop, value);
+    }
+
+    public bool CompactUI
+    {
+        get => _compactUI;
+        set => SetProperty(ref _compactUI, value);
     }
 
     public ReactiveCommand<Unit, Unit> OpenUpdateCommand { get; }

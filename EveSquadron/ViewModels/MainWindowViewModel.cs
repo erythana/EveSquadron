@@ -320,6 +320,9 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
             case nameof(SettingsManagementViewModel.AlwaysOnTop):
                 StatusBarViewModel.AlwaysOnTop = settingsManagementViewModel.AlwaysOnTop;
                 break;
+            case nameof(SettingsManagementViewModel.CompactUI):
+                StatusBarViewModel.CompactUI = settingsManagementViewModel.CompactUI;
+                break;
             case nameof(settingsManagementViewModel.WhitelistActive):
                 StatusBarViewModel.WhitelistActive = settingsManagementViewModel.WhitelistActive;
                 break;

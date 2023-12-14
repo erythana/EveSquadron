@@ -21,18 +21,18 @@
         <converters:GroupCountVisibilityConverter x:Key="GroupCountVisibilityConverter" />
         <converters:ExportFilePathToVisibleConverter x:Key="ExportFilePathToVisibleConverter" />
     </Window.Resources>
-    <SplitView PanePlacement="Right" 
+    <SplitView PanePlacement="Right"
                DisplayMode="CompactOverlay"
                IsPaneOpen="{Binding IsChecked, ElementName=ToggleSidebar}"
-               CompactPaneLength="15"
+               CompactPaneLength="20"
                OpenPaneLength="180"
                PaneClosing="SplitView_OnPaneClosing">
         <SplitView.Pane>
             <DockPanel LastChildFill="True" PointerPressed="InputElement_OnPointerPressed">
-                <ToggleButton Name="ToggleSidebar" VerticalAlignment="Stretch" />
+                <ToggleButton Name="ToggleSidebar" VerticalAlignment="Stretch" Width="20" />
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom"
                             HorizontalAlignment="Right">
-                                        <!-- Update Fetch Error - Material Icon "Sync Problem" -->
+                    <!-- Update Fetch Error - Material Icon "Sync Problem" -->
                     <Button
                         Margin="5,5"
                         Height="30"
@@ -96,7 +96,8 @@
                         <Button.IsVisible>
                             <MultiBinding Converter="{x:Static BoolConverters.And}">
                                 <Binding Path="IsChecked" ElementName="ToggleSidebar" />
-                                <Binding Path="ExportFilePath" Converter="{StaticResource ExportFilePathToVisibleConverter}" Mode="OneWay" />
+                                <Binding Path="ExportFilePath"
+                                         Converter="{StaticResource ExportFilePathToVisibleConverter}" Mode="OneWay" />
                             </MultiBinding>
                         </Button.IsVisible>
                         <!-- material icon download -->
@@ -187,7 +188,7 @@
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.CharacterName}"
                                     Binding="{Binding Character.Name, Mode=OneWay}"
                                     FontSize="{Binding GridFontSize}" />
-                
+
                 <DataGridTextColumn Header="{x:Static m:MainDataGridHeaderNames.SecurityStatus}"
                                     Binding="{Binding SecurityStanding, StringFormat={}{0:0.###;-0.###}, Mode=OneWay}"
                                     FontSize="{Binding GridFontSize}" />
@@ -232,7 +233,7 @@
                                     HorizontalAlignment="Center"
                                     ZIndex="2"
                                     Command="{Binding #PlayerInfoGrid.DataContext.ExportPlayerInformationCommand}"
-                                    CommandParameter="{Binding}" 
+                                    CommandParameter="{Binding}"
                                     Margin="2,0"
                                     Background="Transparent"
                                     Height="{Binding RowHeight, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGrid}}"

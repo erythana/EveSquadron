@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -13,7 +14,6 @@ using EveSquadron.Models.Enums;
 using EveSquadron.Models.Helper;
 using EveSquadron.Models.Options;
 using EveSquadron.ViewModels.Interfaces;
-using EveSquadron.Views;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ReactiveUI;
@@ -34,7 +34,6 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     private string _exportFile;
     private GridFontSizeEnum _gridFontSize;
     private ThemeVariant _theme;
-    
     private Dictionary<string, string> _settingsToSave;
     private bool _whitelistActive;
     private bool _compactUI;
@@ -64,24 +63,25 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         };
         var colors = GetAllAvailableColors();
         AvailableHoverColors = colors;
+        ColumnOrder = new List<DataGridOrderMapping>();
         
         LoadAndSetSavedSettingsFromOptions(serviceProvider);
     }
 
     private async Task OnOpenAutoExportFolderPickerCommand()
     {
-        try  //ReactiveCommand
+        try //ReactiveCommand
         {
             var window = ApplicationHelper.GetWindowWithDataContext(this);
             if (window is null)
                 return;
-                
+
             var file = await GetCsvTargetFileFromSaveFilePickerAsync(window);
 
             var filePath = file?.Path.AbsolutePath;
             if (string.IsNullOrWhiteSpace(filePath) || !ExportFileHelper.IsValidExportFile(filePath))
                 return;
-            
+
             ExportFile = filePath;
         }
         catch (Exception e)
@@ -93,9 +93,9 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
 
     private async Task OnSaveApplicationSettingsCommand()
     {
-        try  //ReactiveCommand
+        try //ReactiveCommand
         {
-            var saveableSettings = GetListOfWriteableSettings();
+            var saveableSettings = GetWriteableSettings();
             await _applicationSettingDataRepository.SaveApplicationSettings(saveableSettings);
             _settingsToSave.Clear();
         }
@@ -105,12 +105,12 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
             throw;
         }
     }
-    
+
     private void OnClearExportFileCommand()
     {
         ExportFile = "";
     }
-    
+
     #endregion
 
     #region properties
@@ -166,12 +166,14 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         }
     }
 
-    public bool CompactUI { get => _compactUI;
+    public bool CompactUI {
+        get => _compactUI;
         set
         {
             SetProperty(ref _compactUI, value);
             AddToSaveableSettings(StatusOptions.Section, nameof(CompactUI), value.ToString());
-        } }
+        }
+    }
 
     public Color HoverColor {
         get => _hoverColor;
@@ -200,6 +202,32 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
         }
     }
 
+    public IEnumerable<DataGridOrderMapping> ColumnOrder { get; private set; }
+    
+    public Task SaveColumnOrder(IEnumerable<DataGridOrderMapping> columnOrder)
+    {
+        var serializedValue = JsonSerializer.Serialize(columnOrder, AppConstants.AppDefaultSerializerOptions);
+        var saveableValue = new ConfigurationValue
+        {
+            Name = $"{EveSquadronOptions.Section}:ColumnOrder",
+            Value = serializedValue
+        };
+        return _applicationSettingDataRepository.SaveApplicationSettings(new[] { saveableValue });
+    }
+
+    public WindowDimension? WindowDimension { get; private set; }
+
+    public Task SaveWindowDimension(WindowDimension windowDimension)
+    {
+        var serializedValue = JsonSerializer.Serialize(windowDimension, AppConstants.AppDefaultSerializerOptions);
+        var saveableValue = new ConfigurationValue
+        {
+            Name = $"{EveSquadronOptions.Section}:WindowDimension",
+            Value = serializedValue
+        };
+        return _applicationSettingDataRepository.SaveApplicationSettings(new[] { saveableValue });
+    }
+
     public ThemeVariant Theme {
         get => _theme;
         set
@@ -216,60 +244,77 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
     #endregion
 
     #region helper methods
-    
+
     private static IEnumerable<Color> GetAllAvailableColors()
     {
         var properties = typeof(Colors).GetProperties(BindingFlags.Public | BindingFlags.Static);
         var colors = properties.Where(x => x.PropertyType == typeof(Color)).Select(x => (Color)x.GetValue(null)!);
         return colors;
     }
-    
+
     private void LoadAndSetSavedSettingsFromOptions(IServiceProvider serviceProvider)
     {
         var eveSquadronOptions = ResolveOptionsFromType<EveSquadronOptions>(serviceProvider);
         var statusOptions = ResolveOptionsFromType<StatusOptions>(serviceProvider);
-        
-        ClipboardPolling = int.TryParse(eveSquadronOptions.Value.ClipboardPolling, out var polling) ? polling : AppConstants.DefaultClipboardPollingMs;
+
+        ClipboardPolling = int.TryParse(eveSquadronOptions.Value.ClipboardPolling, out var polling)
+            ? polling
+            : AppConstants.DefaultClipboardPollingMs;
         HoverColor = SettingConversionHelper.StringToColorConverter(eveSquadronOptions.Value.HoverColor);
         Theme = SettingConversionHelper.StringToThemeConverter(eveSquadronOptions.Value.Theme);
         ExportFile = eveSquadronOptions.Value.ExportFile ?? string.Empty;
         AutoExport = bool.TryParse(eveSquadronOptions.Value.AutoExport, out var autoExport) && autoExport;
         ShowPortrait = bool.TryParse(eveSquadronOptions.Value.ShowPortrait, out var showPortrait) && showPortrait;
+        ColumnOrder = SettingConversionHelper.StringToColumnOrderConverter(eveSquadronOptions.Value.ColumnOrder);
+        WindowDimension = SettingConversionHelper.StringToWindowDimensionConverter(eveSquadronOptions.Value.WindowDimension);
         GridFontSize = Enum.TryParse(eveSquadronOptions.Value.GridFontSize, out GridFontSizeEnum rowSize)
             ? rowSize
             : AppConstants.DefaultGridFontSize;
-        
+
         AlwaysOnTop = bool.TryParse(statusOptions.Value.AlwaysOnTop, out var alwaysOnTop) && alwaysOnTop;
         CompactUI = bool.TryParse(statusOptions.Value.CompactUI, out var compactUI) && compactUI;
         WhitelistActive = bool.TryParse(statusOptions.Value.WhitelistActive, out var whitelistActive) && whitelistActive;
     }
-    
+
     private IOptions<T> ResolveOptionsFromType<T>(IServiceProvider serviceProvider) where T : class => (IOptions<T>)serviceProvider.GetService(typeof(IOptions<T>))!;
-    
+
     private void AddToSaveableSettings(string sectionTarget, string name, string value)
     {
         if (string.IsNullOrWhiteSpace(name))
             return;
-        
+
         if (!_settingsToSave.TryAdd($"{sectionTarget}:{name}", value))
             _settingsToSave[$"{sectionTarget}:{name}"] = value;
     }
-    
-    private IEnumerable<ConfigurationValue> GetListOfWriteableSettings() => 
-        _settingsToSave.Select(x => new ConfigurationValue {Name = x.Key, Value = x.Value});
+
+    private IEnumerable<ConfigurationValue> GetWriteableSettings() =>
+        _settingsToSave.Select(x => new ConfigurationValue
+        {
+            Name = x.Key,
+            Value = x.Value
+        });
 
     private static Task<IStorageFile?> GetCsvTargetFileFromSaveFilePickerAsync(TopLevel topLevel) => topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-    { 
+    {
         ShowOverwritePrompt = false,
         Title = "Save into CSV File",
         DefaultExtension = "*.csv",
         SuggestedFileName = "EveSquadron-Export.csv",
-        FileTypeChoices = new List<FilePickerFileType>{ new("CSV")
+        FileTypeChoices = new List<FilePickerFileType>
         {
-            Patterns = new[]{"*.csv"},
-            MimeTypes = new[]{"text/*"},
-        }}
+            new("CSV")
+            {
+                Patterns = new[]
+                {
+                    "*.csv"
+                },
+                MimeTypes = new[]
+                {
+                    "text/*"
+                },
+            }
+        }
     });
-    
+
     #endregion
 }

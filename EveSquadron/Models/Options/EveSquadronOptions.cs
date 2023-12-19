@@ -11,4 +11,6 @@ public class EveSquadronOptions
         public string GridFontSize { get; set;}
         public string AutoExport { get; set;}
         public string ExportFile { get; set;}
+        public string ColumnOrder { get; set;}
+        public string WindowDimension { get; set;}
 }

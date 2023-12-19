@@ -2,8 +2,8 @@ namespace EveSquadron.Models.Enums;
 
 public enum GridFontSizeEnum
 {
-    Tiny = 8,
-    Small = 16,
-    Medium = 24,
-    Large = 32
+    Tiny = 10,
+    Small = 14,
+    Medium = 20,
+    Large = 26
 }

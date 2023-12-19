@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Text.Json;
 using Avalonia.Media;
 using Avalonia.Styling;
 
@@ -17,4 +19,17 @@ public static class SettingConversionHelper
         ? color
         : AppConstants.DefaultHoverColor;
 
+    public static IEnumerable<DataGridOrderMapping> StringToColumnOrderConverter(string columnMapping)
+    {
+        if (string.IsNullOrWhiteSpace(columnMapping))
+            return Array.Empty<DataGridOrderMapping>();
+        return JsonSerializer.Deserialize<IEnumerable<DataGridOrderMapping>>(columnMapping) ?? Array.Empty<DataGridOrderMapping>();
+    }
+
+    public static WindowDimension? StringToWindowDimensionConverter(string windowDimension)
+    {
+        return string.IsNullOrWhiteSpace(windowDimension)
+            ? null
+            : JsonSerializer.Deserialize<WindowDimension>(windowDimension);
+    }
 }

@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Avalonia.Media;
 using Avalonia.Styling;
+using EveSquadron.Models;
 using EveSquadron.Models.Enums;
 using ReactiveUI;
 
@@ -27,4 +29,8 @@ public interface ISettingsManagementViewModel : INotifyPropertyChanged
     public bool CompactUI { get; }
     public IEnumerable<GridFontSizeEnum> AvailableGridFontSizes { get; }
     public GridFontSizeEnum GridFontSize { get; }
+    public IEnumerable<DataGridOrderMapping> ColumnOrder { get; }
+    public Task SaveColumnOrder(IEnumerable<DataGridOrderMapping> columnOrder);
+    public WindowDimension? WindowDimension { get; }
+    Task SaveWindowDimension(WindowDimension windowDimension);
 }

@@ -79,6 +79,8 @@ public partial class MainWindow : Window
         this.Bind(TopmostProperty, alwaysOnTopBinding);
         this.Bind(SystemDecorationsProperty, compactUIBinding);
         Application.Current!.Bind(Application.RequestedThemeVariantProperty, isDarkModeCheckedBinding);
+
+        LoadUIDefaults();
     }
 
     private void OnCurrentViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -158,7 +160,7 @@ public partial class MainWindow : Window
     {
         if (ToggleSidebar is null)
             return;
-
+        
         ToggleSidebar.IsChecked = false;
     }
 
@@ -166,8 +168,79 @@ public partial class MainWindow : Window
     {
         if (e.Source is StyledElement { Parent.TemplatedParent: DataGridColumnHeader })
             return;
-        InvalidateMeasure();
         BeginMoveDrag(e);
+    }
+    
+    private void Window_OnClosing(object? sender, WindowClosingEventArgs e)
+        => SaveUIDefaults();
+
+    #endregion
+
+    #region helper methods
+    
+    private void LoadUIDefaults()
+    {
+        LoadWindowSizeAndPosition();
+        LoadDataGridColumnOrder();
+    }
+
+    private void LoadWindowSizeAndPosition()
+    {
+        if (this is not { DataContext: IMainWindowViewModel {SettingsManagementViewModel: { WindowDimension: {} savedSize } } } dataGrid)
+            return;
+
+        var startupPosition = new PixelPoint(savedSize.Left, savedSize.Top);
+        WindowStartupLocation = WindowStartupLocation.Manual;
+        Position = startupPosition;
+        Width = savedSize.Width;
+        Height = savedSize.Height;
+    }
+    
+    private async void SaveWindowSizeAndPosition()
+    {
+        if (this is not { DataContext: IMainWindowViewModel { SettingsManagementViewModel: { } settingsManagementViewModel } })
+            return;
+        
+        var windowInformation = new WindowDimension
+        {
+            Top = Position.Y,
+            Left = Position.X,
+            Height = Height,
+            Width = Width
+        };
+        
+        await settingsManagementViewModel.SaveWindowDimension(windowInformation);
+
+    }
+
+    private void LoadDataGridColumnOrder()
+    {
+        if (PlayerInfoGrid is not { DataContext: IMainWindowViewModel {SettingsManagementViewModel: { } settingsManagementViewModel} } dataGrid)
+            return;
+
+        var columnOrder = settingsManagementViewModel.ColumnOrder.ToDictionary(x => x.Index, x => x.DisplayIndex);
+        if (columnOrder.Count != dataGrid.Columns.Count)
+            return;
+        
+        for (var i = 0; i < dataGrid.Columns.Count; i++)
+            dataGrid.Columns[i].DisplayIndex = columnOrder[i];
+    }
+
+    private async void SaveDataGridColumnOrder()
+    {
+        if (PlayerInfoGrid is not { DataContext: IMainWindowViewModel { SettingsManagementViewModel: { } settingsManagementViewModel } } dataGrid)
+            return;
+
+        var columnOrder = dataGrid.Columns
+            .Select((column, index) => new DataGridOrderMapping(index, column.DisplayIndex));
+        
+        await settingsManagementViewModel.SaveColumnOrder(columnOrder);
+    }
+
+    private void SaveUIDefaults()
+    {
+        SaveDataGridColumnOrder();
+        SaveWindowSizeAndPosition();
     }
 
     #endregion

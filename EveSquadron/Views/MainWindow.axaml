@@ -12,6 +12,8 @@
         MinWidth="550"
         Width="800"
         Height="500"
+        ExtendClientAreaToDecorationsHint="True"
+        Closing="Window_OnClosing"
         PointerPressed="InputElement_OnPointerPressed"
         IsEnabled="{Binding  WhitelistManagementViewModel.IsWindowVisible, Mode=OneWay, Converter={x:Static BoolConverters.Not}}">
     <Design.DataContext>
@@ -142,9 +144,7 @@
                         DockPanel.Dock="Top"
                         Margin="5,0" />
                 </StackPanel>
-
             </DockPanel>
-
         </SplitView.Pane>
         <DataGrid
             x:Name="PlayerInfoGrid"

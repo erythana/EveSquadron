@@ -62,6 +62,13 @@ public partial class MainWindow : Window
             Path = nameof(currentViewModel.StatusBarViewModel.AlwaysOnTop),
         };
         
+        var compactUIBinding = new Binding
+        {
+            Source = currentViewModel.StatusBarViewModel,
+            Path = nameof(currentViewModel.StatusBarViewModel.CompactUI),
+            Converter = new BoolToCompactSystemDecorationsConverter()
+        };
+
         var isDarkModeCheckedBinding = new Binding
         {
             Source = currentViewModel,
@@ -70,6 +77,7 @@ public partial class MainWindow : Window
         };
 
         this.Bind(TopmostProperty, alwaysOnTopBinding);
+        this.Bind(SystemDecorationsProperty, compactUIBinding);
         Application.Current!.Bind(Application.RequestedThemeVariantProperty, isDarkModeCheckedBinding);
 
         LoadUIDefaults();

@@ -12,8 +12,6 @@
         MinWidth="550"
         Width="800"
         Height="500"
-        ExtendClientAreaToDecorationsHint="{Binding StatusBarViewModel.CompactUI}"
-        ExtendClientAreaChromeHints="NoChrome"
         Closing="Window_OnClosing"
         PointerPressed="InputElement_OnPointerPressed"
         IsEnabled="{Binding  WhitelistManagementViewModel.IsWindowVisible, Mode=OneWay, Converter={x:Static BoolConverters.Not}}">
@@ -28,7 +26,7 @@
                DisplayMode="CompactOverlay"
                IsPaneOpen="{Binding IsChecked, ElementName=ToggleSidebar}"
                CompactPaneLength="20"
-               OpenPaneLength="180"
+               OpenPaneLength="185"
                PaneClosing="SplitView_OnPaneClosing">
         <SplitView.Pane>
             <DockPanel LastChildFill="True" PointerPressed="InputElement_OnPointerPressed">

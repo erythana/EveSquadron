@@ -12,7 +12,8 @@
         MinWidth="550"
         Width="800"
         Height="500"
-        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaToDecorationsHint="{Binding StatusBarViewModel.CompactUI}"
+        ExtendClientAreaChromeHints="NoChrome"
         Closing="Window_OnClosing"
         PointerPressed="InputElement_OnPointerPressed"
         IsEnabled="{Binding  WhitelistManagementViewModel.IsWindowVisible, Mode=OneWay, Converter={x:Static BoolConverters.Not}}">

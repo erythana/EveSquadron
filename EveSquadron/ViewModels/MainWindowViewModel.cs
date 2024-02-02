@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Avalonia.Collections;
@@ -197,7 +198,7 @@ public class MainWindowViewModel : ViewModelBase, IMainWindowViewModel
         private set => SetProperty(ref _exportFilePath, value);
     }
     
-    public IReactiveCommand ExportPlayerInformationCommand { get; }
+    public ReactiveCommand<EveSquadronPlayerInformation, Unit> ExportPlayerInformationCommand { get; }
 
     public ThemeVariant ThemeVariant {
         get => _themeVariant;

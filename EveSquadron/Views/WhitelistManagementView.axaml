@@ -12,13 +12,17 @@
         MaxWidth="550"
         Height="600">
 
-    <DockPanel LastChildFill="True">
-        <DockPanel DockPanel.Dock="Bottom">
+    <DockPanel>
+        <DockPanel LastChildFill="False" DockPanel.Dock="Bottom">
             <DockPanel.Styles>
                 <Style Selector=":is(Layoutable)">
                     <Setter Property="Margin" Value="2, 2" />
                 </Style>  
             </DockPanel.Styles>
+            <Button Content="Save" Command="{Binding SaveWhitelistCommand}" />
+            <Button Content="Add single item" Command="{Binding AddSingleItemWhitelistCommand}" />
+            <Button Content="Delete selected" Command="{Binding DeleteSelectedWhitelistCommand}"
+                    CommandParameter="{Binding #WhitelistGrid.SelectedItems}" />
             <Button Content="Import from Clipboard" Command="{Binding ImportClipboardWhitelistCommand}" DockPanel.Dock="Right">
                 <Button.Styles>
                     <Style Selector="Button">
@@ -32,10 +36,7 @@
                     </Style>
                 </Button.Styles>
             </Button>
-            <Button Content="Save" Command="{Binding SaveWhitelistCommand}" />
-            <Button Content="Add single item" Command="{Binding AddSingleItemWhitelistCommand}" />
-            <Button Content="Delete selected" Command="{Binding DeleteSelectedWhitelistCommand}"
-                    CommandParameter="{Binding #WhitelistGrid.SelectedItems}" />
+            
         </DockPanel>
         <DataGrid
             x:Name="WhitelistGrid"
@@ -55,7 +56,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Width="*" Header="Whitelisted Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Width="*" IsReadOnly="False" Header="Whitelisted Name" Binding="{Binding Name}" />
             </DataGrid.Columns>
         </DataGrid>
     </DockPanel>

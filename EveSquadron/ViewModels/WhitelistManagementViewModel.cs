@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using DynamicData;
 using EveSquadron.DataRepositories.Interfaces;
@@ -74,13 +75,13 @@ public class WhitelistManagementViewModel : ViewModelBase, IWhitelistManagementV
 
     #region properties
 
-    public IReactiveCommand SaveWhitelistCommand { get; }
+    public ReactiveCommand<Unit, Unit> SaveWhitelistCommand { get; }
 
-    public IReactiveCommand AddSingleItemWhitelistCommand { get; }
+    public ReactiveCommand<Unit, Unit> AddSingleItemWhitelistCommand { get; }
 
-    public IReactiveCommand DeleteSelectedWhitelistCommand { get; }
+    public ReactiveCommand<IList, Unit> DeleteSelectedWhitelistCommand { get; }
 
-    public IReactiveCommand ImportClipboardWhitelistCommand { get; }
+    public ReactiveCommand<Unit, Task> ImportClipboardWhitelistCommand { get; }
 
     public IEnumerable<EntityTypeEnum> AvailableEntityTypes { get; }
 

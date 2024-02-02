@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reactive;
 using System.Threading.Tasks;
 using Avalonia.Media;
 using Avalonia.Styling;
@@ -11,9 +12,9 @@ namespace EveSquadron.ViewModels.Interfaces;
 
 public interface ISettingsManagementViewModel : INotifyPropertyChanged
 {
-    public IReactiveCommand SaveApplicationSettingsCommand { get; }
-    public IReactiveCommand OpenExportFilePickerCommand { get; }
-    public IReactiveCommand ClearExportFileCommand { get; }
+    public ReactiveCommand<Unit, Unit> SaveApplicationSettingsCommand { get; }
+    public ReactiveCommand<Unit, Unit> OpenExportFilePickerCommand { get; }
+    public ReactiveCommand<Unit, Unit> ClearExportFileCommand { get; }
     public int MinimumClipboardPolling { get; }
     public int MaximumClipboardPolling { get; }
     public int ClipboardPolling { get; }

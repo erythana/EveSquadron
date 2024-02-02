@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Reactive;
 using Avalonia.Media;
 using Avalonia.Styling;
 using EveSquadron.Models.Enums;
@@ -15,7 +16,7 @@ public interface IMainWindowViewModel : INotifyPropertyChanged
     
     public ISettingsManagementViewModel SettingsManagementViewModel { get; }
     
-    public IReactiveCommand ExportPlayerInformationCommand { get; }
+    public ReactiveCommand<EveSquadronPlayerInformation, Unit> ExportPlayerInformationCommand { get; }
     
     public ThemeVariant ThemeVariant { get; set; }
     

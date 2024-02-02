@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -115,9 +116,9 @@ public class SettingsManagementViewModel : ViewModelBase, ISettingsManagementVie
 
     #region properties
 
-    public IReactiveCommand SaveApplicationSettingsCommand { get; }
-    public IReactiveCommand OpenExportFilePickerCommand { get; }
-    public IReactiveCommand ClearExportFileCommand { get; }
+    public ReactiveCommand<Unit, Unit> SaveApplicationSettingsCommand { get; }
+    public ReactiveCommand<Unit, Unit> OpenExportFilePickerCommand { get; }
+    public ReactiveCommand<Unit, Unit> ClearExportFileCommand { get; }
     public int MinimumClipboardPolling { get; }
     public int MaximumClipboardPolling { get; }
 

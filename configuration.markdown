@@ -2,7 +2,7 @@
 
 ## Settings Menu
 
-Starting with version 0.5, the settings are now managed by the application itself.<br />
+Starting with version 0.5, the settings are now managed within the application itself.<br />
 Click on the 'Settings' button in the right bottom corner of the application. These settings are saved in a local database which, by default, is in your configuration directory.<br />
 The database is stored in this directory
 * For Linux/MacOS: `/Users/<USERNAME>/.config/Eve Squadron`

@@ -1,5 +1,5 @@
 # Eve Squadron
-![EveSquadron](https://user-images.githubusercontent.com/42657063/233725331-43542b46-c892-4a13-85e0-61cd9c15d49f.gif)
+![EveSquadron](https://github.com/erythana/EveSquadron/assets/42657063/93a5373e-7204-4411-ba5f-c4ceaa640679)
 
 ## Current Status
 ![EveSquadron-CI](https://github.com/erythana/EveSquadron/actions/workflows/EveSquadron-CI.yml/badge.svg)

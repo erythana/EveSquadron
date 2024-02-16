@@ -40,11 +40,4 @@ in the directory where the solution file (.sln) is located.
 For more detailed information (Configuration, Roadmap, etc.), please check out the projects website https://www.eve-squadron.com
 
 ## Feedback and Donations
-
-Additionally, if you find this tool useful and would like to support its continued development, consider donating some ISK.<br />
-Your contributions will keep me from doing PvE and i have more time so this tool remains up-to-date and useful for all Eve Online players.<br />
-Eve character name: *Christian Gaterau*
-
-```
-"Give me money. Money me! Money now! Me a money needing a lot now."
-```
+Feedback is appreciated - create a discussion at Github!

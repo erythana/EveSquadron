@@ -6,7 +6,7 @@
 ![EveSquadron-CD](https://github.com/erythana/EveSquadron/actions/workflows/EveSquadron-CD.yml/badge.svg)
 <br />
 While this tool is still in its development-phase, it should already work without any problems.<br/>
-If you encounter any bugs, please report them to me at 'Github Issues' or in-game via a message to 'Christian Gaterau'.
+If you encounter any bugs, please report them to me via the "Github Issues"
 
 ## How to Use
 
@@ -64,9 +64,7 @@ It's easy to use, and provides all the data you need to stay on top of the lates
 
 ## Future Improvements
 
-Here is the [Roadmap](./roadmap.markdown) for this tool.
 If you have any feature requests or suggestions for improvements, please don't hesitate to reach out!<br />
-You can send an in-game mail to *Christian Gaterau* with your feedback or create an issue on Github.
 
 As of release 0.5, two capsuleers already proposed features:<br />
 * Whitelisting pilots 
@@ -74,10 +72,4 @@ As of release 0.5, two capsuleers already proposed features:<br />
 
 ## Feedback and Donations
 
-Additionally, if you find this tool useful and would like to support its continued development, consider donating some ISK.<br />
-Your contributions will keep me from doing PvE and i have more time so this tool remains up-to-date and useful for all Eve Online players.<br />
-Eve character name: *Christian Gaterau*
-
-```
-"Give me money. Money me! Money now! Me a money needing a lot now."
-```
+Feedback is appreciated - create a discussion at Github!

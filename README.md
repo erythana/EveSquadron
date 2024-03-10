@@ -1,13 +1,10 @@
 # Eve Squadron
-![EveSquadron](https://user-images.githubusercontent.com/42657063/233725331-43542b46-c892-4a13-85e0-61cd9c15d49f.gif)
+![EveSquadron](https://github.com/erythana/EveSquadron/assets/42657063/93a5373e-7204-4411-ba5f-c4ceaa640679)
 
 ## Current Status
 ![EveSquadron-CI](https://github.com/erythana/EveSquadron/actions/workflows/EveSquadron-CI.yml/badge.svg)
 ![EveSquadron-CD](https://github.com/erythana/EveSquadron/actions/workflows/EveSquadron-CD.yml/badge.svg)
 <br />
-This tool is still in early development, but it should work just fine for now.<br />
-However, there may be some bugs or glitches that need to be addressed, so please keep this in mind.<br />
-Please report them to me if you encounter any problems.
 
 ## How to Use
 
@@ -43,11 +40,4 @@ in the directory where the solution file (.sln) is located.
 For more detailed information (Configuration, Roadmap, etc.), please check out the projects website https://www.eve-squadron.com
 
 ## Feedback and Donations
-
-Additionally, if you find this tool useful and would like to support its continued development, consider donating some ISK.<br />
-Your contributions will keep me from doing PvE and i have more time so this tool remains up-to-date and useful for all Eve Online players.<br />
-Eve character name: *Christian Gaterau*
-
-```
-"Give me money. Money me! Money now! Me a money needing a lot now."
-```
+Feedback is appreciated - create a discussion at Github!

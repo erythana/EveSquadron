@@ -1,6 +1,8 @@
 # Eve Squadron
 ![EveSquadron](https://github.com/erythana/EveSquadron/assets/42657063/93a5373e-7204-4411-ba5f-c4ceaa640679)
 
+<a href="https://www.buymeacoffee.com/erythana" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
 ## Current Status
 ![EveSquadron-CI](https://github.com/erythana/EveSquadron/actions/workflows/EveSquadron-CI.yml/badge.svg)
 ![EveSquadron-CD](https://github.com/erythana/EveSquadron/actions/workflows/EveSquadron-CD.yml/badge.svg)

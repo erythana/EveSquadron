@@ -73,3 +73,5 @@ As of release 0.5, two capsuleers already proposed features:<br />
 ## Feedback and Donations
 
 Feedback is appreciated - create a discussion at Github!
+
+<a href="https://www.buymeacoffee.com/erythana" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
